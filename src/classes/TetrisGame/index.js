@@ -281,7 +281,6 @@ class TetrisGame {
     if (b1IsAbove && blocksAreVertical) { // B1 is above B2
       if (this.isCellAvailable(row2, col2 + 1)) {
         // Can B1 move to the right of B2?
-        console.log('This one')
         this.rightBlockOne()
         this.dropBlockOne()
       } else if (this.isCellAvailable(row2, col2 - 1)) {
@@ -334,6 +333,70 @@ class TetrisGame {
     }
   }
 
+  rotateTheActivePieceCCW () {
+    const { row: row1, col: col1 } = this.activeBlock1
+    const { row: row2, col: col2 } = this.activeBlock2
+
+    const b1IsLeft = col1 < col2
+    const b1IsAbove = row1 < row2
+    const blocksAreVertical = col1 === col2
+    const blocksAreHoriz = row1 === row2
+
+    if (b1IsAbove && blocksAreVertical) { // B1 is above B2
+      if (this.isCellAvailable(row2, col2 - 1)) {
+        // Can B1 move left of B2?
+        this.leftBlockOne()
+        this.dropBlockOne()
+      } else if (this.isCellAvailable(row2, col2 + 1)) {
+        // If not, can B2 move right, and B1 move down?
+        this.rightBlockTwo()
+        this.dropBlockOne()
+      } else {
+        // Something to left and right, so just swap the blocks vertically
+        this.swapActiveBlocks()
+      }
+    } else if (b1IsLeft && blocksAreHoriz) { // B1 is left of B2
+      if (this.isCellAvailable(row2 + 1, col2)) {
+        // Can B1 move below B2?
+        this.dropBlockOne()
+        this.rightBlockOne()
+      } else if (this.isCellAvailable(row2 - 1, col2)) {
+        // If not, can B2 move up and B1 move right
+        this.upBlockTwo()
+        this.rightBlockOne()
+      } else {
+        // Something above and below, so just swap the blocks horizontally
+        this.swapActiveBlocks()
+      }
+    } else if (!b1IsAbove && blocksAreVertical) { // B1 is below B2
+      if (this.isCellAvailable(row2, col2 + 1)) {
+        // Can B1 move right of B2?
+        this.rightBlockOne()
+        this.upBlockOne()
+      } else if (this.isCellAvailable(row2, col2 - 1)) {
+        // If not, can B2 move left, and B1 move up
+        this.leftBlockTwo()
+        this.upBlockOne()
+      } else {
+        // Something left and right, so just swap the blocks vertically
+        this.swapActiveBlocks()
+      }
+    } else if (!b1IsLeft && blocksAreHoriz) { // B1 is to the right of B2
+      if (this.isCellAvailable(row2 - 1, col2)) {
+        // Can B1 move above B2?
+        this.upBlockOne()
+        this.leftBlockOne()
+      } else if (this.isCellAvailable(row2 + 1, col2)) {
+        // If not, can B2 move down and B1 move left
+        this.dropBlockTwo()
+        this.leftBlockOne()
+      } else {
+        // Something above and below, so just swap the blocks horizontally
+        this.swapActiveBlocks()
+      }
+    }
+  }
+
   endTheTurn () {
     clearInterval(this.pieceDropInterval)
     this.pieceDropInterval = null
@@ -346,11 +409,11 @@ class TetrisGame {
       switch (keyCode) {
         case 87: // W
         case 38: // Up Arrow
-          console.log('Rotate CCW')
+          this.rotateTheActivePieceCW()
           break
         case 83: // S
         case 40: // D Arrow
-          this.rotateTheActivePieceCW()
+          this.rotateTheActivePieceCCW()
           break
         case 65: // A
         case 37: // L Arrow
@@ -362,6 +425,8 @@ class TetrisGame {
         case 68: // D
         case 39: // R Arrow
           this.rightTheActivePiece()
+          break
+        default:
           break
       }
     }

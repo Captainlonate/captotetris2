@@ -41,6 +41,8 @@ export const getNextBlockType = (currentBlockType) => {
     case BlockTypes.TRANSPARENT:
       nextBlockType = BlockTypes.NORMAL
       break
+    default:
+      break
   }
 
   return nextBlockType

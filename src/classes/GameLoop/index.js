@@ -66,7 +66,7 @@ class GameLoop {
   }
 
   onWindowResize () {
-    const { width: gameAreaWidth, height: gameAreaHeight } = this.gameArea.getBoundingClientRect()
+    const { height: gameAreaHeight } = this.gameArea.getBoundingClientRect()
 
     const maxBlockHeight = Math.floor(gameAreaHeight / 13)
     const maxBlockWidth = maxBlockHeight
