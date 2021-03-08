@@ -1,21 +1,19 @@
 import { getRandomBlockColor } from './blockColors'
-import { isValidBlockStatus, BLOCKSTATUSES, getNextBlockStatus } from './blockStatuses'
-import { getHeadsOrTails } from '../../utils/random'
+import { isValidBlockType, BlockTypes, getNextBlockType, BlockTypesInfo } from './blockTypes'
+import { BlockImages } from './blockImages'
 
 class Block {
-  constructor ({ color, blockStatus, isBreaker }) {
-    this._color = color || getRandomBlockColor()
-    this._blockStatus = blockStatus || BLOCKSTATUSES.NORMAL
-    this._isBreaker = isBreaker || getHeadsOrTails()
-    this._isBreakable = isStone(this._blockStatus)
+  constructor ({ blockType = BlockTypes.NORMAL } = {}) {
+    this._color = getRandomBlockColor()
+    this.updateBlockType(blockType)
+  }
+
+  get blockType () {
+    return this._blockType
   }
 
   get color () {
     return this._color
-  }
-
-  get blockStatus () {
-    return this._blockStatus
   }
 
   get isBreaker () {
@@ -26,31 +24,28 @@ class Block {
     return this._isBreakable
   }
 
-  set isBreaker (isABreaker) {
-    this._isBreaker = Boolean(isABreaker)
+  get isStone () {
+    return this._isStone
   }
 
-  set blockStatus (newBlockStatus) {
-    if (isValidBlockStatus(newBlockStatus)) {
-      this._blockStatus = newBlockStatus
+  get imageName () {
+    return this._blockImageName
+  }
+
+  updateBlockType (newBlockType) {
+    if (isValidBlockType(newBlockType)) {
+      const blockTypeInfo = BlockTypesInfo[newBlockType]
+
+      this._blockType = newBlockType
+      this._isBreakable = blockTypeInfo.isBreakable
+      this._isBreaker = blockTypeInfo.isBreaker
+      this._isStone = blockTypeInfo.isStone
+      this._blockImageName = BlockImages[this._blockType][this._color]
     }
   }
 
-  randomizeColor () {
-    this._color = getRandomBlockColor()
-  }
-
-  randomizeIsBreaker () {
-    this._isBreaker = getHeadsOrTails()
-  }
-
-  randomizeBlock () {
-    this.randomizeColor()
-    this.randomizeIsBreaker()
-  }
-
-  progressBlockStatus () {
-    this._blockStatus = getNextBlockStatus(this._blockStatus)
+  progressBlockType () {
+    this.updateBlockType(getNextBlockType(this._blockType))
   }
 }
 
