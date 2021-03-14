@@ -1,10 +1,10 @@
-import Block from "../../Block"
+// const sortTuplesDesc = sort(([aKey], [bKey]) => bKey - aKey)
 
 class BoardManager {
-  constructor ({ numRows, numCols, onEndTurn, onCannotSpawn }) {
+  constructor ({ numRows, numCols, onEndTurn, onCannotSpawn, onDoneDroppingBlocks }) {
     this.numRows = numRows
     this.numCols = numCols
-    this.blockStarCol = 3
+    this.blockStartCol = 3
     this.startRowBlockOne = 0
     this.startRowBlockTwo = 1
 
@@ -13,19 +13,22 @@ class BoardManager {
     this.activeBlock1 = null
     this.activeBlock2 = null
 
+    this.blocksThatNeedToFall = []
+
     this.onEndTurn = () => onEndTurn()
     this.onCannotSpawn = () => onCannotSpawn()
+    this.onDoneDroppingBlocks = () => onDoneDroppingBlocks()
   }
 
   spawnNewActivePiece (blockOne, blockTwo) {
-    if (this.board[2][this.blockStarCol] === null) {
-      this.activeBlock1 = { block: blockOne, row: this.startRowBlockOne, col: this.blockStarCol }
-      this.activeBlock2 = { block: blockTwo, row: this.startRowBlockTwo, col: this.blockStarCol }
+    if (this.canSpawnNewPiece()) {
+      this.activeBlock1 = { block: blockOne, row: this.startRowBlockOne, col: this.blockStartCol }
+      this.activeBlock2 = { block: blockTwo, row: this.startRowBlockTwo, col: this.blockStartCol }
 
-      this.board[this.startRowBlockOne][this.blockStarCol] = this.activeBlock1.block
-      this.board[this.startRowBlockTwo][this.blockStarCol] = this.activeBlock2.block
+      this.board[this.startRowBlockOne][this.blockStartCol] = this.activeBlock1.block
+      this.board[this.startRowBlockTwo][this.blockStartCol] = this.activeBlock2.block
     } else {
-      console.log('The spawn point is not empty. Game is over?')
+      console.log('The board is full. Game over?')
       this.onCannotSpawn()
     }
   }
@@ -53,11 +56,6 @@ class BoardManager {
       this.board[row][col] === null
     )
   }
-
-  // moveCell (fromRow, fromCol, toRow, toCol) {
-  //   this.board[toRow][toCol] = this.board[fromRow][fromCol]
-  //   this.board[fromRow][fromCol] = null
-  // }
 
   moveActiveBlock (activeBlock, toRow, toCol) {
     const { row: oldRow, col: oldCol, block } = activeBlock
@@ -296,6 +294,43 @@ class BoardManager {
 
     this.activeBlock2.row = oldRow1
     this.activeBlock2.col = oldCol1
+  }
+
+  dropBlocksWithSpacesBeneath () {
+    console.log('Dropping blocks')
+    const blocksThatCanDropAgain = []
+    for (const [rowIdx, colIdx] of this.blocksThatNeedToFall) {
+      if (this.isCellAvailable(rowIdx + 1, colIdx)) {
+        this.board[rowIdx + 1][colIdx] = this.board[rowIdx][colIdx]
+        this.board[rowIdx][colIdx] = null
+        if (this.isCellAvailable(rowIdx + 2, colIdx)) {
+          blocksThatCanDropAgain.push([rowIdx + 1, colIdx])
+        }
+      }
+    }
+    this.blocksThatNeedToFall = blocksThatCanDropAgain
+    if (blocksThatCanDropAgain.length === 0) {
+      this.onDoneDroppingBlocks()
+    }
+  }
+
+  /*
+    @param blocksThatNeedToFall = [[rowIdx, colIdx], [rowIdx, colIdx]...]
+      expects array to be sorted with highest rowIndexes first
+  */
+  setBlocksThatNeedToFall (blocksThatNeedToFall) {
+    // This is an array of tuples. Each tuple
+    // represents [rowIdx, colIdx]. The array must be sorted
+    // with highests rowIdx first
+    this.blocksThatNeedToFall = blocksThatNeedToFall
+  }
+
+  // The board is "full" if it's not possible to spawn a new piece
+  canSpawnNewPiece () {
+    return (
+      this.board[1][this.blockStartCol] === null &&
+      this.board[2][this.blockStartCol] === null
+    )
   }
 }
 

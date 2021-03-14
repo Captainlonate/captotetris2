@@ -1,3 +1,5 @@
+import { tenPercentChance } from '../../utils/random'
+
 export const BlockTypes = {
   CEMENT: 'CEMENT',
   TRANSPARENT: 'TRANSPARENT',
@@ -47,3 +49,7 @@ export const getNextBlockType = (currentBlockType) => {
 
   return nextBlockType
 }
+
+export const chanceToGetBreaker = () => (
+  tenPercentChance() ? BlockTypes.BREAKER : BlockTypes.NORMAL
+)
