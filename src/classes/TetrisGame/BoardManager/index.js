@@ -332,6 +332,94 @@ class BoardManager {
       this.board[2][this.blockStartCol] === null
     )
   }
+
+  getPossibleBreaks () {
+    const possibleBreaks = []
+
+    for (let rowIdx = 2; rowIdx < this.numRows; rowIdx++) {
+      for (let colIdx = 2; colIdx < this.numCols; colIdx++) {
+        const thisCell = this.getCell(rowIdx, colIdx)
+        if (thisCell !== null && thisCell.isBreaker) {
+          const newBreak = {
+            color: thisCell.color,
+            breakerLocation: [rowIdx, colIdx],
+            numberOfBlocksToBreak: 0,
+            blocksInThisBreak: []
+          }
+          // Found a breaker. Begin recursively looking for all linked
+          // normal blocks
+          newBreak.blocksInThisBreak = this.findLinkedBlocks(thisCell.color, rowIdx, colIdx, [rowIdx, colIdx])
+          newBreak.numberOfBlocksToBreak = newBreak.blocksInThisBreak.length
+          console.log(newBreak)
+          if (newBreak.numberOfBlocksToBreak > 0) {
+            possibleBreaks.push(newBreak)
+          }
+        }
+      }
+    }
+
+    console.log('possible breaks', possibleBreaks)
+  }
+
+  // Recursive
+  findLinkedBlocks (color, currRow, currCol, blocksFoundSoFar) {
+    const rowAbove = currRow - 1
+    const rowBelow = currRow + 1
+    const colLeft = currCol - 1
+    const colRight = currCol + 1
+
+    let matches = [...blocksFoundSoFar]
+
+    const cellAboveMatches = (
+      this.isWithinBounds(rowAbove, currCol) &&
+      this.getCell(rowAbove, currCol) !== null &&
+      this.getCell(rowAbove, currCol).color === color &&
+      !matches.some(([rowIdx, colIdx]) => (rowIdx === rowAbove) && (colIdx === currCol))
+    )
+
+    const cellBelowMatches = (
+      this.isWithinBounds(rowBelow, currCol) &&
+      this.getCell(rowBelow, currCol) !== null &&
+      this.getCell(rowBelow, currCol).color === color &&
+      !matches.some(([rowIdx, colIdx]) => (rowIdx === rowBelow) && (colIdx === currCol))
+    )
+
+    const cellRightMatches = (
+      this.isWithinBounds(currRow, colRight) &&
+      this.getCell(currRow, colRight) !== null &&
+      this.getCell(currRow, colRight).color === color &&
+      !matches.some(([rowIdx, colIdx]) => (rowIdx === currRow) && (colIdx === colRight))
+    )
+
+    const cellLeftMatches = (
+      this.isWithinBounds(currRow, colLeft) &&
+      this.getCell(currRow, colLeft) !== null &&
+      this.getCell(currRow, colLeft).color === color &&
+      !matches.some(([rowIdx, colIdx]) => (rowIdx === currRow) && (colIdx === colLeft))
+    )
+
+    if (cellAboveMatches) {
+      matches.push([rowAbove, currCol])
+      matches = this.findLinkedBlocks(color, rowAbove, currCol, matches)
+    }
+
+    if (cellRightMatches) {
+      matches.push([currRow, colRight])
+      matches = this.findLinkedBlocks(color, currRow, colRight, matches)
+    }
+
+    if (cellBelowMatches) {
+      matches.push([rowBelow, currCol])
+      matches = this.findLinkedBlocks(color, rowBelow, currCol, matches)
+    }
+
+    if (cellLeftMatches) {
+      matches.push([currRow, colLeft])
+      matches = this.findLinkedBlocks(color, currRow, colLeft, matches)
+    }
+
+    return matches
+  }
 }
 
 export default BoardManager
