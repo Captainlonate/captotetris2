@@ -3,8 +3,8 @@ import { isValidBlockType, BlockTypes, getNextBlockType, BlockTypesInfo } from '
 import { BlockImages } from './blockImages'
 
 class Block {
-  constructor ({ blockType = BlockTypes.NORMAL } = {}) {
-    this._color = getRandomBlockColor()
+  constructor ({ blockType = BlockTypes.NORMAL, color } = {}) {
+    this._color = color || getRandomBlockColor()
     this.updateBlockType(blockType)
   }
 

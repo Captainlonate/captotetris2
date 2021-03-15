@@ -1,4 +1,5 @@
-// const sortTuplesDesc = sort(([aKey], [bKey]) => bKey - aKey)
+import { sortTuplesDesc } from '../../../utils/tuples'
+import Block from '../../Block'
 
 class BoardManager {
   constructor ({ numRows, numCols, onEndTurn, onCannotSpawn, onDoneDroppingBlocks }) {
@@ -33,8 +34,30 @@ class BoardManager {
     }
   }
 
+  // resetBoard (numRows, numCols) {
+  //   return [...new Array(numRows)].map(() => [...new Array(numCols)].fill(null))
+  // }
+
   resetBoard (numRows, numCols) {
-    return [...new Array(numRows)].map(() => [...new Array(numCols)].fill(null))
+    let tempBoard = [...new Array(numRows)].map(() => [...new Array(numCols)].fill(null))
+    tempBoard = [
+      [null, null, null, null, null, null, null], // 0
+      [null, null, null, null, null, null, null], // 1
+      [null, null, null, null, null, null, null], // 2
+      [null, null, null, null, null, null, new Block({ color: 'RED' })], // 3
+      [null, null, null, null, null, null, new Block({ color: 'RED' })], // 4
+      [null, null, null, null, null, null, new Block({ color: 'RED' })], // 5
+      [null, null, null, null, null, null, new Block({ color: 'RED' })], // 6
+      [null, null, null, null, null, null, new Block({ color: 'RED' })], // 7
+      [null, null, null, null, null, null, new Block({ color: 'GREEN' })], // 8
+      [null, null, null, null, null, null, new Block({ color: 'GREEN' })], // 9
+      [null, null, null, null, null, null, new Block({ color: 'GREEN' })], // 10
+      [null, null, null, null, null, null, new Block({ color: 'GREEN' })], // 11
+      [null, null, null, null, null, null, new Block({ color: 'GREEN' })], // 12
+      [null, null, null, null, null, null, new Block({ color: 'GREEN' })], // 13
+      [null, null, null, null, null, null, new Block({ color: 'GREEN' })] // 14
+    ]
+    return tempBoard
   }
 
   getCell (row, col) {
@@ -297,35 +320,33 @@ class BoardManager {
   }
 
   dropBlocksWithSpacesBeneath () {
-    console.log('Dropping blocks')
-    const blocksThatCanDropAgain = []
+    const blocksAtNewPosition = []
+    let didAnythingFall = false
     for (const [rowIdx, colIdx] of this.blocksThatNeedToFall) {
       if (this.isCellAvailable(rowIdx + 1, colIdx)) {
         this.board[rowIdx + 1][colIdx] = this.board[rowIdx][colIdx]
         this.board[rowIdx][colIdx] = null
-        if (this.isCellAvailable(rowIdx + 2, colIdx)) {
-          blocksThatCanDropAgain.push([rowIdx + 1, colIdx])
-        }
+        didAnythingFall = true
+        blocksAtNewPosition.push([rowIdx + 1, colIdx])
       }
     }
-    this.blocksThatNeedToFall = blocksThatCanDropAgain
-    if (blocksThatCanDropAgain.length === 0) {
+    this.blocksThatNeedToFall = blocksAtNewPosition
+    if (!didAnythingFall) {
       this.onDoneDroppingBlocks()
     }
   }
 
   /*
-    @param blocksThatNeedToFall = [[rowIdx, colIdx], [rowIdx, colIdx]...]
-      expects array to be sorted with highest rowIndexes first
+    @param blocksThatNeedToFall an array of tuples
+      ex: [[rowIdx, colIdx], [rowIdx, colIdx]...]
   */
-  setBlocksThatNeedToFall (blocksThatNeedToFall) {
-    // This is an array of tuples. Each tuple
-    // represents [rowIdx, colIdx]. The array must be sorted
-    // with highests rowIdx first
-    this.blocksThatNeedToFall = blocksThatNeedToFall
+  setBlocksThatNeedToFall (blocksThatNeedToFall = []) {
+    this.blocksThatNeedToFall = sortTuplesDesc(blocksThatNeedToFall)
   }
 
-  // The board is "full" if it's not possible to spawn a new piece
+  /*
+    The board is "full" if it's not possible to spawn a new piece
+  */
   canSpawnNewPiece () {
     return (
       this.board[1][this.blockStartCol] === null &&
@@ -333,92 +354,96 @@ class BoardManager {
     )
   }
 
+  /*
+    Search through the board for breakers, and then discover all
+    of the linked blocks of the same color. Returns an array
+    of tuples [[rowIdx, colIdx], ...]
+  */
   getPossibleBreaks () {
     const possibleBreaks = []
 
     for (let rowIdx = 2; rowIdx < this.numRows; rowIdx++) {
-      for (let colIdx = 2; colIdx < this.numCols; colIdx++) {
-        const thisCell = this.getCell(rowIdx, colIdx)
-        if (thisCell !== null && thisCell.isBreaker) {
-          const newBreak = {
-            color: thisCell.color,
-            breakerLocation: [rowIdx, colIdx],
-            numberOfBlocksToBreak: 0,
-            blocksInThisBreak: []
-          }
-          // Found a breaker. Begin recursively looking for all linked
-          // normal blocks
-          newBreak.blocksInThisBreak = this.findLinkedBlocks(thisCell.color, rowIdx, colIdx, [rowIdx, colIdx])
-          newBreak.numberOfBlocksToBreak = newBreak.blocksInThisBreak.length
-          console.log(newBreak)
-          if (newBreak.numberOfBlocksToBreak > 0) {
-            possibleBreaks.push(newBreak)
+      for (let colIdx = 0; colIdx < this.numCols; colIdx++) {
+        const cell = this.getCell(rowIdx, colIdx)
+        if (cell !== null && cell.isBreaker) {
+          const cellCoords = [rowIdx, colIdx]
+          const blocksToBreak = this.findLinkedBlocks(cellCoords, cell.color, [cellCoords])
+          if (blocksToBreak.length > 1) {
+            possibleBreaks.push(blocksToBreak)
           }
         }
       }
     }
 
-    console.log('possible breaks', possibleBreaks)
+    return possibleBreaks
   }
 
-  // Recursive
-  findLinkedBlocks (color, currRow, currCol, blocksFoundSoFar) {
-    const rowAbove = currRow - 1
-    const rowBelow = currRow + 1
-    const colLeft = currCol - 1
-    const colRight = currCol + 1
+  /*
+    A new match if there is a block of the same color that has not been matched yet
+  */
+  isCellANewMatch ([row, col], matches, color) {
+    return (
+      this.isWithinBounds(row, col) &&
+      this.getCell(row, col) !== null &&
+      this.getCell(row, col).color === color &&
+      !matches.some(([rowIdx, colIdx]) => (rowIdx === row) && (colIdx === col))
+    )
+  }
+
+  /*
+    Starting at a given cell, traverse the board and find all blocks
+    that are attached/touching/adjacent to this cell, with the same
+    color. This function is recursive. It will return an array
+    of tuples [[rowIdx, colIdx], ...]
+  */
+  findLinkedBlocks ([currRow, currCol], color, blocksFoundSoFar) {
+    const cellAbove = [currRow - 1, currCol]
+    const cellRight = [currRow, currCol + 1]
+    const cellBelow = [currRow + 1, currCol]
+    const cellLeft = [currRow, currCol - 1]
 
     let matches = [...blocksFoundSoFar]
 
-    const cellAboveMatches = (
-      this.isWithinBounds(rowAbove, currCol) &&
-      this.getCell(rowAbove, currCol) !== null &&
-      this.getCell(rowAbove, currCol).color === color &&
-      !matches.some(([rowIdx, colIdx]) => (rowIdx === rowAbove) && (colIdx === currCol))
-    )
-
-    const cellBelowMatches = (
-      this.isWithinBounds(rowBelow, currCol) &&
-      this.getCell(rowBelow, currCol) !== null &&
-      this.getCell(rowBelow, currCol).color === color &&
-      !matches.some(([rowIdx, colIdx]) => (rowIdx === rowBelow) && (colIdx === currCol))
-    )
-
-    const cellRightMatches = (
-      this.isWithinBounds(currRow, colRight) &&
-      this.getCell(currRow, colRight) !== null &&
-      this.getCell(currRow, colRight).color === color &&
-      !matches.some(([rowIdx, colIdx]) => (rowIdx === currRow) && (colIdx === colRight))
-    )
-
-    const cellLeftMatches = (
-      this.isWithinBounds(currRow, colLeft) &&
-      this.getCell(currRow, colLeft) !== null &&
-      this.getCell(currRow, colLeft).color === color &&
-      !matches.some(([rowIdx, colIdx]) => (rowIdx === currRow) && (colIdx === colLeft))
-    )
-
+    const cellAboveMatches = this.isCellANewMatch(cellAbove, matches, color)
     if (cellAboveMatches) {
-      matches.push([rowAbove, currCol])
-      matches = this.findLinkedBlocks(color, rowAbove, currCol, matches)
+      matches.push(cellAbove)
+      matches = this.findLinkedBlocks(cellAbove, color, matches)
     }
 
+    const cellRightMatches = this.isCellANewMatch(cellRight, matches, color)
     if (cellRightMatches) {
-      matches.push([currRow, colRight])
-      matches = this.findLinkedBlocks(color, currRow, colRight, matches)
+      matches.push(cellRight)
+      matches = this.findLinkedBlocks(cellRight, color, matches)
     }
 
+    const cellBelowMatches = this.isCellANewMatch(cellBelow, matches, color)
     if (cellBelowMatches) {
-      matches.push([rowBelow, currCol])
-      matches = this.findLinkedBlocks(color, rowBelow, currCol, matches)
+      matches.push(cellBelow)
+      matches = this.findLinkedBlocks(cellBelow, color, matches)
     }
 
+    const cellLeftMatches = this.isCellANewMatch(cellLeft, matches, color)
     if (cellLeftMatches) {
-      matches.push([currRow, colLeft])
-      matches = this.findLinkedBlocks(color, currRow, colLeft, matches)
+      matches.push(cellLeft)
+      matches = this.findLinkedBlocks(cellLeft, color, matches)
     }
 
     return matches
+  }
+
+  /*
+    Clears cells in the board.
+    @param setsOfBreaks is a 3d array. The top level contains groups
+      of "breaks". Each "break" contains an array of tuples, where each
+      represents a cell's coordinates.
+      [
+        [[rowIdx, colIdx], ...], // Break #1
+      ]
+  */
+  breakBlocks (setsOfBreaks = []) {
+    for (const [rowIdx, colIdx] of setsOfBreaks.flat()) {
+      this.board[rowIdx][colIdx] = null
+    }
   }
 }
 

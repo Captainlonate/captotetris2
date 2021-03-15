@@ -2,14 +2,8 @@ import ImageLoader from '../ImageLoader'
 import Block from '../Block'
 import { ImageLabelsToPaths, BlockImageSize } from './images'
 import BoardManager from './BoardManager'
-import SetOfIntTuples from './SetOfIntTuples'
 import { chanceToGetBreaker } from '../Block/blockTypes'
-
-const debugLog = (msg) => {
-  if (false) {
-    console.log(msg)
-  }
-}
+import { removeDuplicateTuples } from '../../utils/tuples'
 
 const BoardInfo = {
   NUMROWS: 15, // the top 2 are where the blocks spawn
@@ -63,7 +57,6 @@ class TetrisGame {
   }
 
   onEndTurn () {
-    debugLog('onEndTurn')
     // TODO: play the tink sound
     this.stopActivePieceDropInterval()
     this.stopBlocksFallingInterval()
@@ -72,7 +65,6 @@ class TetrisGame {
   }
 
   onCannotSpawn () {
-    debugLog('onCannotSpawn')
     this.stopActivePieceDropInterval()
     this.stopBlocksFallingInterval()
     this.setFlagsProcessingBoard()
@@ -80,7 +72,6 @@ class TetrisGame {
   }
 
   onDoneDroppingBlocks () {
-    debugLog('onDoneDroppingBlocks')
     this.stopActivePieceDropInterval()
     this.stopBlocksFallingInterval()
     this.setFlagsProcessingBoard()
@@ -95,7 +86,8 @@ class TetrisGame {
   startTheGame () {
     this.gameState.gameHasStarted = true
     this.gameState.imagesAreLoaded = true
-    this.boardManager.spawnNewActivePiece(this.makeRegularBlock(), this.makeRegularBlock())
+    // this.boardManager.spawnNewActivePiece(this.makeRegularBlock(), this.makeRegularBlock())
+    this.boardManager.spawnNewActivePiece(new Block({ blockType: 'BREAKER', color: 'GREEN' }), this.makeRegularBlock())
     this.activePieceDropInterval = setInterval(this.onPieceDropInterval, 1000)
     this.gameState.acceptsUserInput = true
   }
@@ -143,12 +135,10 @@ class TetrisGame {
   }
 
   onPieceDropInterval () {
-    debugLog('onPieceDropInterval')
     this.boardManager.dropTheActivePiece()
   }
 
   onBlocksFallingInterval () {
-    debugLog('onBlocksFallingInterval')
     this.boardManager.dropBlocksWithSpacesBeneath()
   }
 
@@ -163,12 +153,11 @@ class TetrisGame {
   }
 
   processTheBoard () {
-    debugLog('processTheBoard')
     const blocksThatCanDrop = this.checkBoardForBlocksThatCanDrop()
     const thereAreBlocksToDrop = blocksThatCanDrop.length > 0
-    const thereAreBlocksToBreak = false // TODO: Placeholder
     // Don't call this expensive function if there are blocks to drop
-    const blocksToBreak = thereAreBlocksToDrop ? [] : this.checkBoardForBlocksToBreak()
+    const blocksToBreak = thereAreBlocksToDrop ? [] : this.boardManager.getPossibleBreaks()
+    const thereAreBlocksToBreak = blocksToBreak.length > 0
 
     // Begin by stopping all intervals, just to be sure
     // Will start them back up, if logic requires it
@@ -176,18 +165,15 @@ class TetrisGame {
     this.stopBlocksFallingInterval()
 
     if (thereAreBlocksToDrop) {
-      debugLog('There are blocks to drop:', blocksThatCanDrop)
       this.boardManager.setBlocksThatNeedToFall(blocksThatCanDrop)
       this.setFlagsDroppingBlocks()
-      this.blocksFallingInterval = setInterval(this.onBlocksFallingInterval, 100)
+      this.blocksFallingInterval = setInterval(this.onBlocksFallingInterval, 50)
     } else if (thereAreBlocksToBreak) {
-      // TODO: Check if there is stuff to break
-
+      this.boardManager.breakBlocks(blocksToBreak)
+      setImmediate(() => this.processTheBoard())
     } else if (!this.boardManager.canSpawnNewPiece()) {
-      debugLog('No blocks to drop & cannot spawn piece.')
       this.handleGameIsOver()
     } else {
-      debugLog('There are no blocks to drop and game is not over.')
       this.boardManager.setBlocksThatNeedToFall([])
 
       this.boardManager.spawnNewActivePiece(this.nextBlock1, this.nextBlock2)
@@ -198,10 +184,17 @@ class TetrisGame {
     }
   }
 
+  /*
+    Checks every cell of the board and records if it can be dropped. It can be
+    dropped if there is an empty cell beneath it, or, if the cell beneath it
+    can also be dropped.
+    @return an array of tuples. Each one describes a cell that can be dropped
+      ex: [[rowIdx, colIdx], [rowIdx, colIdx], ...]
+  */
   checkBoardForBlocksThatCanDrop () {
     let thisCellIsEmpty = null
     let cellAboveThisCellIsNotEmpty = null
-    const blocksThatCanDrop = new SetOfIntTuples()
+    const blocksThatCanDrop = []
 
     for (let rowIdx = BoardInfo.NUMROWS - 1; rowIdx >= 2; rowIdx--) {
       for (let colIdx = 0; colIdx < BoardInfo.NUMCOLS; colIdx++) {
@@ -209,104 +202,20 @@ class TetrisGame {
         cellAboveThisCellIsNotEmpty = !this.boardManager.isCellAvailable(rowIdx - 1, colIdx)
         if (thisCellIsEmpty && cellAboveThisCellIsNotEmpty) {
           // The above cell can be dropped
-          blocksThatCanDrop.add(rowIdx - 1, colIdx)
+          blocksThatCanDrop.push([rowIdx - 1, colIdx])
           // If there are also cells above this that are occupied, then
           // those can drop too (even though the cell below isn't empty)
           let chainedRowIdx = rowIdx - 2 // Already checked rowIdx - 1
           while (chainedRowIdx >= 2 && !this.boardManager.isCellAvailable(chainedRowIdx, colIdx)) {
-            blocksThatCanDrop.add(chainedRowIdx, colIdx)
+            blocksThatCanDrop.push([chainedRowIdx, colIdx])
             chainedRowIdx--
           }
         }
       }
     }
 
-    return blocksThatCanDrop.getSorted({ sortByKey: true, isAscending: false })
+    return removeDuplicateTuples(blocksThatCanDrop)
   }
-
-  checkBoardForBlocksToBreak () {
-    console.log('Checking for BREAKS')
-    return this.boardManager.getPossibleBreaks()
-  }
-
-  /*
-    function breakBlocks(color, curPosRow, curPosCol, flag) {
-			// Check above
-			if( (curPosRow-1 >= 2) && (gridArray[curPosRow-1][curPosCol] != 0) ) { 
-				if(gridArray[curPosRow-1][curPosCol].getColor() == color) {
-					if (gridArray[curPosRow-1][curPosCol].isUsable() == true) {
-						var rowAbove = curPosRow-1;
-						if ( isThingInArray({row:rowAbove, col:curPosCol}, flag) == false ) {
-							// Push the above block to the array
-							flag.push({row: rowAbove, col: curPosCol});
-							breakBlocks(color, rowAbove, curPosCol, flag);
-						}
-						if ( isThingInArray({row:curPosRow, col:curPosCol}, flag) == false ) {
-							// Push the current block to the array
-							flag.push({row: curPosRow, col: curPosCol});
-						}
-					}
-				}
-			}
-			// Check left
-			if( (curPosCol-1 >= 0) && (gridArray[curPosRow][curPosCol-1]) ) {
-				if(gridArray[curPosRow][curPosCol-1].getColor() == color) {
-					if (gridArray[curPosRow][curPosCol-1].isUsable() == true) {
-						// The col of the cell to the left
-						var colLeft = curPosCol-1;
-						if ( isThingInArray({row:curPosRow, col:colLeft}, flag) == false ) {
-							// Push the left block to the array
-							flag.push({row: curPosRow, col: colLeft});
-							breakBlocks(color, curPosRow, colLeft, flag);
-						}
-						if ( isThingInArray({row:curPosRow, col:curPosCol}, flag) == false ) {
-							// Push the current block to the array
-							flag.push({row: curPosRow, col: curPosCol});
-						}
-					}
-				}
-			}
-			// Check right
-			if( (curPosCol+1 < LEVELONE.NUMCOLS) && (gridArray[curPosRow][curPosCol+1]) ) {
-				if(gridArray[curPosRow][curPosCol+1].getColor() == color) {
-					if (gridArray[curPosRow][curPosCol+1].isUsable() == true) {
-						var colRight = curPosCol+1;
-						if ( isThingInArray({row:curPosRow, col:colRight}, flag) == false ) {
-							// Push the right block to the array
-							flag.push({row: curPosRow, col: colRight});
-							breakBlocks(color, curPosRow, colRight, flag);
-						}
-						// If the current block isn't already in the array, add it
-						if ( isThingInArray({row:curPosRow, col:curPosCol}, flag) == false ) {
-							// Push the current block to the array
-							flag.push({row: curPosRow, col: curPosCol});
-						}
-					}
-				}
-			}
-			// Check below
-			if( (curPosRow+1 < LEVELONE.NUMROWS) && (gridArray[curPosRow+1][curPosCol]) ) {
-				if(gridArray[curPosRow+1][curPosCol].getColor() == color) {
-					if (gridArray[curPosRow+1][curPosCol].isUsable() == true) {
-						var rowBelow = curPosRow+1;
-						if ( isThingInArray({row:rowBelow, col:curPosCol}, flag) == false ) {
-							// Push the block below, to the array
-							flag.push({row: rowBelow, col: curPosCol});
-							breakBlocks(color, rowBelow, curPosCol, flag);
-						}
-						// If the current block isn't already in the array, add it
-						if ( isThingInArray({row:curPosRow, col:curPosCol}, flag) == false ) {
-							// Push the current block to the array
-							flag.push({row: curPosRow, col: curPosCol});
-						}	
-					}			
-				}
-			}
-			
-			// return array
-			return flag;
-		}
-  */
 
   setFlagsControllingPiece () {
     this.gameState.acceptsUserInput = true
@@ -333,7 +242,7 @@ class TetrisGame {
   }
 
   /*
-    This will product a block whose type has a small chance to
+    This will produce a block whose type has a small chance to
     be a "Breaker", but is otherwise just a "Normal" block
   */
   makeRegularBlock () {
