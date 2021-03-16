@@ -9,17 +9,6 @@ class GameLoop {
 
     this.game = null
 
-    this.start = this.start.bind(this)
-    this.draw = this.draw.bind(this)
-    this.update = this.update.bind(this)
-    this.gameLoop = this.gameLoop.bind(this)
-    this.setGame = this.setGame.bind(this)
-    this.onWindowResize = this.onWindowResize.bind(this)
-    this.onKeyDown = this.onKeyDown.bind(this)
-    this.stop = this.stop.bind(this)
-    this.onTabFocus = this.onTabFocus.bind(this)
-    this.onTabBlur = this.onTabBlur.bind(this)
-
     this.onWindowResize()
 
     window.addEventListener('resize', this.onWindowResize)
@@ -31,36 +20,34 @@ class GameLoop {
   updateCanvasBounds () {
     this.canvasWidth = this.canvasEl.width
     this.canvasHeight = this.canvasEl.height
-    // this.game.updateCanvasBounds(this.canvasWidth, this.canvasHeight)
     this.onWindowResize()
   }
 
-  setGame (GameClass) {
+  setGame = (GameClass) => {
     this.game = new GameClass({ ctx: this._ctx })
-    // this.game.updateCanvasBounds(this.canvasWidth, this.canvasHeight)
     this.onWindowResize()
   }
 
   clearCanvas () {
     // Clear the entire canvas
     this._ctx.clearRect(0, 0, this._ctx.canvas.width, this._ctx.canvas.height)
-    // Fill the canvas with a dark background
+    // Fill the canvas with a dark, transparent background
     this._ctx.fillStyle = '#000000'
-    this._ctx.globalAlpha = 0.2
+    this._ctx.globalAlpha = 0.3
     this._ctx.fillRect(0, 0, this._ctx.canvas.width, this._ctx.canvas.height)
     this._ctx.globalAlpha = 1.0
   }
 
-  draw () {
+  draw = () => {
     this.clearCanvas()
     this.game.draw()
   }
 
-  update () {
+  update = () => {
     this.game.update()
   }
 
-  start () {
+  start = () => {
     if (this.game) {
       this.gameLoop(0)
     } else {
@@ -68,7 +55,7 @@ class GameLoop {
     }
   }
 
-  gameLoop () {
+  gameLoop = () => {
     if (this.game) {
       window.requestAnimationFrame(this.gameLoop)
       this.update()
@@ -76,7 +63,7 @@ class GameLoop {
     }
   }
 
-  onWindowResize () {
+  onWindowResize = () => {
     const { height: gameAreaHeight } = this.gameArea.getBoundingClientRect()
 
     const maxBlockHeight = Math.floor(gameAreaHeight / 13)
@@ -103,25 +90,25 @@ class GameLoop {
     }
   }
 
-  onKeyDown (e) {
+  onKeyDown = (e) => {
     if (this.game) {
       this.game.onKeyPressed(e.keyCode)
     }
   }
 
-  onTabFocus () {
+  onTabFocus = () => {
     if (this.game) {
       this.game.onTabFocused()
     }
   }
 
-  onTabBlur () {
+  onTabBlur = () => {
     if (this.game) {
       this.game.onTabBlurred()
     }
   }
 
-  stop () {
+  stop = () => {
     this.game = null
     window.removeEventListener('resize', this.onWindowResize)
     window.removeEventListener('keydown', this.onKeyDown)

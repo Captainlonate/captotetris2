@@ -28,6 +28,7 @@ export const ImageLabelsToPaths = {
 
   [ImageKeys.GreenBreaker]: 'images/green_breaker_3d_512.png',
   [ImageKeys.YellowBreaker]: 'images/yellow_breaker_3d_512.png',
+  [ImageKeys.RedBreaker]: 'images/red_breaker_3d_512.png',
 
   // [ImageKeys.BlueBlock]: 'images/bluePiece.png',
   // [ImageKeys.RedBlock]: 'images/redPiece.png',
@@ -36,7 +37,7 @@ export const ImageLabelsToPaths = {
   // [ImageKeys.YellowBreaker]: 'images/yellowBreaker.png',
   [ImageKeys.BlueBreaker]: 'images/blueBreaker.png',
   // [ImageKeys.GreenBreaker]: 'images/greenBreaker.png',
-  [ImageKeys.RedBreaker]: 'images/redBreaker.png',
+  // [ImageKeys.RedBreaker]: 'images/redBreaker.png',
   [ImageKeys.BlueGreyBlock]: 'images/blueGreyPiece.png',
   [ImageKeys.RedGreyBlock]: 'images/redGreyPiece.png',
   [ImageKeys.GreenGreyBlock]: 'images/greenGreyPiece.png',

@@ -115,7 +115,7 @@ class TetrisGame {
 
   drawLeftSidebar () {
     // The dark background
-    this.ctx.globalAlpha = 0.2
+    this.ctx.globalAlpha = 0.3
     this.ctx.fillStyle = '#000000'
     this.ctx.fillRect(0, 0, this.leftSidebarWidth, this.canvasHeight)
     this.ctx.globalAlpha = 1.0

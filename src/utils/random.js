@@ -20,20 +20,3 @@ export const sixtyPercentChance = percentChance(60) // There is a 60% chance it 
 export const seventyPercentChance = percentChance(70) // There is a 70% chance it will return true
 export const eightyPercentChance = percentChance(80) // There is a 80% chance it will return true
 export const ninetyPercentChance = percentChance(90) // There is a 90% chance it will return true
-
-// Testing that the percent chance functions really do work
-// function testRandomness () {
-//   const sampleSize = 1000000
-//   const chanceFn = (percent) => () => Math.random() <= (percent / 100.0)
-//   const twentypercentchance = chanceFn(10)
-//   const results = { wins: 0, losses: 0 }
-//   for (let iteration = 0; iteration < sampleSize; iteration++) {
-//     if (twentypercentchance()) {
-//       results.wins++
-//     } else {
-//       results.losses++
-//     }
-//   }
-//   const percent = (results.wins / sampleSize) * 100
-//   console.log(`wins: ${results.wins}, losses: ${results.losses} === win ${percent}% of the time`)
-// }
