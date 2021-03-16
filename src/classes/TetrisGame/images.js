@@ -15,13 +15,27 @@ export const ImageKeys = {
 }
 
 export const ImageLabelsToPaths = {
-  [ImageKeys.BlueBlock]: 'images/bluePiece.png',
-  [ImageKeys.RedBlock]: 'images/redPiece.png',
-  [ImageKeys.GreenBlock]: 'images/greenPiece.png',
-  [ImageKeys.YellowBlock]: 'images/yellowPiece.png',
-  [ImageKeys.YellowBreaker]: 'images/yellowBreaker.png',
+
+  // [ImageKeys.BlueBlock]: 'images/blue_block_3d.png',
+  // [ImageKeys.RedBlock]: 'images/red_block_3d.png',
+  // [ImageKeys.GreenBlock]: 'images/green_block_3d.png',
+  // [ImageKeys.YellowBlock]: 'images/yellow_block_3d.png',
+
+  [ImageKeys.BlueBlock]: 'images/blue_block_3d_512.png',
+  [ImageKeys.RedBlock]: 'images/red_block_3d_512.png',
+  [ImageKeys.GreenBlock]: 'images/green_block_3d_512.png',
+  [ImageKeys.YellowBlock]: 'images/yellow_block_3d_512.png',
+
+  [ImageKeys.GreenBreaker]: 'images/green_breaker_3d_512.png',
+  [ImageKeys.YellowBreaker]: 'images/yellow_breaker_3d_512.png',
+
+  // [ImageKeys.BlueBlock]: 'images/bluePiece.png',
+  // [ImageKeys.RedBlock]: 'images/redPiece.png',
+  // [ImageKeys.GreenBlock]: 'images/greenPiece.png',
+  // [ImageKeys.YellowBlock]: 'images/yellowPiece.png',
+  // [ImageKeys.YellowBreaker]: 'images/yellowBreaker.png',
   [ImageKeys.BlueBreaker]: 'images/blueBreaker.png',
-  [ImageKeys.GreenBreaker]: 'images/greenBreaker.png',
+  // [ImageKeys.GreenBreaker]: 'images/greenBreaker.png',
   [ImageKeys.RedBreaker]: 'images/redBreaker.png',
   [ImageKeys.BlueGreyBlock]: 'images/blueGreyPiece.png',
   [ImageKeys.RedGreyBlock]: 'images/redGreyPiece.png',
@@ -31,4 +45,5 @@ export const ImageLabelsToPaths = {
 }
 
 // The block images (.pngs) are 120 x 120 pixels
-export const BlockImageSize = 120
+// export const BlockImageSize = 120
+export const BlockImageSize = 512

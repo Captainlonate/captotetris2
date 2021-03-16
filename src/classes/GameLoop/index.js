@@ -17,27 +17,38 @@ class GameLoop {
     this.onWindowResize = this.onWindowResize.bind(this)
     this.onKeyDown = this.onKeyDown.bind(this)
     this.stop = this.stop.bind(this)
+    this.onTabFocus = this.onTabFocus.bind(this)
+    this.onTabBlur = this.onTabBlur.bind(this)
 
     this.onWindowResize()
 
     window.addEventListener('resize', this.onWindowResize)
     window.addEventListener('keydown', this.onKeyDown)
+    window.addEventListener('focus', this.onTabFocus)
+    window.addEventListener('blur', this.onTabBlur)
   }
 
   updateCanvasBounds () {
     this.canvasWidth = this.canvasEl.width
     this.canvasHeight = this.canvasEl.height
-    this.game.updateCanvasBounds(this.canvasWidth, this.canvasHeight)
+    // this.game.updateCanvasBounds(this.canvasWidth, this.canvasHeight)
+    this.onWindowResize()
   }
 
   setGame (GameClass) {
     this.game = new GameClass({ ctx: this._ctx })
-    this.game.updateCanvasBounds(this.canvasWidth, this.canvasHeight)
+    // this.game.updateCanvasBounds(this.canvasWidth, this.canvasHeight)
+    this.onWindowResize()
   }
 
   clearCanvas () {
+    // Clear the entire canvas
+    this._ctx.clearRect(0, 0, this._ctx.canvas.width, this._ctx.canvas.height)
+    // Fill the canvas with a dark background
     this._ctx.fillStyle = '#000000'
+    this._ctx.globalAlpha = 0.2
     this._ctx.fillRect(0, 0, this._ctx.canvas.width, this._ctx.canvas.height)
+    this._ctx.globalAlpha = 1.0
   }
 
   draw () {
@@ -71,8 +82,10 @@ class GameLoop {
     const maxBlockHeight = Math.floor(gameAreaHeight / 13)
     const maxBlockWidth = maxBlockHeight
 
+    const leftSidebarWidth = maxBlockWidth * 2
+    const boardWidth = maxBlockWidth * 7
     const newCanvasHeight = maxBlockHeight * 13
-    const newCanvasWidth = maxBlockWidth * 7
+    const newCanvasWidth = boardWidth + leftSidebarWidth
 
     this.canvasWidth = newCanvasWidth
     this.canvasHeight = newCanvasHeight
@@ -86,7 +99,7 @@ class GameLoop {
     this._ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
 
     if (this.game) {
-      this.game.updateCanvasBounds(newCanvasWidth, newCanvasHeight)
+      this.game.updateCanvasBounds(newCanvasWidth, newCanvasHeight, leftSidebarWidth, boardWidth)
     }
   }
 
@@ -96,10 +109,24 @@ class GameLoop {
     }
   }
 
+  onTabFocus () {
+    if (this.game) {
+      this.game.onTabFocused()
+    }
+  }
+
+  onTabBlur () {
+    if (this.game) {
+      this.game.onTabBlurred()
+    }
+  }
+
   stop () {
     this.game = null
     window.removeEventListener('resize', this.onWindowResize)
     window.removeEventListener('keydown', this.onKeyDown)
+    window.removeEventListener('focus', this.onTabFocus)
+    window.removeEventListener('blur', this.onTabBlur)
   }
 }
 

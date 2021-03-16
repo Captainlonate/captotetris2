@@ -4,6 +4,8 @@ import { ImageLabelsToPaths, BlockImageSize } from './images'
 import BoardManager from './BoardManager'
 import { chanceToGetBreaker } from '../Block/blockTypes'
 import { removeDuplicateTuples } from '../../utils/tuples'
+import SoundManager from '../SoundManager'
+import sounds from '../SoundManager/sounds'
 
 const BoardInfo = {
   NUMROWS: 15, // the top 2 are where the blocks spawn
@@ -15,9 +17,17 @@ class TetrisGame {
     this.ctx = ctx
     this.canvasWidth = 0
     this.canvasHeight = 0
+    this.leftSidebarWidth = 0
+    this.boardWidth = 0
 
     this.blockWidth = 0
     this.blockHeight = 0
+    this.blockSrcDimensions = [0, 0, 0, 0]
+    this.sidebarOffsetX = 0
+    this.sidebarOffsetY = 0
+    this.sidebarGapY = 0
+
+    this.tabHasFocus = true
 
     this.gameState = {
       gameHasStarted: false, // allows update() and draw()
@@ -26,6 +36,8 @@ class TetrisGame {
       processingTheBoard: false,
       droppingBlocks: false
     }
+
+    this.gameStateToRestore = null
 
     this.nextBlock1 = this.makeRegularBlock()
     this.nextBlock2 = this.makeRegularBlock()
@@ -48,6 +60,8 @@ class TetrisGame {
     this.activePieceDropInterval = null
     this.blocksFallingInterval = null
 
+    this.soundManager = new SoundManager(sounds)
+
     this.imageManager = new ImageLoader({
       imagesToLoad: ImageLabelsToPaths,
       onDone: () => {
@@ -57,7 +71,7 @@ class TetrisGame {
   }
 
   onEndTurn () {
-    // TODO: play the tink sound
+    this.soundManager.play('tink')
     this.stopActivePieceDropInterval()
     this.stopBlocksFallingInterval()
     this.setFlagsProcessingBoard()
@@ -87,6 +101,7 @@ class TetrisGame {
     this.gameState.gameHasStarted = true
     this.gameState.imagesAreLoaded = true
     // this.boardManager.spawnNewActivePiece(this.makeRegularBlock(), this.makeRegularBlock())
+    // TODO: Delete
     this.boardManager.spawnNewActivePiece(new Block({ blockType: 'BREAKER', color: 'GREEN' }), this.makeRegularBlock())
     this.activePieceDropInterval = setInterval(this.onPieceDropInterval, 1000)
     this.gameState.acceptsUserInput = true
@@ -98,32 +113,88 @@ class TetrisGame {
     }
   }
 
-  draw () {
-    if (this.gameState.gameHasStarted) {
-      for (let rowIdx = 2; rowIdx < BoardInfo.NUMROWS; rowIdx++) {
-        for (let colIdx = 0; colIdx < BoardInfo.NUMCOLS; colIdx++) {
-          const blockToDraw = this.boardManager.getCell(rowIdx, colIdx)
-          if (blockToDraw) {
-            this.ctx.drawImage(
-              this.imageManager.getImage(blockToDraw.imageName),
-              0, 0, BlockImageSize, BlockImageSize,
-              colIdx * this.blockWidth, (rowIdx - 2) * this.blockHeight, this.blockWidth, this.blockHeight
-            )
-          }
+  drawLeftSidebar () {
+    // The dark background
+    this.ctx.globalAlpha = 0.2
+    this.ctx.fillStyle = '#000000'
+    this.ctx.fillRect(0, 0, this.leftSidebarWidth, this.canvasHeight)
+    this.ctx.globalAlpha = 1.0
+    // The two preview blocks
+    if (this.nextBlock1 && this.nextBlock2) {
+      this.ctx.drawImage(
+        this.imageManager.getImage(this.nextBlock1.imageName),
+        ...this.blockSrcDimensions,
+        this.sidebarOffsetX, this.sidebarOffsetY, this.blockWidth, this.blockHeight
+      )
+      this.ctx.drawImage(
+        this.imageManager.getImage(this.nextBlock2.imageName),
+        ...this.blockSrcDimensions,
+        this.sidebarOffsetX, this.sidebarOffsetY + this.blockHeight + this.sidebarGapY, this.blockWidth, this.blockHeight
+      )
+    }
+  }
+
+  drawBoard () {
+    let x = 0
+    let y = 0
+
+    for (let rowIdx = 2; rowIdx < BoardInfo.NUMROWS; rowIdx++) {
+      for (let colIdx = 0; colIdx < BoardInfo.NUMCOLS; colIdx++) {
+        const blockToDraw = this.boardManager.getCell(rowIdx, colIdx)
+        if (blockToDraw) {
+          x = this.leftSidebarWidth + (colIdx * this.blockWidth)
+          y = (rowIdx - 2) * this.blockHeight
+          this.ctx.drawImage(
+            this.imageManager.getImage(blockToDraw.imageName),
+            ...this.blockSrcDimensions,
+            x, y, this.blockWidth, this.blockHeight
+          )
         }
       }
     }
   }
 
-  updateCanvasBounds (newCanvasWidth, newCanvasHeight) {
+  drawPaused () {
+    this.ctx.globalAlpha = 0.5
+    this.ctx.fillStyle = '#000000'
+    this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight)
+    this.ctx.globalAlpha = 1.0
+
+    this.ctx.font = '30px Comic Sans MS'
+    this.ctx.fillStyle = 'red'
+    this.ctx.textAlign = 'center'
+    this.ctx.fillText('Paused', this.canvasWidth / 2, this.canvasHeight / 2)
+  }
+
+  draw () {
+    // if (this.tabHasFocus && this.gameState.gameHasStarted) {
+    if (this.gameState.gameHasStarted) {
+      this.drawLeftSidebar()
+      this.drawBoard()
+    } else {
+      this.drawPaused()
+    }
+  }
+
+  updateCanvasBounds (newCanvasWidth, newCanvasHeight, leftSidebarWidth, boardWidth) {
     this.canvasWidth = newCanvasWidth
     this.canvasHeight = newCanvasHeight
+    this.leftSidebarWidth = leftSidebarWidth
+    this.boardWidth = boardWidth
     this.recalculateBlockSize()
+    this.recalculateSidebar()
   }
 
   recalculateBlockSize () {
-    this.blockWidth = Math.floor(this.canvasWidth / BoardInfo.NUMCOLS)
+    this.blockWidth = Math.floor(this.boardWidth / BoardInfo.NUMCOLS)
     this.blockHeight = Math.floor(this.canvasHeight / (BoardInfo.NUMROWS - 2))
+    this.blockSrcDimensions = [0, 0, BlockImageSize, BlockImageSize]
+  }
+
+  recalculateSidebar () {
+    this.sidebarOffsetX = Math.floor(this.leftSidebarWidth * 0.25)
+    this.sidebarOffsetY = Math.floor(this.blockHeight / 2)
+    this.sidebarGapY = Math.floor(this.blockHeight / 4)
   }
 
   handleGameIsOver (isWin) {
@@ -159,7 +230,7 @@ class TetrisGame {
     const blocksToBreak = thereAreBlocksToDrop ? [] : this.boardManager.getPossibleBreaks()
     const thereAreBlocksToBreak = blocksToBreak.length > 0
 
-    // Begin by stopping all intervals, just to be sure
+    // Begin by stopping all intervals, just to be sure.
     // Will start them back up, if logic requires it
     this.stopActivePieceDropInterval()
     this.stopBlocksFallingInterval()
@@ -170,6 +241,7 @@ class TetrisGame {
       this.blocksFallingInterval = setInterval(this.onBlocksFallingInterval, 50)
     } else if (thereAreBlocksToBreak) {
       this.boardManager.breakBlocks(blocksToBreak)
+      this.soundManager.play('success')
       setImmediate(() => this.processTheBoard())
     } else if (!this.boardManager.canSpawnNewPiece()) {
       this.handleGameIsOver()
@@ -275,6 +347,31 @@ class TetrisGame {
           break
       }
     }
+  }
+
+  onTabFocused () {
+    console.log('Unpausing')
+    if (this.gameStateToRestore !== null) {
+      this.gameState = this.gameStateToRestore.state
+      if (this.gameStateToRestore.activePieceDropInterval) {
+        this.activePieceDropInterval = setInterval(this.onPieceDropInterval, 1000)
+      } else if (this.gameStateToRestore.blocksFallingInterval) {
+        this.blocksFallingInterval = setInterval(this.onBlocksFallingInterval, 50)
+      }
+    }
+    this.tabHasFocus = true
+  }
+
+  onTabBlurred () {
+    console.log('Pausing')
+    this.tabHasFocus = false
+    this.gameStateToRestore = {
+      state: this.gameState,
+      activePieceDropInterval: this.activePieceDropInterval !== null,
+      blocksFallingInterval: this.blocksFallingInterval !== null
+    }
+    this.stopActivePieceDropInterval()
+    this.stopBlocksFallingInterval()
   }
 }
 
