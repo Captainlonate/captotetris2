@@ -29,15 +29,23 @@ class TetrisGame {
 
     this.tabHasFocus = true
 
-    this.gameState = {
-      gameHasStarted: false, // allows update() and draw()
-      imagesAreLoaded: false,
+    this.initialState = {
       acceptsUserInput: false,
       processingTheBoard: false,
-      droppingBlocks: false
+      droppingBlocks: false,
+      pieceIsDropping: false,
+      gameIsOver: false,
+      gameIsPaused: false,
+      breakingBlocks: false
     }
 
+    this.gameState = Object.assign({}, this.initialState)
     this.gameStateToRestore = null
+
+    this.gameHasStarted = false
+
+    this.timeSinceLastPieceDrop = 0
+    this.timeSinceLastBlockFell = 0
 
     this.nextBlock1 = this.makeRegularBlock()
     this.nextBlock2 = this.makeRegularBlock()
@@ -45,7 +53,6 @@ class TetrisGame {
     this.onEndTurn = this.onEndTurn.bind(this)
     this.onCannotSpawn = this.onCannotSpawn.bind(this)
     this.onDoneDroppingBlocks = this.onDoneDroppingBlocks.bind(this)
-    this.onPieceDropInterval = this.onPieceDropInterval.bind(this)
     this.onBlocksFallingInterval = this.onBlocksFallingInterval.bind(this)
 
     this.boardManager = new BoardManager({
@@ -57,7 +64,6 @@ class TetrisGame {
     })
 
     // Used in setInterval
-    this.activePieceDropInterval = null
     this.blocksFallingInterval = null
 
     this.soundManager = new SoundManager(sounds)
@@ -72,21 +78,18 @@ class TetrisGame {
 
   onEndTurn () {
     this.soundManager.play('tink')
-    this.stopActivePieceDropInterval()
-    this.stopBlocksFallingInterval()
     this.setFlagsProcessingBoard()
+    this.stopBlocksFallingInterval()
     this.processTheBoard()
   }
 
   onCannotSpawn () {
-    this.stopActivePieceDropInterval()
     this.stopBlocksFallingInterval()
     this.setFlagsProcessingBoard()
     this.processTheBoard()
   }
 
   onDoneDroppingBlocks () {
-    this.stopActivePieceDropInterval()
     this.stopBlocksFallingInterval()
     this.setFlagsProcessingBoard()
     this.processTheBoard()
@@ -98,18 +101,27 @@ class TetrisGame {
   }
 
   startTheGame () {
-    this.gameState.gameHasStarted = true
-    this.gameState.imagesAreLoaded = true
+    this.gameHasStarted = true
     // this.boardManager.spawnNewActivePiece(this.makeRegularBlock(), this.makeRegularBlock())
     // TODO: Delete
     this.boardManager.spawnNewActivePiece(new Block({ blockType: 'BREAKER', color: 'GREEN' }), this.makeRegularBlock())
-    this.activePieceDropInterval = setInterval(this.onPieceDropInterval, 1000)
-    this.gameState.acceptsUserInput = true
+    this.setFlagsControllingPiece()
   }
 
-  update () {
-    if (this.gameState.gameHasStarted) {
-      //
+  update (deltaTime) {
+    if (this.gameHasStarted) {
+      if (!this.gameState.gameIsPaused) {
+        if (this.gameState.processingTheBoard) {
+          console.log('Telling it to process the board')
+          // this.processTheBoardGetNewState()
+        } else if (this.gameState.pieceIsDropping) {
+          this.timeSinceLastPieceDrop += deltaTime
+          if (this.timeSinceLastPieceDrop > 1000) {
+            this.timeSinceLastPieceDrop = 0
+            this.boardManager.dropTheActivePiece()
+          }
+        }
+      }
     }
   }
 
@@ -167,13 +179,17 @@ class TetrisGame {
   }
 
   draw () {
-    // if (this.tabHasFocus && this.gameState.gameHasStarted) {
-    if (this.gameState.gameHasStarted) {
-      this.drawLeftSidebar()
-      this.drawBoard()
-    } else {
-      this.drawPaused()
-    }
+    // if (this.gameHasStarted) {
+    //   if (this.gameState.gameIsPaused) {
+    //     this.drawPaused()
+    //   } else {
+    //     this.drawLeftSidebar()
+    //     this.drawBoard()
+    //   }
+    // }
+    // TODO: Remove
+    this.drawLeftSidebar()
+    this.drawBoard()
   }
 
   updateCanvasBounds (newCanvasWidth, newCanvasHeight, leftSidebarWidth, boardWidth) {
@@ -198,29 +214,45 @@ class TetrisGame {
   }
 
   handleGameIsOver (isWin) {
-    this.stopActivePieceDropInterval()
     this.stopBlocksFallingInterval()
     this.setFlagsGameIsOver()
     const msg = isWin ? 'You won!' : 'You lost!'
     console.info(msg)
   }
 
-  onPieceDropInterval () {
-    this.boardManager.dropTheActivePiece()
-  }
-
   onBlocksFallingInterval () {
     this.boardManager.dropBlocksWithSpacesBeneath()
-  }
-
-  stopActivePieceDropInterval () {
-    clearInterval(this.activePieceDropInterval)
-    this.activePieceDropInterval = null
   }
 
   stopBlocksFallingInterval () {
     clearInterval(this.blocksFallingInterval)
     this.blocksFallingInterval = null
+  }
+
+  processTheBoardGetNewState () {
+    const blocksThatCanDrop = this.checkBoardForBlocksThatCanDrop()
+    const thereAreBlocksToDrop = blocksThatCanDrop.length > 0
+
+    const blocksToBreak = thereAreBlocksToDrop ? [] : this.boardManager.getPossibleBreaks()
+    const thereAreBlocksToBreak = blocksToBreak.length > 0
+
+    if (thereAreBlocksToDrop) {
+      this.boardManager.setBlocksThatNeedToFall(blocksThatCanDrop)
+      this.setFlagsDroppingBlocks()
+    } else if (thereAreBlocksToBreak) {
+      this.boardManager.breakBlocks(blocksToBreak)
+      this.soundManager.play('success')
+      // Really need something to say "need to check board again one time"
+      this.setFlagsProcessingBoard() // TODO: Need something better
+    } else if (!this.boardManager.canSpawnNewPiece()) {
+      this.setFlagsGameIsOver()
+    } else {
+      this.boardManager.setBlocksThatNeedToFall([])
+      this.boardManager.spawnNewActivePiece(this.nextBlock1, this.nextBlock2)
+      this.nextBlock1 = this.makeRegularBlock()
+      this.nextBlock2 = this.makeRegularBlock()
+      this.setFlagsControllingPiece()
+    }
   }
 
   processTheBoard () {
@@ -229,10 +261,9 @@ class TetrisGame {
     // Don't call this expensive function if there are blocks to drop
     const blocksToBreak = thereAreBlocksToDrop ? [] : this.boardManager.getPossibleBreaks()
     const thereAreBlocksToBreak = blocksToBreak.length > 0
-
     // Begin by stopping all intervals, just to be sure.
     // Will start them back up, if logic requires it
-    this.stopActivePieceDropInterval()
+    this.setFlagsProcessingBoard()
     this.stopBlocksFallingInterval()
 
     if (thereAreBlocksToDrop) {
@@ -251,7 +282,6 @@ class TetrisGame {
       this.boardManager.spawnNewActivePiece(this.nextBlock1, this.nextBlock2)
       this.nextBlock1 = this.makeRegularBlock()
       this.nextBlock2 = this.makeRegularBlock()
-      this.activePieceDropInterval = setInterval(this.onPieceDropInterval, 1000)
       this.setFlagsControllingPiece()
     }
   }
@@ -289,28 +319,35 @@ class TetrisGame {
     return removeDuplicateTuples(blocksThatCanDrop)
   }
 
+  updateGameState (newState) {
+    this.gameState = Object.assign({}, this.initialState, newState)
+  }
+
   setFlagsControllingPiece () {
-    this.gameState.acceptsUserInput = true
-    this.gameState.processingTheBoard = false
-    this.gameState.droppingBlocks = false
+    this.updateGameState({
+      acceptsUserInput: true,
+      pieceIsDropping: true
+    })
   }
 
   setFlagsProcessingBoard () {
-    this.gameState.acceptsUserInput = false
-    this.gameState.processingTheBoard = true
-    this.gameState.droppingBlocks = false
+    this.updateGameState({ processingTheBoard: true })
   }
 
   setFlagsDroppingBlocks () {
-    this.gameState.acceptsUserInput = false
-    this.gameState.processingTheBoard = true
-    this.gameState.droppingBlocks = true
+    this.updateGameState({ droppingBlocks: true })
   }
 
   setFlagsGameIsOver () {
-    this.gameState.acceptsUserInput = false
-    this.gameState.processingTheBoard = false
-    this.gameState.droppingBlocks = false
+    this.updateGameState({ gameIsOver: true })
+  }
+
+  setFlagsPauseGame () {
+    this.updateGameState({ gameIsPaused: true })
+  }
+
+  setFlagsBreakingBlocks () {
+    this.updateGameState({ breakingBlocks: true })
   }
 
   /*
@@ -352,10 +389,8 @@ class TetrisGame {
   onTabFocused () {
     console.log('Unpausing')
     if (this.gameStateToRestore !== null) {
-      this.gameState = this.gameStateToRestore.state
-      if (this.gameStateToRestore.activePieceDropInterval) {
-        this.activePieceDropInterval = setInterval(this.onPieceDropInterval, 1000)
-      } else if (this.gameStateToRestore.blocksFallingInterval) {
+      this.gameState = Object.assign({}, this.gameStateToRestore.state)
+      if (this.gameStateToRestore.blocksFallingInterval) {
         this.blocksFallingInterval = setInterval(this.onBlocksFallingInterval, 50)
       }
     }
@@ -367,10 +402,9 @@ class TetrisGame {
     this.tabHasFocus = false
     this.gameStateToRestore = {
       state: this.gameState,
-      activePieceDropInterval: this.activePieceDropInterval !== null,
       blocksFallingInterval: this.blocksFallingInterval !== null
     }
-    this.stopActivePieceDropInterval()
+    this.setFlagsPauseGame()
     this.stopBlocksFallingInterval()
   }
 }

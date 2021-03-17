@@ -9,6 +9,9 @@ class GameLoop {
 
     this.game = null
 
+    this.deltaTime = 0
+    this.timeLastUpdate = 0
+
     this.onWindowResize()
 
     window.addEventListener('resize', this.onWindowResize)
@@ -43,10 +46,6 @@ class GameLoop {
     this.game.draw()
   }
 
-  update = () => {
-    this.game.update()
-  }
-
   start = () => {
     if (this.game) {
       this.gameLoop(0)
@@ -55,11 +54,14 @@ class GameLoop {
     }
   }
 
-  gameLoop = () => {
+  gameLoop = (timestamp) => {
+    this.deltaTime = timestamp - this.timeLastUpdate
+    this.timeLastUpdate = timestamp
+
     if (this.game) {
-      window.requestAnimationFrame(this.gameLoop)
-      this.update()
+      this.game.update(this.deltaTime)
       this.draw()
+      window.requestAnimationFrame(this.gameLoop)
     }
   }
 

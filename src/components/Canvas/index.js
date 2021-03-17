@@ -26,8 +26,8 @@ const InnerWrapper = styled.div`
 `
 
 const GameArea = styled.div`
-  width: 90%;
-  height: 90%;
+  width: 95%;
+  height: 95%;
   display: flex;
   justify-content: center;
   align-items: flex-start;
