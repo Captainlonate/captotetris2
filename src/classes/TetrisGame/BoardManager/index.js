@@ -9,6 +9,7 @@ class BoardManager {
     this.startRowBlockOne = 0
     this.startRowBlockTwo = 1
 
+    // 2d array of cells. Each cell is either null or a Block()
     this.board = this.resetBoard(this.numRows, this.numCols)
 
     this.activeBlock1 = null
