@@ -49,14 +49,14 @@ class BoardManager {
       [null, null, null, null, null, null, new Block({ color: 'RED' })], // 4
       [null, null, null, null, null, null, new Block({ color: 'RED' })], // 5
       [null, null, null, null, null, null, new Block({ color: 'RED' })], // 6
-      [null, null, null, null, null, null, new Block({ color: 'RED' })], // 7
-      [null, null, null, null, null, null, new Block({ color: 'GREEN' })], // 8
-      [null, null, null, null, null, null, new Block({ color: 'GREEN' })], // 9
-      [null, null, null, null, null, null, new Block({ color: 'GREEN' })], // 10
-      [null, null, null, null, null, null, new Block({ color: 'GREEN' })], // 11
-      [null, null, null, null, null, null, new Block({ color: 'GREEN' })], // 12
-      [null, null, null, null, null, null, new Block({ color: 'GREEN' })], // 13
-      [null, null, null, null, null, null, new Block({ color: 'GREEN' })] // 14
+      [new Block({ color: 'YELLOW' }), null, null, null, null, null, new Block({ color: 'RED' })], // 7
+      [new Block({ color: 'RED' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 8
+      [new Block({ color: 'GREEN' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 9
+      [new Block({ color: 'BLUE' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 10
+      [new Block({ blockType: 'BREAKER', color: 'YELLOW' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 11
+      [new Block({ blockType: 'BREAKER', color: 'RED' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 12
+      [new Block({ blockType: 'BREAKER', color: 'GREEN' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 13
+      [new Block({ blockType: 'BREAKER', color: 'BLUE' }), null, null, null, null, null, new Block({ color: 'GREEN' })] // 14
     ]
     return tempBoard
   }
