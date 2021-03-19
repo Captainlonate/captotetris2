@@ -34,7 +34,7 @@
         <key>dataFormat</key>
         <string>spritesheet-only</string>
         <key>textureFileName</key>
-        <filename>../../../public/images/breakers/green_breaker_animation.png</filename>
+        <filename>../../../public/images/breakers/green_breaker_animation_rare.png</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrCompressionQuality</key>
@@ -174,49 +174,10 @@
             <false/>
         </struct>
         <key>individualSpriteSettings</key>
-        <map type="IndividualSpriteSettingsMap">
-            <key type="filename">../../../public/images/breakers/green sword animation/0001.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0011.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0021.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0031.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0041.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0051.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0061.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0071.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0081.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0091.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0101.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0111.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0121.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0131.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0141.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0151.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0161.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0171.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0181.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0191.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0201.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0211.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0221.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/0231.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>128,128,256,256</rect>
-                <key>scale9Paddings</key>
-                <rect>128,128,256,256</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-        </map>
+        <map type="IndividualSpriteSettingsMap"/>
         <key>fileList</key>
         <array>
-            <filename>../../../public/images/breakers/green sword animation</filename>
+            <filename>../../../public/images/breakers/green sword animation/rare</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
