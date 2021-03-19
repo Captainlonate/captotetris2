@@ -14,7 +14,8 @@ const getDefaultPositionsAndSizes = () => ({
   boardWidth: 0,
   blockWidth: 0,
   blockHeight: 0,
-  blockSrcDimensions: [0, 0, 0, 0],
+  // blockSrcDimensions: [0, 0, 0, 0],
+  blockSrcDimensions: [0, 0],
   sidebarOffsetX: 0,
   sidebarOffsetY: 0,
   sidebarGapY: 0,
@@ -55,6 +56,13 @@ class TetrisGame {
     // Used with requestAnimationFrame
     this.timeSinceLastPieceDrop = 0
     this.timeSinceLastBlockFell = 0
+    this.timeSinceLastBlockAnimation = 0
+    this.animateBlocks = true
+
+    // Animations
+    this.blockAnimationDuration = 1800
+    this.numberOfBlockFrames = 24
+    this.blockAnimationSpeed = Math.floor(this.blockAnimationDuration / this.numberOfBlockFrames)
 
     this.onEndTurn = this.onEndTurn.bind(this)
     this.onCannotSpawn = this.onCannotSpawn.bind(this)
@@ -127,6 +135,15 @@ class TetrisGame {
             this.boardManager.dropBlocksWithSpacesBeneath()
           }
         }
+
+        // Animations
+        if (this.animateBlocks) {
+          this.timeSinceLastBlockAnimation += deltaTime
+          if (this.timeSinceLastBlockAnimation > this.blockAnimationSpeed) {
+            this.timeSinceLastBlockAnimation = 0
+            this.boardManager.updateBlockAnimations()
+          }
+        }
       }
     }
   }
@@ -141,11 +158,13 @@ class TetrisGame {
     if (this.nextBlock1 && this.nextBlock2) {
       this.ctx.drawImage(
         this.imageManager.getImage(this.nextBlock1.imageName),
+        ...this.nextBlock1.getImageSrcXandY(),
         ...this.dim.blockSrcDimensions,
         ...this.dim.sidebarBlockOneDims
       )
       this.ctx.drawImage(
         this.imageManager.getImage(this.nextBlock2.imageName),
+        ...this.nextBlock2.getImageSrcXandY(),
         ...this.dim.blockSrcDimensions,
         ...this.dim.sidebarBlockTwoDims
       )
@@ -165,6 +184,7 @@ class TetrisGame {
           y = (rowIdx - 2) * blockHeight
           this.ctx.drawImage(
             this.imageManager.getImage(blockToDraw.imageName),
+            ...blockToDraw.getImageSrcXandY(),
             ...blockSrcDimensions,
             x, y, ...blockTargetSize
           )
@@ -213,8 +233,11 @@ class TetrisGame {
 
   recalculateBlockSize () {
     this.dim.blockWidth = Math.floor(this.dim.boardWidth / this.dim.numCols)
+    // this.dim.blockWidth *= 2 // Makes it bigger for testing/debugging
     this.dim.blockHeight = Math.floor(this.dim.canvasHeight / (this.dim.numRows - 2))
-    this.dim.blockSrcDimensions = [0, 0, BlockImageSize, BlockImageSize]
+    // this.dim.blockHeight *= 2 // Makes it bigger for testing/debugging
+    // this.dim.blockSrcDimensions = [0, 0, BlockImageSize, BlockImageSize]
+    this.dim.blockSrcDimensions = [BlockImageSize, BlockImageSize]
     this.dim.blockTargetSize = [this.dim.blockWidth, this.dim.blockHeight]
   }
 

@@ -36,9 +36,9 @@ class GameLoop {
     this._ctx.clearRect(0, 0, this._ctx.canvas.width, this._ctx.canvas.height)
     // Fill the canvas with a dark, transparent background
     this._ctx.fillStyle = '#000000'
-    // this._ctx.globalAlpha = 0.5
+    this._ctx.globalAlpha = 0.5
     this._ctx.fillRect(0, 0, this._ctx.canvas.width, this._ctx.canvas.height)
-    // this._ctx.globalAlpha = 1.0
+    this._ctx.globalAlpha = 1.0
   }
 
   draw = () => {

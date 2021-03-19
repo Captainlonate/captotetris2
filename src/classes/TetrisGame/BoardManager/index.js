@@ -49,9 +49,9 @@ class BoardManager {
       [null, null, null, null, null, null, new Block({ color: 'RED' })], // 4
       [null, null, null, null, null, null, new Block({ color: 'RED' })], // 5
       [null, null, null, null, null, null, new Block({ color: 'RED' })], // 6
-      [new Block({ color: 'YELLOW' }), null, null, null, null, null, new Block({ color: 'RED' })], // 7
-      [new Block({ color: 'RED' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 8
-      [new Block({ color: 'GREEN' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 9
+      [new Block({ blockType: 'BREAKER', color: 'RED' }), null, null, null, null, null, new Block({ color: 'RED' })], // 7
+      [new Block({ blockType: 'BREAKER', color: 'GREEN' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 8
+      [new Block({ color: 'YELLOW' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 9
       [new Block({ color: 'BLUE' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 10
       [new Block({ blockType: 'BREAKER', color: 'YELLOW' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 11
       [new Block({ blockType: 'BREAKER', color: 'RED' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 12
@@ -444,6 +444,17 @@ class BoardManager {
   breakBlocks (setsOfBreaks = []) {
     for (const [rowIdx, colIdx] of setsOfBreaks.flat()) {
       this.board[rowIdx][colIdx] = null
+    }
+  }
+
+  updateBlockAnimations () {
+    for (let rowIdx = 2; rowIdx < this.numRows; rowIdx++) {
+      for (let colIdx = 0; colIdx < this.numCols; colIdx++) {
+        const block = this.getCell(rowIdx, colIdx)
+        if (block !== null) {
+          block.updateFrame()
+        }
+      }
     }
   }
 }
