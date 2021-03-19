@@ -60,8 +60,8 @@ class TetrisGame {
     this.animateBlocks = true
 
     // Animations
-    this.blockAnimationDuration = 1800
-    this.numberOfBlockFrames = 24
+    this.blockAnimationDuration = 3000
+    this.numberOfBlockFrames = 30
     this.blockAnimationSpeed = Math.floor(this.blockAnimationDuration / this.numberOfBlockFrames)
 
     this.onEndTurn = this.onEndTurn.bind(this)

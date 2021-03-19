@@ -22,7 +22,7 @@ export const ImageLabelsToPaths = {
 
   [ImageKeys.YellowBreaker]: 'images/breakers/yellow_breaker_3d_512.png',
   [ImageKeys.BlueBreaker]: 'images/breakers/blue_breaker_3d_512.png',
-  [ImageKeys.GreenBreaker]: 'images/breakers/green_breaker_animation.png',
+  [ImageKeys.GreenBreaker]: 'images/breakers/green_breaker_animation_idle.png',
   [ImageKeys.RedBreaker]: 'images/breakers/red_breaker_animation_idle.png',
 
   [ImageKeys.BlueGreyBlock]: 'images/blueGreyPiece.png',
@@ -54,9 +54,9 @@ export const BlockAnimationMeta = {
     numberOfRows: 1
   },
   [ImageKeys.GreenBreaker]: {
-    numberOfFrames: 24,
-    framesPerColumn: 4,
-    numberOfRows: 6
+    numberOfFrames: 30,
+    framesPerColumn: 8,
+    numberOfRows: 4
   },
   [ImageKeys.YellowBreaker]: {
     numberOfFrames: 1,
@@ -64,9 +64,9 @@ export const BlockAnimationMeta = {
     numberOfRows: 1
   },
   [ImageKeys.RedBreaker]: {
-    numberOfFrames: 24,
-    framesPerColumn: 4,
-    numberOfRows: 6
+    numberOfFrames: 30,
+    framesPerColumn: 8,
+    numberOfRows: 4
   },
   [ImageKeys.BlueBreaker]: {
     numberOfFrames: 1,
