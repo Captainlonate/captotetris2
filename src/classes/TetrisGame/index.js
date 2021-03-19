@@ -7,6 +7,9 @@ import { removeDuplicateTuples } from '../../utils/tuples'
 import SoundManager from '../SoundManager'
 import sounds from '../SoundManager/sounds'
 
+// number of ms in a second
+const SECONDS = 1000
+
 const getDefaultPositionsAndSizes = () => ({
   canvasWidth: 0,
   canvasHeight: 0,
@@ -58,11 +61,13 @@ class TetrisGame {
     this.timeSinceLastBlockFell = 0
     this.timeSinceLastBlockAnimation = 0
     this.animateBlocks = true
+    this.timeSinceLastRareAnimation = 0
 
     // Animations
-    this.blockAnimationDuration = 3000
+    this.blockAnimationDuration = 3 * SECONDS
     this.numberOfBlockFrames = 30
     this.blockAnimationSpeed = Math.floor(this.blockAnimationDuration / this.numberOfBlockFrames)
+    this.minTimeRareAnimation = 5 * SECONDS
 
     this.onEndTurn = this.onEndTurn.bind(this)
     this.onCannotSpawn = this.onCannotSpawn.bind(this)
@@ -138,10 +143,18 @@ class TetrisGame {
 
         // Animations
         if (this.animateBlocks) {
+          // Normal animation progression
           this.timeSinceLastBlockAnimation += deltaTime
           if (this.timeSinceLastBlockAnimation > this.blockAnimationSpeed) {
             this.timeSinceLastBlockAnimation = 0
             this.boardManager.updateBlockAnimations()
+          }
+
+          // Rare Animations
+          this.timeSinceLastRareAnimation += deltaTime
+          if (this.timeSinceLastRareAnimation > this.minTimeRareAnimation) {
+            this.timeSinceLastRareAnimation = 0
+            this.boardManager.tryToPlayRareAnimation()
           }
         }
       }

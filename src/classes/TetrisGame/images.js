@@ -3,10 +3,14 @@ export const ImageKeys = {
   RedBlock: 'RedBlock',
   GreenBlock: 'GreenBlock',
   YellowBlock: 'YellowBlock',
+  // AnimationState.IDLE
   YellowBreaker: 'YellowBreaker',
   BlueBreaker: 'BlueBreaker',
   GreenBreaker: 'GreenBreaker',
   RedBreaker: 'RedBreaker',
+  // AnimationState.RARE
+  RedBreakerRare: 'RedBreakerRare',
+
   BlueGreyBlock: 'BlueGreyBlock',
   RedGreyBlock: 'RedGreyBlock',
   GreenGreyBlock: 'GreenGreyBlock',
@@ -19,11 +23,13 @@ export const ImageLabelsToPaths = {
   [ImageKeys.RedBlock]: 'images/blocks/red_block_3d_512.png',
   [ImageKeys.GreenBlock]: 'images/blocks/green_block_3d_512.png',
   [ImageKeys.YellowBlock]: 'images/blocks/yellow_block_3d_512.png',
-
+  // AnimationState.IDLE
   [ImageKeys.YellowBreaker]: 'images/breakers/yellow_breaker_3d_512.png',
   [ImageKeys.BlueBreaker]: 'images/breakers/blue_breaker_3d_512.png',
   [ImageKeys.GreenBreaker]: 'images/breakers/green_breaker_animation_idle.png',
   [ImageKeys.RedBreaker]: 'images/breakers/red_breaker_animation_idle.png',
+  // AnimationState.RARE
+  [ImageKeys.RedBreakerRare]: 'images/breakers/red_breaker_animation_rare.png',
 
   [ImageKeys.BlueGreyBlock]: 'images/blueGreyPiece.png',
   [ImageKeys.RedGreyBlock]: 'images/redGreyPiece.png',
@@ -33,69 +39,25 @@ export const ImageLabelsToPaths = {
 }
 
 export const BlockAnimationMeta = {
-  [ImageKeys.BlueBlock]: {
-    numberOfFrames: 1,
-    framesPerColumn: 1,
-    numberOfRows: 1
-  },
-  [ImageKeys.RedBlock]: {
-    numberOfFrames: 1,
-    framesPerColumn: 1,
-    numberOfRows: 1
-  },
-  [ImageKeys.GreenBlock]: {
-    numberOfFrames: 1,
-    framesPerColumn: 1,
-    numberOfRows: 1
-  },
-  [ImageKeys.YellowBlock]: {
-    numberOfFrames: 1,
-    framesPerColumn: 1,
-    numberOfRows: 1
-  },
-  [ImageKeys.GreenBreaker]: {
-    numberOfFrames: 30,
-    framesPerColumn: 8,
-    numberOfRows: 4
-  },
-  [ImageKeys.YellowBreaker]: {
-    numberOfFrames: 1,
-    framesPerColumn: 1,
-    numberOfRows: 1
-  },
-  [ImageKeys.RedBreaker]: {
-    numberOfFrames: 30,
-    framesPerColumn: 8,
-    numberOfRows: 4
-  },
-  [ImageKeys.BlueBreaker]: {
-    numberOfFrames: 1,
-    framesPerColumn: 1,
-    numberOfRows: 1
-  },
-  [ImageKeys.BlueGreyBlock]: {
-    numberOfFrames: 1,
-    framesPerColumn: 1,
-    numberOfRows: 1
-  },
-  [ImageKeys.RedGreyBlock]: {
-    numberOfFrames: 1,
-    framesPerColumn: 1,
-    numberOfRows: 1
-  },
-  [ImageKeys.GreenGreyBlock]: {
-    numberOfFrames: 1,
-    framesPerColumn: 1,
-    numberOfRows: 1
-  },
-  [ImageKeys.YellowGreyBlock]: {
-    numberOfFrames: 1,
-    framesPerColumn: 1
-  },
-  [ImageKeys.CementBlock]: {
-    numberOfFrames: 1,
-    framesPerColumn: 1
-  }
+  [ImageKeys.BlueBlock]: { numberOfFrames: 1, framesPerColumn: 1, numberOfRows: 1 },
+  [ImageKeys.RedBlock]: { numberOfFrames: 1, framesPerColumn: 1, numberOfRows: 1 },
+  [ImageKeys.GreenBlock]: { numberOfFrames: 1, framesPerColumn: 1, numberOfRows: 1 },
+  [ImageKeys.YellowBlock]: { numberOfFrames: 1, framesPerColumn: 1, numberOfRows: 1 },
+  // AnimationState.IDLE
+  [ImageKeys.GreenBreaker]: { numberOfFrames: 30, framesPerColumn: 8, numberOfRows: 4 },
+  [ImageKeys.YellowBreaker]: { numberOfFrames: 1, framesPerColumn: 1, numberOfRows: 1 },
+  [ImageKeys.RedBreaker]: { numberOfFrames: 30, framesPerColumn: 8, numberOfRows: 4 },
+  [ImageKeys.BlueBreaker]: { numberOfFrames: 1, framesPerColumn: 1, numberOfRows: 1 },
+  // AnimationState.RARE
+  [ImageKeys.RedBreakerRare]: { numberOfFrames: 30, framesPerColumn: 8, numberOfRows: 4 },
+
+  [ImageKeys.BlueGreyBlock]: { numberOfFrames: 1, framesPerColumn: 1, numberOfRows: 1 },
+  [ImageKeys.RedGreyBlock]: { numberOfFrames: 1, framesPerColumn: 1, numberOfRows: 1 },
+  [ImageKeys.GreenGreyBlock]: { numberOfFrames: 1, framesPerColumn: 1, numberOfRows: 1 },
+  [ImageKeys.YellowGreyBlock]: { numberOfFrames: 1, framesPerColumn: 1 },
+  [ImageKeys.CementBlock]: { numberOfFrames: 1, framesPerColumn: 1 }
 }
 
+// Within each sprite sheet, each animation frame will be
+// this width and height:
 export const BlockImageSize = 512

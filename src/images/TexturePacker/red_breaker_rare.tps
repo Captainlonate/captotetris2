@@ -88,7 +88,7 @@
         <key>maxTextureSize</key>
         <QSize>
             <key>width</key>
-            <int>2048</int>
+            <int>4096</int>
             <key>height</key>
             <int>4096</int>
         </QSize>
@@ -176,29 +176,35 @@
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
             <key type="filename">../../../public/images/breakers/red sword animation/rare/0001.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0011.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0021.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0031.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0009.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0017.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0025.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0033.png</key>
             <key type="filename">../../../public/images/breakers/red sword animation/rare/0041.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0051.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0061.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0071.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0049.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0057.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0065.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0073.png</key>
             <key type="filename">../../../public/images/breakers/red sword animation/rare/0081.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0091.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0101.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0111.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0089.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0097.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0105.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0113.png</key>
             <key type="filename">../../../public/images/breakers/red sword animation/rare/0121.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0131.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0141.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0151.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0129.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0137.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0145.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0153.png</key>
             <key type="filename">../../../public/images/breakers/red sword animation/rare/0161.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0171.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0181.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0191.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0169.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0177.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0185.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0193.png</key>
             <key type="filename">../../../public/images/breakers/red sword animation/rare/0201.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0211.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0221.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0231.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0209.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0217.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0225.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/rare/0233.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>

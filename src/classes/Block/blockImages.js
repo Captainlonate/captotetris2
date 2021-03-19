@@ -2,30 +2,35 @@ import { BlockColors } from './blockColors'
 import { BlockTypes } from './blockTypes'
 import { ImageKeys } from '../TetrisGame/images'
 
-// Maps a BlockType + BlockColor to a corresponding Image (key)
+export const AnimationState = {
+  IDLE: 'IDLE',
+  RARE: 'RARE'
+}
+
+// Maps a BlockType + BlockColor + Animation State to a corresponding Image (key)
 export const BlockImages = {
   [BlockTypes.CEMENT]: {
-    [BlockColors.RED]: ImageKeys.CementBlock,
-    [BlockColors.BLUE]: ImageKeys.CementBlock,
-    [BlockColors.GREEN]: ImageKeys.CementBlock,
-    [BlockColors.YELLOW]: ImageKeys.CementBlock
+    [BlockColors.RED]: { [AnimationState.IDLE]: ImageKeys.CementBlock, [AnimationState.RARE]: ImageKeys.CementBlock },
+    [BlockColors.BLUE]: { [AnimationState.IDLE]: ImageKeys.CementBlock, [AnimationState.RARE]: ImageKeys.CementBlock },
+    [BlockColors.GREEN]: { [AnimationState.IDLE]: ImageKeys.CementBlock, [AnimationState.RARE]: ImageKeys.CementBlock },
+    [BlockColors.YELLOW]: { [AnimationState.IDLE]: ImageKeys.CementBlock, [AnimationState.RARE]: ImageKeys.CementBlock }
   },
   [BlockTypes.TRANSPARENT]: {
-    [BlockColors.RED]: ImageKeys.RedGreyBlock,
-    [BlockColors.BLUE]: ImageKeys.BlueGreyBlock,
-    [BlockColors.GREEN]: ImageKeys.GreenGreyBlock,
-    [BlockColors.YELLOW]: ImageKeys.YellowGreyBlock
+    [BlockColors.RED]: { [AnimationState.IDLE]: ImageKeys.RedGreyBlock, [AnimationState.RARE]: ImageKeys.RedGreyBlock },
+    [BlockColors.BLUE]: { [AnimationState.IDLE]: ImageKeys.BlueGreyBlock, [AnimationState.RARE]: ImageKeys.BlueGreyBlock },
+    [BlockColors.GREEN]: { [AnimationState.IDLE]: ImageKeys.GreenGreyBlock, [AnimationState.RARE]: ImageKeys.GreenGreyBlock },
+    [BlockColors.YELLOW]: { [AnimationState.IDLE]: ImageKeys.YellowGreyBlock, [AnimationState.RARE]: ImageKeys.YellowGreyBlock }
   },
   [BlockTypes.NORMAL]: {
-    [BlockColors.RED]: ImageKeys.RedBlock,
-    [BlockColors.BLUE]: ImageKeys.BlueBlock,
-    [BlockColors.GREEN]: ImageKeys.GreenBlock,
-    [BlockColors.YELLOW]: ImageKeys.YellowBlock
+    [BlockColors.RED]: { [AnimationState.IDLE]: ImageKeys.RedBlock, [AnimationState.RARE]: ImageKeys.RedBlock },
+    [BlockColors.BLUE]: { [AnimationState.IDLE]: ImageKeys.BlueBlock, [AnimationState.RARE]: ImageKeys.BlueBlock },
+    [BlockColors.GREEN]: { [AnimationState.IDLE]: ImageKeys.GreenBlock, [AnimationState.RARE]: ImageKeys.GreenBlock },
+    [BlockColors.YELLOW]: { [AnimationState.IDLE]: ImageKeys.YellowBlock, [AnimationState.RARE]: ImageKeys.YellowBlock }
   },
   [BlockTypes.BREAKER]: {
-    [BlockColors.RED]: ImageKeys.RedBreaker,
-    [BlockColors.BLUE]: ImageKeys.BlueBreaker,
-    [BlockColors.GREEN]: ImageKeys.GreenBreaker,
-    [BlockColors.YELLOW]: ImageKeys.YellowBreaker
+    [BlockColors.RED]: { [AnimationState.IDLE]: ImageKeys.RedBreaker, [AnimationState.RARE]: ImageKeys.RedBreakerRare },
+    [BlockColors.BLUE]: { [AnimationState.IDLE]: ImageKeys.BlueBreaker, [AnimationState.RARE]: ImageKeys.BlueBreaker },
+    [BlockColors.GREEN]: { [AnimationState.IDLE]: ImageKeys.GreenBreaker, [AnimationState.RARE]: ImageKeys.GreenBreaker },
+    [BlockColors.YELLOW]: { [AnimationState.IDLE]: ImageKeys.YellowBreaker, [AnimationState.RARE]: ImageKeys.YellowBreaker }
   }
 }

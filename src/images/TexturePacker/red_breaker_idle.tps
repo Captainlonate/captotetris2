@@ -56,7 +56,7 @@
         <key>jxrCompressionLevel</key>
         <uint>0</uint>
         <key>ditherType</key>
-        <enum type="SettingsBase::DitherType">NearestNeighbour</enum>
+        <enum type="SettingsBase::DitherType">PngQuantLow</enum>
         <key>backgroundColor</key>
         <uint>0</uint>
         <key>libGdx</key>
@@ -88,7 +88,7 @@
         <key>maxTextureSize</key>
         <QSize>
             <key>width</key>
-            <int>2048</int>
+            <int>4096</int>
             <key>height</key>
             <int>4096</int>
         </QSize>
@@ -176,29 +176,35 @@
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
             <key type="filename">../../../public/images/breakers/red sword animation/idle/0001.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0011.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0021.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0031.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0009.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0017.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0025.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0033.png</key>
             <key type="filename">../../../public/images/breakers/red sword animation/idle/0041.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0051.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0061.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0071.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0049.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0057.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0065.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0073.png</key>
             <key type="filename">../../../public/images/breakers/red sword animation/idle/0081.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0091.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0101.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0111.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0089.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0097.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0105.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0113.png</key>
             <key type="filename">../../../public/images/breakers/red sword animation/idle/0121.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0131.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0141.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0151.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0129.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0137.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0145.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0153.png</key>
             <key type="filename">../../../public/images/breakers/red sword animation/idle/0161.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0171.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0181.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0191.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0169.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0177.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0185.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0193.png</key>
             <key type="filename">../../../public/images/breakers/red sword animation/idle/0201.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0211.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0221.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/idle/0231.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0209.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0217.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0225.png</key>
+            <key type="filename">../../../public/images/breakers/red sword animation/idle/0233.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>

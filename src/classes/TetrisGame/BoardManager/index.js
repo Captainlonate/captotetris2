@@ -1,5 +1,6 @@
 import { sortTuplesDesc } from '../../../utils/tuples'
 import Block from '../../Block'
+import { twentyPercentChance } from '../../../utils/random'
 
 class BoardManager {
   constructor ({ numRows, numCols, onEndTurn, onCannotSpawn, onDoneDroppingBlocks }) {
@@ -22,6 +23,23 @@ class BoardManager {
     this.onDoneDroppingBlocks = () => onDoneDroppingBlocks()
   }
 
+  /*
+    To perform an action on each non-null Block() in the grid:
+      for (const block of this.blocksIterable()) { ... }
+    Easier than lugging around the nested for loop everywhere
+    This is intended for usage within the class only.
+  */
+  * blocksIterable () {
+    for (let rowIdx = 2; rowIdx < this.numRows; rowIdx++) {
+      for (let colIdx = 0; colIdx < this.numCols; colIdx++) {
+        const block = this.getCell(rowIdx, colIdx)
+        if (block !== null) {
+          yield block
+        }
+      }
+    }
+  }
+
   spawnNewActivePiece (blockOne, blockTwo) {
     if (this.canSpawnNewPiece()) {
       this.activeBlock1 = { block: blockOne, row: this.startRowBlockOne, col: this.blockStartCol }
@@ -39,6 +57,7 @@ class BoardManager {
   //   return [...new Array(numRows)].map(() => [...new Array(numCols)].fill(null))
   // }
 
+  // TODO: Delete this at the end
   resetBoard (numRows, numCols) {
     let tempBoard = [...new Array(numRows)].map(() => [...new Array(numCols)].fill(null))
     tempBoard = [
@@ -448,12 +467,15 @@ class BoardManager {
   }
 
   updateBlockAnimations () {
-    for (let rowIdx = 2; rowIdx < this.numRows; rowIdx++) {
-      for (let colIdx = 0; colIdx < this.numCols; colIdx++) {
-        const block = this.getCell(rowIdx, colIdx)
-        if (block !== null) {
-          block.updateFrame()
-        }
+    for (const block of this.blocksIterable()) {
+      block.updateFrame()
+    }
+  }
+
+  tryToPlayRareAnimation () {
+    for (const block of this.blocksIterable()) {
+      if (block.isBreaker && twentyPercentChance()) {
+        block.playRareAnimation()
       }
     }
   }
