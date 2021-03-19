@@ -23,7 +23,7 @@ export const ImageLabelsToPaths = {
   [ImageKeys.YellowBreaker]: 'images/breakers/yellow_breaker_3d_512.png',
   [ImageKeys.BlueBreaker]: 'images/breakers/blue_breaker_3d_512.png',
   [ImageKeys.GreenBreaker]: 'images/breakers/green_breaker_animation.png',
-  [ImageKeys.RedBreaker]: 'images/breakers/red_breaker_animation.png',
+  [ImageKeys.RedBreaker]: 'images/breakers/red_breaker_animation_idle.png',
 
   [ImageKeys.BlueGreyBlock]: 'images/blueGreyPiece.png',
   [ImageKeys.RedGreyBlock]: 'images/redGreyPiece.png',
