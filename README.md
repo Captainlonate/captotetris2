@@ -14,18 +14,6 @@ Learn about:
   1. [The Code](#the-code)
   2. [The Art](#the-art)
 
-<img src="readme_images/progress_3_19.png" width="427" height="500" />
-
-<img src="readme_images/red_breaker_loses_eye_compressed.gif" width="300" height="300" />
-<table>
-<tbody>
-<tr>
-<td><img src="readme_images/red_breaker_loses_eye_compressed.gif" width="300" height="300" /></td>
-<td><img src="readme_images/red_breaker_loses_eye_compressed.gif" width="300" height="300" /></td>
-</tr>
-</tbody>
-</table>
-
 ## The Code
   * The native HTML `<canvas>` tag and javascript are all I needed to actually build the game
   * `create-react-app` for the simple website which hosts the `<canvas>`, and for the fantastic prebuilt webpack file
@@ -48,3 +36,44 @@ Everything needed to run the project can be found within this GitHub repo.
   1. Go get [Blender](https://www.blender.org/).
   2. Run Blender, click "Open..." and navigate to `/src/images/blender/<one of the folders>/<one of the .blend files>`
   
+<table>
+  <tbody>
+  <tr>
+    <td><img src="readme_images/progress_3_19.png" width="256" height="300" /></td>
+    <td></td>
+    </tr>
+    <tr>
+    <td>
+      <img src="readme_images/green_breaker.gif" width="300" height="300" />
+    </td>
+    <td>
+      <img src="readme_images/green_block.png" width="300" height="300" />
+    </td>
+    </tr>
+    <tr>
+    <td>
+      <img src="readme_images/blue_breaker.png" width="300" height="300" />
+    </td>
+    <td>
+      <img src="readme_images/blue_block.png" width="300" height="300" />
+    </td>
+    </tr>
+    <tr>
+    <td>
+      <img src="readme_images/red_breaker_loses_eye_compressed.gif" width="300" height="300" />
+    </td>
+    <td>
+      <img src="readme_images/red_block.png" width="300" height="300" />
+    </td>
+    </tr>
+    <tr>
+    <td>
+      <img src="readme_images/yellow_breaker.png" width="300" height="300" />
+    </td>
+    <td>
+      <img src="readme_images/yellow_block.png" width="300" height="300" />
+    </td>
+    </tr>
+    <tr>
+  </tbody>
+</table>
