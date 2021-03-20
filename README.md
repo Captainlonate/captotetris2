@@ -1,70 +1,43 @@
-# Getting Started with Create React App
+# Captotetris
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Play it live here: [https://breaks.pirated.technology/](https://breaks.pirated.technology/)
 
-## Available Scripts
 
-In the project directory, you can run:
+## Summary
 
-### `npm start`
+This is a blocks-and-breakers style game built with javascript. I wrote all the code and did all the art.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+_`If you see it, I built it. If you hear it, I stole it`_ : )
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Learn about:
 
-### `npm test`
+  1. [The Code](#the-code)
+  2. [The Art](#the-art)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+![red_breaker_loses_eye](readme_images/red_breaker_loses_eye.mp4)
 
-### `npm run build`
+<img src="readme_images/progress_3_19" width="1627" height="1905" />
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## The Code
+  * The native HTML `<canvas>` tag and javascript are all I needed to actually build the game
+  * `create-react-app` for the simple website which hosts the `<canvas>`, and for the fantastic prebuilt webpack file
+  * The bundled files are hosted on AWS (https -> route 53 -> cloudfront -> s3)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## The Art
+  * I made all of the 3-D art in Blender, then took 2-D renders of the scenes
+  * I assembled the renders into spritesheets for the animations
+    * Each animation is 30 frames, and I used TexturePacker to neatly organize the 30 .pngs into a single sprite sheet
 
-### `npm run eject`
+## The project
+Everything needed to run the project can be found within this GitHub repo.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### To Run it
+  1. Clone the repo
+  2. `npm install` within the directory
+  3. `npm start`
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### To tinker with the original art files
+  1. Go get [Blender](https://www.blender.org/).
+  2. Run Blender, click "Open..." and navigate to `/src/images/blender/<one of the folders>/<one of the .blend files>`
+  
