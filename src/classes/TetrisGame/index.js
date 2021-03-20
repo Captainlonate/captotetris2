@@ -169,7 +169,8 @@ class TetrisGame {
       sidebarNextOffsetY,
       blockSrcDimensions,
       sidebarBlockOneDims,
-      sidebarBlockTwoDims
+      sidebarBlockTwoDims,
+      blockWidth
     } = this.dim
 
     // The dark background
@@ -178,11 +179,10 @@ class TetrisGame {
     this.ctx.fillRect(0, 0, leftSidebarWidth, canvasHeight)
     this.ctx.globalAlpha = 1.0
     // The "Next" text
-    this.ctx.font = '28px TradeWinds'
+    this.ctx.font = `${blockWidth * 0.45}px TradeWinds`
     this.ctx.fillStyle = 'white'
     this.ctx.textAlign = 'center'
     this.ctx.fillText('Next', leftSidebarWidth / 2, sidebarNextOffsetY)
-
     // The two preview blocks
     if (this.nextBlock1 && this.nextBlock2) {
       this.ctx.drawImage(
@@ -276,13 +276,9 @@ class TetrisGame {
   }
 
   drawPaused () {
-    const { leftSidebarWidth, canvasHeight, boardWidth } = this.dim
-    // this.ctx.globalAlpha = 0.2
-    // this.ctx.fillStyle = '#000000'
-    // this.ctx.fillRect(0, 0, canvasWidth, canvasHeight)
-    // this.ctx.globalAlpha = 1.0
+    const { blockWidth, leftSidebarWidth, canvasHeight, boardWidth } = this.dim
 
-    this.ctx.font = '40px TradeWinds'
+    this.ctx.font = `${blockWidth * 0.7}px TradeWinds`
     this.ctx.fillStyle = 'red'
     this.ctx.textAlign = 'center'
     this.ctx.fillText('Paused', leftSidebarWidth + (boardWidth / 2), canvasHeight / 2)
