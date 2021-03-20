@@ -14,15 +14,22 @@ Learn about:
   1. [The Code](#the-code)
   2. [The Art](#the-art)
 
-![red_breaker_loses_eye](readme_images/red_breaker_loses_eye.mp4)
+<img src="readme_images/progress_3_19.png" width="427" height="500" />
 
-<img src="readme_images/progress_3_19" width="1627" height="1905" />
+<img src="readme_images/red_breaker_loses_eye_compressed.gif" width="300" height="300" />
+<table>
+<tbody>
+<tr>
+<td><img src="readme_images/red_breaker_loses_eye_compressed.gif" width="300" height="300" /></td>
+<td><img src="readme_images/red_breaker_loses_eye_compressed.gif" width="300" height="300" /></td>
+</tr>
+</tbody>
+</table>
 
 ## The Code
   * The native HTML `<canvas>` tag and javascript are all I needed to actually build the game
   * `create-react-app` for the simple website which hosts the `<canvas>`, and for the fantastic prebuilt webpack file
   * The bundled files are hosted on AWS (https -> route 53 -> cloudfront -> s3)
-
 
 ## The Art
   * I made all of the 3-D art in Blender, then took 2-D renders of the scenes
