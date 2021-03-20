@@ -9,7 +9,13 @@ const GameContainer = styled.div`
   right: 0;
   top: 0;
   bottom: 0;
-  background-image: url('images/simple_plants.png');
+  /* background-image: url('images/backgrounds/simple_plants.png'); */
+  /* background-image: url('images/backgrounds/bird.png'); */
+  /* background-image: url('images/backgrounds/fishbowl_4k.png'); */
+  background-image: url('images/backgrounds/kitchen_4k.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   overflow: hidden;
 `
 
@@ -38,8 +44,52 @@ const StyledCanvas = styled.canvas`
   box-sizing: border-box;
   width: 100%;
   height: 100%;
-  border: 2px solid white;
+  border: 30px solid blue;
+  border-image: url('images/canvas_frame.png');
+  border-image-slice: 33%;
+  border-image-width: 1;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
 `
+
+const CanvasAndFrameWrapper = styled.div`
+  position: relative;
+`
+
+// const CanvasFrame = styled.div`
+//   position: absolute;
+//   background-image: url('images/canvas_frame.png');
+//   background-repeat: no-repeat;
+//   background-size: contain;
+//   background-position: center;
+
+//   top: -20%;
+//   left: -20%;
+//   width: 100%;
+//   height: 100%;
+
+//   z-index: -1;
+// `
+
+// const CanvasFrame = styled.img`
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   width: 0;
+//   height: 0;
+
+//   z-index: -1;
+// `
+
+// const CanvasFrame = styled.div`
+//   position: absolute;
+//   background-image: url('images/canvas_frame.png');
+//   background-repeat: no-repeat;;
+//   top: 0;
+//   left: 0;
+
+//   z-index: -1;
+// `
 
 const GameCanvas = () => {
   const canvasRef = useRef(null)
@@ -61,7 +111,10 @@ const GameCanvas = () => {
     <GameContainer>
       <InnerWrapper>
         <GameArea ref={gameAreaRef}>
-          <StyledCanvas id='gameCanvas' ref={canvasRef} width='500px' height='500px' />
+          <CanvasAndFrameWrapper>
+            {/* <CanvasFrame src='images/canvas_frame.png' /> */}
+            <StyledCanvas id='gameCanvas' ref={canvasRef} width='500px' height='500px' />
+          </CanvasAndFrameWrapper>
         </GameArea>
       </InnerWrapper>
     </GameContainer>

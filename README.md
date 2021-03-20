@@ -1,4 +1,5 @@
-# Captotetris
+# <img src="readme_images/logo.png" width="50" height="50" /> Captotetris <img src="readme_images/logo.png" width="50" height="50" />
+
 
 Play it live here: [https://breaks.pirated.technology/](https://breaks.pirated.technology/)
 
@@ -22,6 +23,46 @@ __Blocks:__
 <img src="readme_images/blue_block.png" width="50" height="50" />
 <img src="readme_images/yellow_block.png" width="50" height="50" />
 <img src="readme_images/red_block.png" width="50" height="50" />
+
+## TODO
+  * Core Game
+    * Blue Piece - Trident
+      * Idle Animation: 
+      * Rare Animation: 
+    * Yellow Piece - Redo it
+      * Idle Animation:
+      * Rare Animation: 
+    * Green Piece
+      * Rare Animation
+    * Needs a "Score"
+      * Sidebar displays # of blocks broken in 1 turn, total number blocks broken, size of current combo, total score, number of turns so far
+    * Need a better background (be cool if it moves. Animate a blender scene?)
+    * Should I kill 1 row, and add a column?
+      * The blocks would be bigger
+    * Add floating buttons for left, right, and rotate so it can work on iPad
+    * Add "Next" text to the sidebar above the preview pieces
+    * Create 3d frame around the canvas
+      * How will I know the size since it's based on the viewport dimensions?
+    * Need to find some free music online
+      * Might be nice to just have ambiance sounds
+    * Need to emphasize what was broken
+      * 1) Use borders to outline the shape of the break (border color matches the block color)
+      * 2) Wait a short time
+      * 3) Create shatter animation for all the blocks and breakers
+      * 4) Pause for a moment before dropping the next blocks (or spawning a new piece)
+  * Web Site
+    * Design it
+      * Need "Play" button, title, my name
+  * Single Player
+    * Needs a Pause button
+    * Should single player have configurable settings?
+    * Would a button to neatly organized your chaotic board be fun?
+      * What if you have to earn it by breaking so much first.
+  * Multiplayer
+    * Node.js & socketio
+    * Should they create accounts, or be randomely assigned named just for the match?
+    * What happens if they close the tab?
+    * What happens if they switch to another tab?
 
 ## The Code
   * The native HTML `<canvas>` tag and javascript are all I needed to actually build the game

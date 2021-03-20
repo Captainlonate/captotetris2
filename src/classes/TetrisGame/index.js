@@ -17,16 +17,17 @@ const getDefaultPositionsAndSizes = () => ({
   boardWidth: 0,
   blockWidth: 0,
   blockHeight: 0,
-  // blockSrcDimensions: [0, 0, 0, 0],
   blockSrcDimensions: [0, 0],
-  sidebarOffsetX: 0,
-  sidebarOffsetY: 0,
-  sidebarGapY: 0,
+  sidebarBlockOffsetX: 0,
+  sidebarBlockOffsetY: 0,
+  sidebarBlockGapY: 0,
+  sidebarNextOffsetY: 0,
   blockTargetSize: [0, 0],
   sidebarBlockOneDims: [0, 0, 0, 0],
   sidebarBlockTwoDims: [0, 0, 0, 0],
-  numRows: 15,
-  numCols: 7
+  numRows: 15, // 2 are hidden
+  numCols: 7,
+  cellBorders: [] // 2d array filled with objects
 })
 
 const getEmptyState = () => ({
@@ -162,24 +163,39 @@ class TetrisGame {
   }
 
   drawLeftSidebar () {
+    const {
+      leftSidebarWidth,
+      canvasHeight,
+      sidebarNextOffsetY,
+      blockSrcDimensions,
+      sidebarBlockOneDims,
+      sidebarBlockTwoDims
+    } = this.dim
+
     // The dark background
     this.ctx.globalAlpha = 0.3
     this.ctx.fillStyle = '#000000'
-    this.ctx.fillRect(0, 0, this.dim.leftSidebarWidth, this.dim.canvasHeight)
+    this.ctx.fillRect(0, 0, leftSidebarWidth, canvasHeight)
     this.ctx.globalAlpha = 1.0
+    // The "Next" text
+    this.ctx.font = '28px TradeWinds'
+    this.ctx.fillStyle = 'white'
+    this.ctx.textAlign = 'center'
+    this.ctx.fillText('Next', leftSidebarWidth / 2, sidebarNextOffsetY)
+
     // The two preview blocks
     if (this.nextBlock1 && this.nextBlock2) {
       this.ctx.drawImage(
         this.imageManager.getImage(this.nextBlock1.imageName),
         ...this.nextBlock1.getImageSrcXandY(),
-        ...this.dim.blockSrcDimensions,
-        ...this.dim.sidebarBlockOneDims
+        ...blockSrcDimensions,
+        ...sidebarBlockOneDims
       )
       this.ctx.drawImage(
         this.imageManager.getImage(this.nextBlock2.imageName),
         ...this.nextBlock2.getImageSrcXandY(),
-        ...this.dim.blockSrcDimensions,
-        ...this.dim.sidebarBlockTwoDims
+        ...blockSrcDimensions,
+        ...sidebarBlockTwoDims
       )
     }
   }
@@ -204,34 +220,81 @@ class TetrisGame {
         }
       }
     }
+
+    // Draw Cell Borders
+    this.ctx.lineWidth = 4
+    this.ctx.strokeStyle = '#75cfff'
+    const cellsWithBorders = [
+      { row: 4, col: 5, sides: ['top', 'left', 'right'] },
+      { row: 5, col: 5, sides: ['left', 'right'] },
+      { row: 5, col: 5, sides: ['bottom', 'left', 'right'] }
+    ]
+
+    if (cellsWithBorders.length > 0) {
+      this.ctx.beginPath()
+      for (const { row, col, sides } of cellsWithBorders) {
+        this.drawBorder(row, col, sides)
+      }
+      this.ctx.stroke()
+    }
+  }
+
+  drawBorder (row, col, sides) {
+    for (const side of sides) {
+      const [x, y, endX, endY] = this.dim.cellBorders[row][col][side]
+      this.ctx.moveTo(x, y)
+      this.ctx.lineTo(endX, endY)
+    }
+  }
+
+  cellLeftBorderDimensions (row, col) {
+    const { blockWidth, blockHeight } = this.dim
+    const x = col * blockWidth
+    const y = row * blockHeight
+    return [x, y - 1, x, y + blockHeight + 1]
+  }
+
+  cellTopBorderDimensions (row, col) {
+    const { blockWidth, blockHeight } = this.dim
+    const x = col * blockWidth
+    const y = row * blockHeight
+    return [x - 1, y, x + blockWidth + 1, y]
+  }
+
+  cellBottomBorderDimensions (row, col) {
+    const { blockWidth, blockHeight } = this.dim
+    const x = (col * blockWidth) + blockWidth
+    const y = (row * blockHeight) + blockHeight
+    return [x + 1, y, x - blockWidth - 1, y]
+  }
+
+  cellRightBorderDimensions (row, col) {
+    const { blockWidth, blockHeight } = this.dim
+    const x = (col * blockWidth) + blockWidth
+    const y = (row * blockHeight) + blockHeight
+    return [x, y + 1, x, y - blockHeight - 1]
   }
 
   drawPaused () {
-    const { canvasWidth, canvasHeight } = this.dim
-    this.ctx.globalAlpha = 0.5
-    this.ctx.fillStyle = '#000000'
-    this.ctx.fillRect(0, 0, canvasWidth, canvasHeight)
-    this.ctx.globalAlpha = 1.0
+    const { leftSidebarWidth, canvasHeight, boardWidth } = this.dim
+    // this.ctx.globalAlpha = 0.2
+    // this.ctx.fillStyle = '#000000'
+    // this.ctx.fillRect(0, 0, canvasWidth, canvasHeight)
+    // this.ctx.globalAlpha = 1.0
 
-    this.ctx.font = '30px Comic Sans MS'
+    this.ctx.font = '40px TradeWinds'
     this.ctx.fillStyle = 'red'
     this.ctx.textAlign = 'center'
-    this.ctx.fillText('Paused', canvasWidth / 2, canvasHeight / 2)
+    this.ctx.fillText('Paused', leftSidebarWidth + (boardWidth / 2), canvasHeight / 2)
   }
 
   draw () {
-    // if (this.gameHasStarted) {
-    //   if (this.gameState.gameIsPaused) {
-    //     this.drawPaused()
-    //   } else {
-    //     this.drawLeftSidebar()
-    //     this.drawBoard()
-    //   }
-    // }
-    // TODO: Remove
     if (this.gameHasStarted) {
       this.drawLeftSidebar()
       this.drawBoard()
+      if (this.gameState.gameIsPaused) {
+        this.drawPaused()
+      }
     }
   }
 
@@ -242,26 +305,42 @@ class TetrisGame {
     this.dim.boardWidth = boardWidth
     this.recalculateBlockSize()
     this.recalculateSidebar()
+    this.recalculateBorderDimensions()
   }
 
   recalculateBlockSize () {
     this.dim.blockWidth = Math.floor(this.dim.boardWidth / this.dim.numCols)
-    // this.dim.blockWidth *= 2 // Makes it bigger for testing/debugging
     this.dim.blockHeight = Math.floor(this.dim.canvasHeight / (this.dim.numRows - 2))
-    // this.dim.blockHeight *= 2 // Makes it bigger for testing/debugging
-    // this.dim.blockSrcDimensions = [0, 0, BlockImageSize, BlockImageSize]
     this.dim.blockSrcDimensions = [BlockImageSize, BlockImageSize]
     this.dim.blockTargetSize = [this.dim.blockWidth, this.dim.blockHeight]
   }
 
   recalculateSidebar () {
-    this.dim.sidebarOffsetX = Math.floor(this.dim.leftSidebarWidth * 0.25)
-    this.dim.sidebarOffsetY = Math.floor(this.dim.blockHeight / 2)
-    this.dim.sidebarGapY = Math.floor(this.dim.blockHeight / 4)
+    // Next text
+    this.dim.sidebarNextOffsetY = Math.floor(this.dim.blockHeight)
+    // Preview Blocks Offsets
+    this.dim.sidebarBlockOffsetX = Math.floor(this.dim.leftSidebarWidth * 0.25)
+    this.dim.sidebarBlockOffsetY = Math.floor(this.dim.blockHeight * 1.5)
+    this.dim.sidebarBlockGapY = Math.floor(this.dim.blockHeight / 4)
     // Sidebar preview blocks - location and sizes
-    this.dim.sidebarBlockOneDims = [this.dim.sidebarOffsetX, this.dim.sidebarOffsetY, this.dim.blockWidth, this.dim.blockHeight]
-    const sidebarBlockTwoY = this.dim.sidebarOffsetY + this.dim.blockHeight + this.dim.sidebarGapY
-    this.dim.sidebarBlockTwoDims = [this.dim.sidebarOffsetX, sidebarBlockTwoY, this.dim.blockWidth, this.dim.blockHeight]
+    this.dim.sidebarBlockOneDims = [this.dim.sidebarBlockOffsetX, this.dim.sidebarBlockOffsetY, this.dim.blockWidth, this.dim.blockHeight]
+    const sidebarBlockTwoY = this.dim.sidebarBlockOffsetY + this.dim.blockHeight + this.dim.sidebarBlockGapY
+    this.dim.sidebarBlockTwoDims = [this.dim.sidebarBlockOffsetX, sidebarBlockTwoY, this.dim.blockWidth, this.dim.blockHeight]
+  }
+
+  recalculateBorderDimensions () {
+    const { numRows, numCols } = this.dim
+    this.dim.cellBorders = [...new Array(numRows)].map(() => [...new Array(numCols)].fill(null))
+
+    for (let row = 0; row < numRows; row++) {
+      for (let col = 0; col < numCols; col++) {
+        this.dim.cellBorders[row][col] = this.dim.cellBorders[row][col] || {}
+        this.dim.cellBorders[row][col].top = this.cellTopBorderDimensions(row, col)
+        this.dim.cellBorders[row][col].right = this.cellRightBorderDimensions(row, col)
+        this.dim.cellBorders[row][col].bottom = this.cellBottomBorderDimensions(row, col)
+        this.dim.cellBorders[row][col].left = this.cellLeftBorderDimensions(row, col)
+      }
+    }
   }
 
   handleGameIsOver (isWin) {
