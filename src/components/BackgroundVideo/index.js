@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react'
 import styled from 'styled-components'
 
 const VideoFillsContainer = styled.video`
@@ -10,10 +11,22 @@ const VideoFillsContainer = styled.video`
   height: 100%;
 `
 
-const BackgroundVideo = ({ videoUrl }) => (
-  <VideoFillsContainer playsinline autoPlay muted loop>
-    <source src={videoUrl} type='video/mp4' />
-  </VideoFillsContainer>
-)
+const BackgroundVideo = ({ videoUrl, playbackSpeed = 1 }) => {
+  const videoRef = useRef(null)
+
+  useEffect(() => {
+    // There is no attribute to adjust playback speed of
+    // video tags, so it must be done in javascript.
+    if (videoRef.current) {
+      videoRef.current.playbackRate = playbackSpeed
+    }
+  }, [playbackSpeed])
+
+  return (
+    <VideoFillsContainer playsinline autoPlay muted loop ref={videoRef}>
+      <source src={videoUrl} type='video/mp4' />
+    </VideoFillsContainer>
+  )
+}
 
 export default BackgroundVideo
