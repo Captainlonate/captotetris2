@@ -18,6 +18,8 @@ class GameLoop {
     window.addEventListener('keydown', this.onKeyDown)
     window.addEventListener('focus', this.onTabFocus)
     window.addEventListener('blur', this.onTabBlur)
+
+    this.canvasEl.addEventListener('mouseup', this.onClick)
   }
 
   updateCanvasBounds () {
@@ -111,12 +113,22 @@ class GameLoop {
     }
   }
 
+  onClick = (e) => {
+    if (this.game) {
+      const { left, top } = this.canvasEl.getBoundingClientRect()
+      const canvasClickX = e.clientX - left
+      const canvasClickY = e.clientY - top
+      this.game.onClick({ x: canvasClickX, y: canvasClickY })
+    }
+  }
+
   stop = () => {
     this.game = null
     window.removeEventListener('resize', this.onWindowResize)
     window.removeEventListener('keydown', this.onKeyDown)
     window.removeEventListener('focus', this.onTabFocus)
     window.removeEventListener('blur', this.onTabBlur)
+    this.canvasEl.removeEventListener('mouseup', this.onClick)
   }
 }
 

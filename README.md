@@ -36,13 +36,9 @@ __Blocks:__
       * Rare Animation
     * Needs a "Score"
       * Sidebar displays # of blocks broken in 1 turn, total number blocks broken, size of current combo, total score, number of turns so far
-    * Need a better background (be cool if it moves. Animate a blender scene?)
     * Should I kill 1 row, and add a column?
       * The blocks would be bigger
     * Add floating buttons for left, right, and rotate so it can work on iPad
-    * Add "Next" text to the sidebar above the preview pieces
-    * Create 3d frame around the canvas
-      * How will I know the size since it's based on the viewport dimensions?
     * Need to find some free music online
       * Might be nice to just have ambiance sounds
     * Need to emphasize what was broken

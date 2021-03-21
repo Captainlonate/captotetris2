@@ -6,6 +6,7 @@ import { chanceToGetBreaker } from '../Block/blockTypes'
 import { removeDuplicateTuples } from '../../utils/tuples'
 import SoundManager from '../SoundManager'
 import sounds from '../SoundManager/sounds'
+import PauseButton from '../PauseButton'
 
 // number of ms in a second
 const SECONDS = 1000
@@ -25,6 +26,7 @@ const getDefaultPositionsAndSizes = () => ({
   blockTargetSize: [0, 0],
   sidebarBlockOneDims: [0, 0, 0, 0],
   sidebarBlockTwoDims: [0, 0, 0, 0],
+  pauseButtonDims: [0, 0, 0, 0],
   numRows: 15, // 2 are hidden
   numCols: 7,
   cellBorders: [] // 2d array filled with objects
@@ -63,12 +65,17 @@ class TetrisGame {
     this.timeSinceLastBlockAnimation = 0
     this.animateBlocks = true
     this.timeSinceLastRareAnimation = 0
+    this.timeSinceLastPauseBtnAnimation = 0
 
     // Animations
     this.blockAnimationDuration = 3 * SECONDS
     this.numberOfBlockFrames = 30
     this.blockAnimationSpeed = Math.floor(this.blockAnimationDuration / this.numberOfBlockFrames)
     this.minTimeRareAnimation = 5 * SECONDS
+    this.pauseButtonTimePerFrame = (4 * SECONDS) / 60
+
+    // Buttons
+    this.pauseButton = new PauseButton()
 
     this.onEndTurn = this.onEndTurn.bind(this)
     this.onCannotSpawn = this.onCannotSpawn.bind(this)
@@ -117,6 +124,10 @@ class TetrisGame {
     // TODO: Delete
     this.boardManager.spawnNewActivePiece(new Block({ blockType: 'BREAKER', color: 'GREEN' }), this.makeRegularBlock())
     this.setFlagsControllingPiece()
+    if (!document.hasFocus()) {
+      console.log('The game begins paused, document does not have focus.')
+      this.pauseTheGame()
+    }
   }
 
   update (deltaTime) {
@@ -159,6 +170,13 @@ class TetrisGame {
           }
         }
       }
+
+      // Pause/Play Button Animation
+      this.timeSinceLastPauseBtnAnimation += deltaTime
+      if (this.timeSinceLastPauseBtnAnimation > this.pauseButtonTimePerFrame) {
+        this.timeSinceLastPauseBtnAnimation = 0
+        this.pauseButton.updateFrame()
+      }
     }
   }
 
@@ -170,7 +188,8 @@ class TetrisGame {
       blockSrcDimensions,
       sidebarBlockOneDims,
       sidebarBlockTwoDims,
-      blockWidth
+      blockWidth,
+      pauseButtonDims
     } = this.dim
 
     // The dark background
@@ -198,6 +217,13 @@ class TetrisGame {
         ...sidebarBlockTwoDims
       )
     }
+    // Draw the pause button
+    this.ctx.drawImage(
+      this.imageManager.getImage(this.pauseButton.imageName),
+      ...this.pauseButton.getImageSrcXandY(),
+      ...blockSrcDimensions,
+      ...pauseButtonDims
+    )
   }
 
   drawBoard () {
@@ -322,6 +348,8 @@ class TetrisGame {
     this.dim.sidebarBlockOneDims = [this.dim.sidebarBlockOffsetX, this.dim.sidebarBlockOffsetY, this.dim.blockWidth, this.dim.blockHeight]
     const sidebarBlockTwoY = this.dim.sidebarBlockOffsetY + this.dim.blockHeight + this.dim.sidebarBlockGapY
     this.dim.sidebarBlockTwoDims = [this.dim.sidebarBlockOffsetX, sidebarBlockTwoY, this.dim.blockWidth, this.dim.blockHeight]
+    // Pause button
+    this.dim.pauseButtonDims = [this.dim.sidebarBlockOffsetX, this.dim.canvasHeight - 2 * this.dim.blockHeight, this.dim.blockWidth, this.dim.blockHeight]
   }
 
   recalculateBorderDimensions () {
@@ -471,17 +499,48 @@ class TetrisGame {
   }
 
   onTabFocused () {
-    console.log('Unpausing')
-    if (this.gameStateToRestore !== null) {
-      this.gameState = Object.assign({}, this.gameStateToRestore)
-      this.gameStateToRestore = null
-    }
+    // this.unpauseTheGame()
   }
 
   onTabBlurred () {
-    console.log('Pausing')
-    this.gameStateToRestore = Object.assign({}, this.gameState)
-    this.setFlagsPauseGame()
+    this.pauseTheGame()
+  }
+
+  unpauseTheGame () {
+    if (this.gameStateToRestore !== null) {
+      console.log('Unpausing')
+      this.gameState = Object.assign({}, this.gameStateToRestore)
+      this.gameStateToRestore = null
+      this.pauseButton.playingAnimation()
+    }
+  }
+
+  pauseTheGame () {
+    if (!this.gameState.gameIsPaused) {
+      console.log('Pausing')
+      this.gameStateToRestore = Object.assign({}, this.gameState)
+      this.setFlagsPauseGame()
+      this.pauseButton.pausedAnimation()
+    }
+  }
+
+  onPauseButtonClicked () {
+    if (this.gameState.gameIsPaused) {
+      this.unpauseTheGame()
+    } else {
+      this.pauseTheGame()
+    }
+  }
+
+  onClick ({ x, y }) {
+    const [btnX, btnY, btnWidth, btnHeight] = this.dim.pauseButtonDims
+    const pauseButtonWasClicked = (
+      x >= btnX && y >= btnY &&
+      x <= (btnX + btnWidth) && y <= (btnY + btnHeight)
+    )
+    if (pauseButtonWasClicked) {
+      this.onPauseButtonClicked()
+    }
   }
 }
 

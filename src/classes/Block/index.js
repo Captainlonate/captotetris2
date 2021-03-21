@@ -7,7 +7,8 @@ class Block {
   constructor ({ blockType = BlockTypes.NORMAL, color } = {}) {
     this._color = color || getRandomBlockColor()
     // Image & Animation
-    this.imageMeta = { numberOfFrames: 1, framesPerColumn: 1, animationState: AnimationState.IDLE }
+    this.imageMeta = { numberOfFrames: 1, framesPerColumn: 1, numberOfRows: 1 }
+    this.animationState = AnimationState.IDLE
     this.imageFrameIdx = 0
     this.frameXCoord = 0
     this.frameYCoord = 0
@@ -43,20 +44,20 @@ class Block {
   }
 
   playRareAnimation () {
-    const { animationState } = this.imageMeta
-    if (animationState !== AnimationState.RARE) {
-      this.imageMeta.animationState = AnimationState.RARE
-      this._blockImageName = BlockImages[this._blockType][this._color][this.imageMeta.animationState]
+    // const { animationState } = this.imageMeta
+    if (this.animationState !== AnimationState.RARE) {
+      this.animationState = AnimationState.RARE
+      this._blockImageName = BlockImages[this._blockType][this._color][this.animationState]
       this.imageFrameIdx = 0
       this.updateImageCoordinates(this.imageFrameIdx)
     }
   }
 
   playIdleAnimation () {
-    const { animationState } = this.imageMeta
-    if (animationState !== AnimationState.IDLE) {
-      this.imageMeta.animationState = AnimationState.IDLE
-      this._blockImageName = BlockImages[this._blockType][this._color][this.imageMeta.animationState]
+    // const { animationState } = this.imageMeta
+    if (this.animationState !== AnimationState.IDLE) {
+      this.animationState = AnimationState.IDLE
+      this._blockImageName = BlockImages[this._blockType][this._color][this.animationState]
       this.imageFrameIdx = 0
       this.updateImageCoordinates(this.imageFrameIdx)
     }
@@ -73,12 +74,12 @@ class Block {
   }
 
   updateFrame () {
-    const { numberOfFrames, animationState } = this.imageMeta
+    const { numberOfFrames } = this.imageMeta
     if (numberOfFrames > 1) {
       const doneWithFinalFrame = this.imageFrameIdx === numberOfFrames - 1
 
       // If finishing a rare animation, switch back to the idle animation
-      if (animationState === AnimationState.RARE && doneWithFinalFrame) {
+      if (this.animationState === AnimationState.RARE && doneWithFinalFrame) {
         this.playIdleAnimation()
       } else {
         this.imageFrameIdx = (doneWithFinalFrame) ? 0 : this.imageFrameIdx + 1
@@ -92,15 +93,14 @@ class Block {
     if (isValidBlockType(newBlockType)) {
       const blockTypeInfo = BlockTypesInfo[newBlockType]
 
-      this.imageMeta.animationState = AnimationState.IDLE
+      this.imageMeta = Object.assign({}, BlockAnimationMeta[this._blockImageName])
+      this.animationState = AnimationState.IDLE
 
       this._blockType = newBlockType
       this._isBreakable = blockTypeInfo.isBreakable
       this._isBreaker = blockTypeInfo.isBreaker
       this._isStone = blockTypeInfo.isStone
-      this._blockImageName = BlockImages[this._blockType][this._color][this.imageMeta.animationState]
-
-      this.imageMeta = Object.assign({}, BlockAnimationMeta[this._blockImageName])
+      this._blockImageName = BlockImages[this._blockType][this._color][this.animationState]
 
       // Start at a random frame in the animation
       this.imageFrameIdx = Math.floor(Math.random() * this.imageMeta.numberOfFrames)
