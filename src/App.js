@@ -1,5 +1,5 @@
-import GameCanvas from './components/Canvas'
+import Game from './components/Canvas'
 
-const App = () => <GameCanvas />
+const App = () => <Game />
 
 export default App

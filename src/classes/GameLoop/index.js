@@ -35,8 +35,10 @@ class GameLoop {
     // Clear the entire canvas
     this._ctx.clearRect(0, 0, this._ctx.canvas.width, this._ctx.canvas.height)
     // Fill the canvas with a dark, transparent background
-    this._ctx.fillStyle = '#000000'
-    this._ctx.globalAlpha = 0.5
+    // this._ctx.fillStyle = '#000000'
+    // this._ctx.fillStyle = '#4ec8ff' // with 20% opacity - looks like a window
+    this._ctx.fillStyle = '#002d42' // with 20% opacity - looks like a window
+    this._ctx.globalAlpha = 0.8
     this._ctx.fillRect(0, 0, this._ctx.canvas.width, this._ctx.canvas.height)
     this._ctx.globalAlpha = 1.0
   }
