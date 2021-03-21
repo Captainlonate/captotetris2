@@ -175,6 +175,9 @@ class TetrisGame {
 
     // The dark background
     this.ctx.globalAlpha = 0.3
+    // window.sidebarColor = window.sidebarColor || '#3dc049'
+    // this.ctx.fillStyle = window.sidebarColor // green
+    // this.ctx.fillStyle = '#744a2f' // brown
     this.ctx.fillStyle = '#000000'
     this.ctx.fillRect(0, 0, leftSidebarWidth, canvasHeight)
     this.ctx.globalAlpha = 1.0

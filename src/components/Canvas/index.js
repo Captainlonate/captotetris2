@@ -58,7 +58,7 @@ const TopPlank = styled.img`
   width: 110%;
   height: 8%;
   z-index: 4;
-  transform: rotate3d(1, 1, 1, 2deg);
+  transform: rotate3d(1, 1, 1, -3deg);
 `
 
 const BottomPlank = styled.img`
@@ -135,6 +135,24 @@ const RightPlankBehind = styled.img`
   transform-origin: top right;
 `
 
+const FullScreenVideo = styled.video`
+  object-fit: cover;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+`
+
+// const LeftWall = styled.div`
+//   background-image: url('images/plank_frame.png');
+//   position: absolute;
+//   top: 0;
+//   bottom: 0;
+//   left: 0;
+//   width: 15vw;
+// `
+
 const GameCanvas = () => {
   const canvasRef = useRef(null)
   const gameAreaRef = useRef(null)
@@ -153,20 +171,24 @@ const GameCanvas = () => {
 
   return (
     <GameContainer>
+      {/* <FullScreenVideo playsinline autoPlay muted loop>
+        <source src='images/water_bg_mpeg4_h264.mp4' type='video/mp4' />
+        Your browser does not support the video tag.
+      </FullScreenVideo> */}
       <InnerWrapper>
         <GameArea ref={gameAreaRef}>
           <CanvasAndFrameWrapper>
             <StyledCanvas id='gameCanvas' ref={canvasRef} width='500px' height='500px' />
-            {/* Foreground - In front of the canvas */}
-            <TopPlank src='images/TopPlank.png' />
-            <BottomPlank src='images/TopPlank.png' />
-            <LeftPlank src='images/TopPlank.png' />
-            <RightPlank src='images/TopPlank.png' />
-            {/* Background - Behind the canvas */}
-            <TopPlankBehind src='images/TopPlank.png' />
-            <BottomPlankBehind src='images/TopPlank.png' />
-            <LeftPlankBehind src='images/TopPlank.png' />
-            <RightPlankBehind src='images/TopPlank.png' />
+
+            <TopPlank src='images/plank_frame.png' />
+            <BottomPlank src='images/plank_frame.png' />
+            <LeftPlank src='images/plank_frame.png' />
+            <RightPlank src='images/plank_frame.png' />
+
+            <TopPlankBehind src='images/plank_frame_darker.png' />
+            <BottomPlankBehind src='images/plank_frame_darker.png' />
+            <LeftPlankBehind src='images/plank_frame_darker.png' />
+            <RightPlankBehind src='images/plank_frame_darker.png' />
           </CanvasAndFrameWrapper>
         </GameArea>
       </InnerWrapper>
