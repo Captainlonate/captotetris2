@@ -1,7 +1,8 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import GameLoop from '../../classes/GameLoop'
 import TetrisGame from '../../classes/TetrisGame'
+import checkIsMobile from '../../utils/isMobile'
 
 const GameContainer = styled.div`
   position: fixed;
@@ -9,14 +10,19 @@ const GameContainer = styled.div`
   right: 0;
   top: 0;
   bottom: 0;
-  background-image: url('images/backgrounds/simple_plants.png');
+  /* background-image: url('images/backgrounds/simple_plants.png'); */
   /* background-image: url('images/backgrounds/bird.png'); */
   /* background-image: url('images/backgrounds/fishbowl_4k.png'); */
   /* background-image: url('images/backgrounds/kitchen_4k.png'); */
-  background-size: cover;
+  /* background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
+  background-repeat: no-repeat; */
   overflow: hidden;
+  /* background-color: #481c00; */
+  background-color: #4a2400;
+  background-image: url('images/plank_frame.png');
+  background-position: top left;
+  background-size: 50% 10%;
 `
 
 const InnerWrapper = styled.div`
@@ -136,26 +142,30 @@ const RightPlankBehind = styled.img`
 `
 
 const FullScreenVideo = styled.video`
-  object-fit: cover;
+  /* object-fit: cover;
   width: 100vw;
   height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
-`
+  z-index: -5; */
 
-// const LeftWall = styled.div`
-//   background-image: url('images/plank_frame.png');
-//   position: absolute;
-//   top: 0;
-//   bottom: 0;
-//   left: 0;
-//   width: 15vw;
-// `
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* right: 0;
+  bottom: 0; */
+  z-index: -5;
+
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+`
 
 const GameCanvas = () => {
   const canvasRef = useRef(null)
   const gameAreaRef = useRef(null)
+  const [isMobile] = useState(() => checkIsMobile())
 
   useEffect(() => {
     console.log('Mounting', Date.now())
@@ -171,14 +181,23 @@ const GameCanvas = () => {
 
   return (
     <GameContainer>
-      {/* <FullScreenVideo playsinline autoPlay muted loop>
-        <source src='images/water_bg_mpeg4_h264.mp4' type='video/mp4' />
-        Your browser does not support the video tag.
-      </FullScreenVideo> */}
+      {
+        isMobile && (
+          <FullScreenVideo playsinline autoPlay muted loop>
+            <source src='videos/1000_40fps_medium_8-5MB.mp4' type='video/mp4' />
+            Your browser does not support the video tag.
+          </FullScreenVideo>
+        )
+      }
       <InnerWrapper>
         <GameArea ref={gameAreaRef}>
           <CanvasAndFrameWrapper>
             <StyledCanvas id='gameCanvas' ref={canvasRef} width='500px' height='500px' />
+
+            <FullScreenVideo playsinline autoPlay muted loop>
+              <source src='videos/1000_40fps_medium_8-5MB.mp4' type='video/mp4' />
+              Your browser does not support the video tag.
+            </FullScreenVideo>
 
             <TopPlank src='images/plank_frame.png' />
             <BottomPlank src='images/plank_frame.png' />
