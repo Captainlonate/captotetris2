@@ -1,4 +1,6 @@
 import styled from 'styled-components'
+import islandBackgroundImage from '../../images/backgrounds/simple_plants.png'
+import plankFrameImage from '../../images/plank_frame.png'
 
 export const GameContainer = styled.div`
   position: fixed;
@@ -8,7 +10,7 @@ export const GameContainer = styled.div`
   bottom: 0;
   overflow: hidden;
   background-color: #4a2400;
-  background-image: url('images/plank_frame.png');
+  background-image: url(${plankFrameImage});
   background-position: top left;
   background-size: 50% 10%;
 `
@@ -43,7 +45,7 @@ export const GameCanvas = styled.canvas`
 
 export const CanvasAndFrameWrapper = styled.div`
   position: relative;
-  ${({ staticBG }) => staticBG && 'background-image: url("images/backgrounds/simple_plants.png");'}
+  ${({ staticBG }) => staticBG && 'background-image: url("' + islandBackgroundImage + '");'}
   ${({ staticBG }) => staticBG && 'background-position: left;'}
   ${({ staticBG }) => staticBG && 'background-size: cover;'}
   ${({ staticBG }) => staticBG && 'background-repeat: no-repeat;'}

@@ -101,6 +101,9 @@ class Block {
       this._blockImageName = BlockImages[this._blockType][this._color][this.imageMeta.animationState]
 
       this.imageMeta = Object.assign({}, BlockAnimationMeta[this._blockImageName])
+
+      // Start at a random frame in the animation
+      this.imageFrameIdx = Math.floor(Math.random() * this.imageMeta.numberOfFrames)
     }
   }
 

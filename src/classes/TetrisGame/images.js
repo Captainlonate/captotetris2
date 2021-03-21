@@ -1,3 +1,21 @@
+import greenBreakerIdleImage from '../../images/breakers/green_breaker_animation_idle.png'
+import blueBreakerIdleImage from '../../images/breakers/blue_breaker_3d_512.png'
+import yellowBreakerIdleImage from '../../images/breakers/yellow_breaker_3d_512.png'
+import redBreakerIdleImage from '../../images/breakers/red_breaker_animation_idle.png'
+
+import redBreakerRareImage from '../../images/breakers/red_breaker_animation_rare.png'
+
+import blueBlockImage from '../../images/blocks/blue_block_3d_512.png'
+import redBlockImage from '../../images/blocks/red_block_3d_512.png'
+import greenBlockImage from '../../images/blocks/green_block_3d_512.png'
+import yellowBlockImage from '../../images/blocks/yellow_block_3d_512.png'
+
+import blueGreyBlockImage from '../../images/blocks/blueGreyPiece.png'
+import redGreyBlockImage from '../../images/blocks/redGreyPiece.png'
+import greenGreyBlockImage from '../../images/blocks/greenGreyPiece.png'
+import yellowGreyBlockImage from '../../images/blocks/yellowGreyPiece.png'
+import cementBlockImage from '../../images/blocks/cementPiece.png'
+
 export const ImageKeys = {
   BlueBlock: 'BlueBlock',
   RedBlock: 'RedBlock',
@@ -19,23 +37,24 @@ export const ImageKeys = {
 }
 
 export const ImageLabelsToPaths = {
-  [ImageKeys.BlueBlock]: 'images/blocks/blue_block_3d_512.png',
-  [ImageKeys.RedBlock]: 'images/blocks/red_block_3d_512.png',
-  [ImageKeys.GreenBlock]: 'images/blocks/green_block_3d_512.png',
-  [ImageKeys.YellowBlock]: 'images/blocks/yellow_block_3d_512.png',
+  [ImageKeys.BlueBlock]: blueBlockImage,
+  [ImageKeys.RedBlock]: redBlockImage,
+  [ImageKeys.GreenBlock]: greenBlockImage,
+  [ImageKeys.YellowBlock]: yellowBlockImage,
   // AnimationState.IDLE
-  [ImageKeys.YellowBreaker]: 'images/breakers/yellow_breaker_3d_512.png',
-  [ImageKeys.BlueBreaker]: 'images/breakers/blue_breaker_3d_512.png',
-  [ImageKeys.GreenBreaker]: 'images/breakers/green_breaker_animation_idle.png',
-  [ImageKeys.RedBreaker]: 'images/breakers/red_breaker_animation_idle.png',
+  [ImageKeys.YellowBreaker]: yellowBreakerIdleImage,
+  [ImageKeys.BlueBreaker]: blueBreakerIdleImage,
+  [ImageKeys.GreenBreaker]: greenBreakerIdleImage,
+  // [ImageKeys.RedBreaker]: 'images/breakers/red_breaker_animation_idle.png',
+  [ImageKeys.RedBreaker]: redBreakerIdleImage,
   // AnimationState.RARE
-  [ImageKeys.RedBreakerRare]: 'images/breakers/red_breaker_animation_rare.png',
+  [ImageKeys.RedBreakerRare]: redBreakerRareImage,
 
-  [ImageKeys.BlueGreyBlock]: 'images/blueGreyPiece.png',
-  [ImageKeys.RedGreyBlock]: 'images/redGreyPiece.png',
-  [ImageKeys.GreenGreyBlock]: 'images/greenGreyPiece.png',
-  [ImageKeys.YellowGreyBlock]: 'images/yellowGreyPiece.png',
-  [ImageKeys.CementBlock]: 'images/cementPiece.png'
+  [ImageKeys.BlueGreyBlock]: blueGreyBlockImage,
+  [ImageKeys.RedGreyBlock]: redGreyBlockImage,
+  [ImageKeys.GreenGreyBlock]: greenGreyBlockImage,
+  [ImageKeys.YellowGreyBlock]: yellowGreyBlockImage,
+  [ImageKeys.CementBlock]: cementBlockImage
 }
 
 export const BlockAnimationMeta = {

@@ -1,10 +1,13 @@
+import tinkSound from '../../sounds/tink.wav'
+import successSound from '../../sounds/success.wav'
+
 const soundsMap = {
   tink: {
-    path: 'sounds/tink.wav',
+    path: tinkSound,
     volume: 0.12
   },
   success: {
-    path: 'sounds/success.wav',
+    path: successSound,
     volume: 0.1
   }
 }
