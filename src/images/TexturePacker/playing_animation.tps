@@ -174,55 +174,10 @@
             <false/>
         </struct>
         <key>individualSpriteSettings</key>
-        <map type="IndividualSpriteSettingsMap">
-            <key type="filename">../blender/PauseButton/playing_animation/0001.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0009.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0017.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0025.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0033.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0041.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0049.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0057.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0065.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0073.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0081.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0089.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0097.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0105.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0113.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0121.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0129.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0137.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0145.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0153.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0161.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0169.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0177.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0185.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0193.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0201.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0209.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0217.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0225.png</key>
-            <key type="filename">../blender/PauseButton/playing_animation/0233.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>128,128,256,256</rect>
-                <key>scale9Paddings</key>
-                <rect>128,128,256,256</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-        </map>
+        <map type="IndividualSpriteSettingsMap"/>
         <key>fileList</key>
         <array>
-            <filename>../blender/PauseButton/playing_animation</filename>
+            <filename>../blender/rendered_files/playing_renders</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

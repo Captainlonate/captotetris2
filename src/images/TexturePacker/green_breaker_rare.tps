@@ -34,7 +34,7 @@
         <key>dataFormat</key>
         <string>spritesheet-only</string>
         <key>textureFileName</key>
-        <filename>../../../public/images/breakers/green_breaker_animation_rare.png</filename>
+        <filename>../breakers/green_breaker_animation_rare.png</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrCompressionQuality</key>
@@ -177,7 +177,7 @@
         <map type="IndividualSpriteSettingsMap"/>
         <key>fileList</key>
         <array>
-            <filename>../../../public/images/breakers/green sword animation/rare</filename>
+            <filename>../blender/rendered_files/green_breaker_rare_renders</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

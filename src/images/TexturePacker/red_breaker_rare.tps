@@ -34,7 +34,7 @@
         <key>dataFormat</key>
         <string>spritesheet-only</string>
         <key>textureFileName</key>
-        <filename>../../../public/images/breakers/red_breaker_animation_rare.png</filename>
+        <filename>../breakers/red_breaker_animation_rare.png</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrCompressionQuality</key>
@@ -174,55 +174,10 @@
             <false/>
         </struct>
         <key>individualSpriteSettings</key>
-        <map type="IndividualSpriteSettingsMap">
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0001.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0009.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0017.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0025.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0033.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0041.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0049.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0057.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0065.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0073.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0081.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0089.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0097.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0105.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0113.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0121.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0129.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0137.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0145.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0153.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0161.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0169.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0177.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0185.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0193.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0201.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0209.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0217.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0225.png</key>
-            <key type="filename">../../../public/images/breakers/red sword animation/rare/0233.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>128,128,256,256</rect>
-                <key>scale9Paddings</key>
-                <rect>128,128,256,256</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-        </map>
+        <map type="IndividualSpriteSettingsMap"/>
         <key>fileList</key>
         <array>
-            <filename>../../../public/images/breakers/red sword animation/rare</filename>
+            <filename>../blender/rendered_files/red_breaker_rare_renders</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

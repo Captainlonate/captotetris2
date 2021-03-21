@@ -25,4 +25,4 @@ yarn-error.log*
 # generated files
 # blender_renders/paused_animation/*
 # blender_renders/playing_animation/*
-# *_renders/*
+**/*_renders/*

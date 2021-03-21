@@ -34,7 +34,7 @@
         <key>dataFormat</key>
         <string>spritesheet-only</string>
         <key>textureFileName</key>
-        <filename>../../../public/images/breakers/green_breaker_animation_idle.png</filename>
+        <filename>../breakers/green_breaker_animation_idle.png</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrCompressionQuality</key>
@@ -174,55 +174,10 @@
             <false/>
         </struct>
         <key>individualSpriteSettings</key>
-        <map type="IndividualSpriteSettingsMap">
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0001.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0009.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0017.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0025.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0033.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0041.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0049.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0057.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0065.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0073.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0081.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0089.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0097.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0105.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0113.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0121.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0129.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0137.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0145.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0153.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0161.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0169.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0177.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0185.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0193.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0201.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0209.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0217.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0225.png</key>
-            <key type="filename">../../../public/images/breakers/green sword animation/idle/0233.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>128,128,256,256</rect>
-                <key>scale9Paddings</key>
-                <rect>128,128,256,256</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-        </map>
+        <map type="IndividualSpriteSettingsMap"/>
         <key>fileList</key>
         <array>
-            <filename>../../../public/images/breakers/green sword animation/idle</filename>
+            <filename>../blender/rendered_files/green_breaker_idle_renders</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
