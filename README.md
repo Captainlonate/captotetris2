@@ -50,7 +50,6 @@ __Blocks:__
     * Design it
       * Need "Play" button, title, my name
   * Single Player
-    * Needs a Pause button
     * Should single player have configurable settings?
     * Would a button to neatly organized your chaotic board be fun?
       * What if you have to earn it by breaking so much first.

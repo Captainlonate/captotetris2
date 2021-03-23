@@ -7,6 +7,8 @@ import { removeDuplicateTuples } from '../../utils/tuples'
 import SoundManager from '../SoundManager'
 import sounds from '../SoundManager/sounds'
 import PauseButton from '../PauseButton'
+import GameStateManager from './GameStateManager'
+import InputManager from '../InputManager'
 
 // number of ms in a second
 const SECONDS = 1000
@@ -32,55 +34,40 @@ const getDefaultPositionsAndSizes = () => ({
   cellBorders: [] // 2d array filled with objects
 })
 
-const getEmptyState = () => ({
-  acceptsUserInput: false,
-  needToProcessTheBoard: false,
-  droppingBlocks: false,
-  pieceIsDropping: false,
-  gameIsOver: false,
-  gameIsPaused: false,
-  breakingBlocks: false
-})
-
 class TetrisGame {
   constructor ({ ctx }) {
     this.ctx = ctx
-
     // Holds all dimensions & positions
     this.dim = getDefaultPositionsAndSizes()
-
     // Holds game state
-    this.emptyState = getEmptyState()
-    this.gameState = Object.assign({}, this.emptyState)
-    this.gameStateToRestore = null
-    this.gameHasStarted = false
-
+    this.state = new GameStateManager()
     // Will be shown in the left sidebar's preview blocks
     this.nextBlock1 = this.makeRegularBlock()
     this.nextBlock2 = this.makeRegularBlock()
-
-    // Used with requestAnimationFrame
+    // Timers used with requestAnimationFrame
     this.timeSinceLastPieceDrop = 0
     this.timeSinceLastBlockFell = 0
     this.timeSinceLastBlockAnimation = 0
-    this.animateBlocks = true
     this.timeSinceLastRareAnimation = 0
     this.timeSinceLastPauseBtnAnimation = 0
-
+    this.timeUntilBlocksBreak = 0
+    this.animateBlocks = true
     // Animations
-    this.blockAnimationDuration = 3 * SECONDS
-    this.numberOfBlockFrames = 30
-    this.blockAnimationSpeed = Math.floor(this.blockAnimationDuration / this.numberOfBlockFrames)
-    this.minTimeRareAnimation = 5 * SECONDS
-    this.pauseButtonTimePerFrame = (4 * SECONDS) / 60
-
+    this.timePerBlockAnimation = Math.floor((3 * SECONDS) / 30)
+    this.timePerPauseAnimation = Math.floor((2 * SECONDS) / 30)
+    this.timePerRareAnimation = 5 * SECONDS
+    this.timePerPieceDrop = 1 * SECONDS
+    this.duratonToDrawBreakLines = 5 * SECONDS
+    this.timePerBlockFall = 50
     // Buttons
     this.pauseButton = new PauseButton()
+    //
+    this.cellsToBreakLater = null
+    this.cellsToDrawBorders = []
 
     this.onEndTurn = this.onEndTurn.bind(this)
     this.onCannotSpawn = this.onCannotSpawn.bind(this)
     this.onDoneDroppingBlocks = this.onDoneDroppingBlocks.bind(this)
-
     // Contains the board, allows access and mechanical functions
     this.boardManager = new BoardManager({
       numRows: this.dim.numRows,
@@ -89,28 +76,33 @@ class TetrisGame {
       onCannotSpawn: this.onCannotSpawn,
       onDoneDroppingBlocks: this.onDoneDroppingBlocks
     })
-
+    // Keyboard inputs
+    this.inputManager = new InputManager()
+    this.inputManager.on('up', () => this.boardManager.rotateTheActivePieceCCW())
+    this.inputManager.on('right', () => this.boardManager.rightTheActivePiece())
+    this.inputManager.on('down', () => this.boardManager.rotateTheActivePieceCW())
+    this.inputManager.on('left', () => this.boardManager.leftTheActivePiece())
+    this.inputManager.on('space', () => this.boardManager.dropTheActivePiece())
     // Facilitates sound and image loading
     this.soundManager = new SoundManager(sounds)
     this.imageManager = new ImageLoader({
       imagesToLoad: ImageLabelsToPaths,
-      onDone: () => {
-        this.allImagesAreLoaded()
-      }
+      onDone: () => this.allImagesAreLoaded()
     })
   }
 
   onEndTurn () {
     this.soundManager.play('tink')
-    this.setFlagsProcessingBoard()
+    this.state.setProcessingBoard()
   }
 
   onCannotSpawn () {
-    this.setFlagsProcessingBoard()
+    console.log('cannot spawnnnn')
+    this.state.setProcessingBoard()
   }
 
   onDoneDroppingBlocks () {
-    this.setFlagsProcessingBoard()
+    this.state.setProcessingBoard()
   }
 
   allImagesAreLoaded () {
@@ -119,11 +111,11 @@ class TetrisGame {
   }
 
   startTheGame () {
-    this.gameHasStarted = true
+    this.state.hasStarted = true
     // this.boardManager.spawnNewActivePiece(this.makeRegularBlock(), this.makeRegularBlock())
     // TODO: Delete
     this.boardManager.spawnNewActivePiece(new Block({ blockType: 'BREAKER', color: 'GREEN' }), this.makeRegularBlock())
-    this.setFlagsControllingPiece()
+    this.state.setControllingPiece()
     if (!document.hasFocus()) {
       console.log('The game begins paused, document does not have focus.')
       this.pauseTheGame()
@@ -131,40 +123,47 @@ class TetrisGame {
   }
 
   update (deltaTime) {
-    if (this.gameHasStarted) {
-      if (!this.gameState.gameIsPaused) {
-        if (this.gameState.needToProcessTheBoard) {
+    if (this.state.hasStarted) {
+      if (!this.state.gameIsPaused) {
+        if (this.state.needToProcessTheBoard) {
           // Need To Process the board
-          console.log('Telling it to process the board')
           this.processTheBoardGetNewState()
-        } else if (this.gameState.pieceIsDropping) {
+        } else if (this.state.pieceIsDropping) {
           // Need to drop the user's active piece
           this.timeSinceLastPieceDrop += deltaTime
-          if (this.timeSinceLastPieceDrop > 1000) {
+          if (this.timeSinceLastPieceDrop > this.timePerPieceDrop) {
             this.timeSinceLastPieceDrop = 0
             this.boardManager.dropTheActivePiece()
           }
-        } else if (this.gameState.droppingBlocks) {
+        } else if (this.state.droppingBlocks) {
           // Need to drop blocks with spaces beneath them
           this.timeSinceLastBlockFell += deltaTime
-          if (this.timeSinceLastBlockFell > 100) {
-            this.timeSinceLastPieceDrop = 0
+          if (this.timeSinceLastBlockFell > this.timePerBlockFall) {
+            this.timeSinceLastBlockFell = 0
             this.boardManager.dropBlocksWithSpacesBeneath()
+          }
+        } else if (this.state.breakingBlocks) {
+          //
+          this.timeUntilBlocksBreak += deltaTime
+          if (this.timeUntilBlocksBreak > this.duratonToDrawBreakLines) {
+            this.timeUntilBlocksBreak = 0
+            console.log('Break Now!')
+            this.timeToBreakTheBlocks()
           }
         }
 
-        // Animations
+        // Block Animations
         if (this.animateBlocks) {
-          // Normal animation progression
+          // Idle
           this.timeSinceLastBlockAnimation += deltaTime
-          if (this.timeSinceLastBlockAnimation > this.blockAnimationSpeed) {
+          if (this.timeSinceLastBlockAnimation > this.timePerBlockAnimation) {
             this.timeSinceLastBlockAnimation = 0
             this.boardManager.updateBlockAnimations()
           }
 
-          // Rare Animations
+          // Rare
           this.timeSinceLastRareAnimation += deltaTime
-          if (this.timeSinceLastRareAnimation > this.minTimeRareAnimation) {
+          if (this.timeSinceLastRareAnimation > this.timePerRareAnimation) {
             this.timeSinceLastRareAnimation = 0
             this.boardManager.tryToPlayRareAnimation()
           }
@@ -173,7 +172,7 @@ class TetrisGame {
 
       // Pause/Play Button Animation
       this.timeSinceLastPauseBtnAnimation += deltaTime
-      if (this.timeSinceLastPauseBtnAnimation > this.pauseButtonTimePerFrame) {
+      if (this.timeSinceLastPauseBtnAnimation > this.timePerPauseAnimation) {
         this.timeSinceLastPauseBtnAnimation = 0
         this.pauseButton.updateFrame()
       }
@@ -250,15 +249,10 @@ class TetrisGame {
     // Draw Cell Borders
     this.ctx.lineWidth = 4
     this.ctx.strokeStyle = '#75cfff'
-    const cellsWithBorders = [
-      { row: 4, col: 5, sides: ['top', 'left', 'right'] },
-      { row: 5, col: 5, sides: ['left', 'right'] },
-      { row: 5, col: 5, sides: ['bottom', 'left', 'right'] }
-    ]
 
-    if (cellsWithBorders.length > 0) {
+    if (this.cellsToDrawBorders.length > 0) {
       this.ctx.beginPath()
-      for (const { row, col, sides } of cellsWithBorders) {
+      for (const { row, col, sides } of this.cellsToDrawBorders) {
         this.drawBorder(row, col, sides)
       }
       this.ctx.stroke()
@@ -273,32 +267,21 @@ class TetrisGame {
     }
   }
 
-  cellLeftBorderDimensions (row, col) {
+  // For a given cell's (row, col), compute the coordinates
+  // necessary to stroke() each of the 4 borders
+  // Each of the 4 sides returns [startX, startY, endX, endY]
+  getCellDimensions (row, col) {
     const { blockWidth, blockHeight } = this.dim
-    const x = col * blockWidth
-    const y = row * blockHeight
-    return [x, y - 1, x, y + blockHeight + 1]
-  }
-
-  cellTopBorderDimensions (row, col) {
-    const { blockWidth, blockHeight } = this.dim
-    const x = col * blockWidth
-    const y = row * blockHeight
-    return [x - 1, y, x + blockWidth + 1, y]
-  }
-
-  cellBottomBorderDimensions (row, col) {
-    const { blockWidth, blockHeight } = this.dim
-    const x = (col * blockWidth) + blockWidth
-    const y = (row * blockHeight) + blockHeight
-    return [x + 1, y, x - blockWidth - 1, y]
-  }
-
-  cellRightBorderDimensions (row, col) {
-    const { blockWidth, blockHeight } = this.dim
-    const x = (col * blockWidth) + blockWidth
-    const y = (row * blockHeight) + blockHeight
-    return [x, y + 1, x, y - blockHeight - 1]
+    const topLeftX = (col * blockWidth) + this.leftSidebarWidth
+    const topLeftY = row * blockHeight
+    const bottomRightX = ((col * blockWidth) + blockWidth) + this.leftSidebarWidth
+    const bottomRightY = (row * blockHeight) + blockHeight
+    return {
+      top: [topLeftX - 1, topLeftY, topLeftX + blockWidth + 1, topLeftY],
+      right: [bottomRightX, bottomRightY + 1, bottomRightX, bottomRightY - blockHeight - 1],
+      bottom: [bottomRightX + 1, bottomRightY, bottomRightX - blockWidth - 1, bottomRightY],
+      left: [topLeftX, topLeftY - 1, topLeftX, topLeftY + blockHeight + 1]
+    }
   }
 
   drawPaused () {
@@ -311,10 +294,10 @@ class TetrisGame {
   }
 
   draw () {
-    if (this.gameHasStarted) {
+    if (this.state.hasStarted) {
       this.drawLeftSidebar()
       this.drawBoard()
-      if (this.gameState.gameIsPaused) {
+      if (this.state.gameIsPaused) {
         this.drawPaused()
       }
     }
@@ -338,7 +321,7 @@ class TetrisGame {
   }
 
   recalculateSidebar () {
-    // Next text
+    // "Next" text
     this.dim.sidebarNextOffsetY = Math.floor(this.dim.blockHeight)
     // Preview Blocks Offsets
     this.dim.sidebarBlockOffsetX = Math.floor(this.dim.leftSidebarWidth * 0.25)
@@ -348,7 +331,7 @@ class TetrisGame {
     this.dim.sidebarBlockOneDims = [this.dim.sidebarBlockOffsetX, this.dim.sidebarBlockOffsetY, this.dim.blockWidth, this.dim.blockHeight]
     const sidebarBlockTwoY = this.dim.sidebarBlockOffsetY + this.dim.blockHeight + this.dim.sidebarBlockGapY
     this.dim.sidebarBlockTwoDims = [this.dim.sidebarBlockOffsetX, sidebarBlockTwoY, this.dim.blockWidth, this.dim.blockHeight]
-    // Pause button
+    // Where the pause button should be drawn
     this.dim.pauseButtonDims = [this.dim.sidebarBlockOffsetX, this.dim.canvasHeight - 2 * this.dim.blockHeight, this.dim.blockWidth, this.dim.blockHeight]
   }
 
@@ -358,22 +341,19 @@ class TetrisGame {
 
     for (let row = 0; row < numRows; row++) {
       for (let col = 0; col < numCols; col++) {
-        this.dim.cellBorders[row][col] = this.dim.cellBorders[row][col] || {}
-        this.dim.cellBorders[row][col].top = this.cellTopBorderDimensions(row, col)
-        this.dim.cellBorders[row][col].right = this.cellRightBorderDimensions(row, col)
-        this.dim.cellBorders[row][col].bottom = this.cellBottomBorderDimensions(row, col)
-        this.dim.cellBorders[row][col].left = this.cellLeftBorderDimensions(row, col)
+        this.dim.cellBorders[row][col] = this.getCellDimensions(row, col)
       }
     }
   }
 
   handleGameIsOver (isWin) {
-    this.setFlagsGameIsOver()
+    this.state.setGameIsOver()
     const msg = isWin ? 'You won!' : 'You lost!'
     console.info(msg)
   }
 
   processTheBoardGetNewState () {
+    console.log('processing.....')
     const blocksThatCanDrop = this.checkBoardForBlocksThatCanDrop()
     const thereAreBlocksToDrop = blocksThatCanDrop.length > 0
 
@@ -382,20 +362,54 @@ class TetrisGame {
 
     if (thereAreBlocksToDrop) {
       this.boardManager.setBlocksThatNeedToFall(blocksThatCanDrop)
-      this.setFlagsDroppingBlocks()
+      this.state.setDroppingBlocks()
     } else if (thereAreBlocksToBreak) {
-      this.boardManager.breakBlocks(blocksToBreak)
-      this.soundManager.play('success')
-      this.setFlagsProcessingBoard()
+      // draw the lines
+      console.log('drawing the lines')
+      // store the cells to break later
+      this.cellsToBreakLater = blocksToBreak
+      this.cellsToDrawBorders = this.processOutlineBorders(blocksToBreak)
+      console.log('storing', this.cellsToDrawBorders)
+      // set the state
+      this.state.setBreakingBlocks()
     } else if (!this.boardManager.canSpawnNewPiece()) {
-      this.setFlagsGameIsOver()
+      this.handleGameIsOver()
     } else {
       this.boardManager.setBlocksThatNeedToFall([])
       this.boardManager.spawnNewActivePiece(this.nextBlock1, this.nextBlock2)
       this.nextBlock1 = this.makeRegularBlock()
       this.nextBlock2 = this.makeRegularBlock()
-      this.setFlagsControllingPiece()
+      this.state.setControllingPiece()
     }
+  }
+
+  processOutlineBorders (setsOfBreaks) {
+    const borderedCells = []
+
+    for (const coloredSet of setsOfBreaks) {
+      for (const [row, col] of coloredSet) {
+        const borderTop = coloredSet.find(([r, c]) => r === row - 1 && c === col)
+        const borderRight = coloredSet.find(([r, c]) => r === row && c === col + 1)
+        const borderBottom = coloredSet.find(([r, c]) => r === row + 1 && c === col)
+        const borderLeft = coloredSet.find(([r, c]) => r === row && c === col - 1)
+
+        const cell = {
+          row,
+          col,
+          sides: [
+            ...(borderTop ? ['top'] : []),
+            ...(borderRight ? ['right'] : []),
+            ...(borderBottom ? ['bottom'] : []),
+            ...(borderLeft ? ['left'] : [])
+          ]
+        }
+        if (cell.sides.length) {
+          borderedCells.push(cell)
+        }
+      }
+    }
+
+    return borderedCells
   }
 
   /*
@@ -431,37 +445,6 @@ class TetrisGame {
     return removeDuplicateTuples(blocksThatCanDrop)
   }
 
-  updateGameState (newState) {
-    this.gameState = Object.assign({}, this.emptyState, newState)
-  }
-
-  setFlagsControllingPiece () {
-    this.updateGameState({
-      acceptsUserInput: true,
-      pieceIsDropping: true
-    })
-  }
-
-  setFlagsProcessingBoard () {
-    this.updateGameState({ needToProcessTheBoard: true })
-  }
-
-  setFlagsDroppingBlocks () {
-    this.updateGameState({ droppingBlocks: true })
-  }
-
-  setFlagsGameIsOver () {
-    this.updateGameState({ gameIsOver: true })
-  }
-
-  setFlagsPauseGame () {
-    this.updateGameState({ gameIsPaused: true })
-  }
-
-  setFlagsBreakingBlocks () {
-    this.updateGameState({ breakingBlocks: true })
-  }
-
   /*
     This will produce a block whose type has a small chance to
     be a "Breaker", but is otherwise just a "Normal" block
@@ -470,31 +453,18 @@ class TetrisGame {
     return new Block({ blockType: chanceToGetBreaker() })
   }
 
+  timeToBreakTheBlocks () {
+    console.log('Breaking...', this.cellsToBreakLater)
+    // Stop drawing
+    this.boardManager.breakBlocks(this.cellsToBreakLater)
+    this.soundManager.play('success')
+    this.cellsToBreakLater = null
+    this.state.setProcessingBoard()
+  }
+
   onKeyPressed (keyCode) {
-    if (this.gameState.acceptsUserInput && this.boardManager.hasActivePiece()) {
-      switch (keyCode) {
-        case 87: // W
-        case 38: // Up Arrow
-          this.boardManager.rotateTheActivePieceCCW()
-          break
-        case 83: // S
-        case 40: // D Arrow
-          this.boardManager.rotateTheActivePieceCW()
-          break
-        case 65: // A
-        case 37: // L Arrow
-          this.boardManager.leftTheActivePiece()
-          break
-        case 32: // SpaceBar
-          this.boardManager.dropTheActivePiece()
-          break
-        case 68: // D
-        case 39: // R Arrow
-          this.boardManager.rightTheActivePiece()
-          break
-        default:
-          break
-      }
+    if (this.state.acceptsUserInput && this.boardManager.hasActivePiece()) {
+      this.inputManager.handleKeyUp(keyCode)
     }
   }
 
@@ -502,45 +472,47 @@ class TetrisGame {
     // this.unpauseTheGame()
   }
 
+  // When the user clicks away from this browser tab
   onTabBlurred () {
     this.pauseTheGame()
   }
 
-  unpauseTheGame () {
-    if (this.gameStateToRestore !== null) {
-      console.log('Unpausing')
-      this.gameState = Object.assign({}, this.gameStateToRestore)
-      this.gameStateToRestore = null
-      this.pauseButton.playingAnimation()
+  // All clicks on the canvas will be first routed here
+  onClick ({ x, y }) {
+    if (this.checkIfPauseButtonClicked(x, y)) {
+      this.handlePauseButtonClicked()
     }
+  }
+
+  unpauseTheGame () {
+    console.log('Unpausing')
+    this.state.restoreStashedState()
+    this.pauseButton.doPlayingAnimation()
   }
 
   pauseTheGame () {
-    if (!this.gameState.gameIsPaused) {
-      console.log('Pausing')
-      this.gameStateToRestore = Object.assign({}, this.gameState)
-      this.setFlagsPauseGame()
-      this.pauseButton.pausedAnimation()
+    console.log('Pausing')
+    if (!this.state.gameIsPaused) {
+      this.state.stashCurrentState()
+      this.state.setPauseGame()
+      this.pauseButton.doPausedAnimation()
     }
   }
 
-  onPauseButtonClicked () {
-    if (this.gameState.gameIsPaused) {
+  handlePauseButtonClicked () {
+    if (this.state.gameIsPaused) {
       this.unpauseTheGame()
     } else {
       this.pauseTheGame()
     }
   }
 
-  onClick ({ x, y }) {
+  checkIfPauseButtonClicked (clickX, clickY) {
     const [btnX, btnY, btnWidth, btnHeight] = this.dim.pauseButtonDims
-    const pauseButtonWasClicked = (
-      x >= btnX && y >= btnY &&
-      x <= (btnX + btnWidth) && y <= (btnY + btnHeight)
+    return (
+      clickX >= btnX && clickY >= btnY &&
+      clickX <= (btnX + btnWidth) && clickY <= (btnY + btnHeight)
     )
-    if (pauseButtonWasClicked) {
-      this.onPauseButtonClicked()
-    }
   }
 }
 

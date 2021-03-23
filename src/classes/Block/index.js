@@ -93,7 +93,6 @@ class Block {
     if (isValidBlockType(newBlockType)) {
       const blockTypeInfo = BlockTypesInfo[newBlockType]
 
-      this.imageMeta = Object.assign({}, BlockAnimationMeta[this._blockImageName])
       this.animationState = AnimationState.IDLE
 
       this._blockType = newBlockType
@@ -101,6 +100,8 @@ class Block {
       this._isBreaker = blockTypeInfo.isBreaker
       this._isStone = blockTypeInfo.isStone
       this._blockImageName = BlockImages[this._blockType][this._color][this.animationState]
+
+      this.imageMeta = Object.assign({}, BlockAnimationMeta[this._blockImageName])
 
       // Start at a random frame in the animation
       this.imageFrameIdx = Math.floor(Math.random() * this.imageMeta.numberOfFrames)

@@ -19,11 +19,11 @@ class PauseButton {
     return [this.frameXCoord, this.frameYCoord]
   }
 
-  playingAnimation () {
+  doPlayingAnimation () {
     this._imageName = ImageKeys.PauseButtonPlaying
   }
 
-  pausedAnimation () {
+  doPausedAnimation () {
     this._imageName = ImageKeys.PauseButtonPaused
   }
 

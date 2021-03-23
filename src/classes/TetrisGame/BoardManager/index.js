@@ -12,6 +12,7 @@ class BoardManager {
 
     // 2d array of cells. Each cell is either null or a Block()
     this.board = this.resetBoard(this.numRows, this.numCols)
+    window.theBoard = this.board
 
     this.activeBlock1 = null
     this.activeBlock2 = null
