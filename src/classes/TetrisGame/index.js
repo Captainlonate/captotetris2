@@ -57,7 +57,7 @@ class TetrisGame {
     this.timePerPauseAnimation = Math.floor((2 * SECONDS) / 30)
     this.timePerRareAnimation = 5 * SECONDS
     this.timePerPieceDrop = 1 * SECONDS
-    this.duratonToDrawBreakLines = 5 * SECONDS
+    this.durationToDrawBreakLines = 1.5 * SECONDS
     this.timePerBlockFall = 50
     // Buttons
     this.pauseButton = new PauseButton()
@@ -97,7 +97,6 @@ class TetrisGame {
   }
 
   onCannotSpawn () {
-    console.log('cannot spawnnnn')
     this.state.setProcessingBoard()
   }
 
@@ -143,11 +142,10 @@ class TetrisGame {
             this.boardManager.dropBlocksWithSpacesBeneath()
           }
         } else if (this.state.breakingBlocks) {
-          //
+          // If there are blocks to break (now or after the lines are drawn)
           this.timeUntilBlocksBreak += deltaTime
-          if (this.timeUntilBlocksBreak > this.duratonToDrawBreakLines) {
+          if (this.timeUntilBlocksBreak > this.durationToDrawBreakLines) {
             this.timeUntilBlocksBreak = 0
-            console.log('Break Now!')
             this.timeToBreakTheBlocks()
           }
         }
@@ -261,7 +259,9 @@ class TetrisGame {
 
   drawBorder (row, col, sides) {
     for (const side of sides) {
-      const [x, y, endX, endY] = this.dim.cellBorders[row][col][side]
+      // Because 2 rows are not drawn on the canvas, 2 must be subtracted
+      // from the real row of the blocks, when calculating the y coordinates
+      const [x, y, endX, endY] = this.dim.cellBorders[row - 2][col][side]
       this.ctx.moveTo(x, y)
       this.ctx.lineTo(endX, endY)
     }
@@ -271,10 +271,10 @@ class TetrisGame {
   // necessary to stroke() each of the 4 borders
   // Each of the 4 sides returns [startX, startY, endX, endY]
   getCellDimensions (row, col) {
-    const { blockWidth, blockHeight } = this.dim
-    const topLeftX = (col * blockWidth) + this.leftSidebarWidth
+    const { blockWidth, blockHeight, leftSidebarWidth } = this.dim
+    const topLeftX = (col * blockWidth) + leftSidebarWidth
     const topLeftY = row * blockHeight
-    const bottomRightX = ((col * blockWidth) + blockWidth) + this.leftSidebarWidth
+    const bottomRightX = ((col * blockWidth) + blockWidth) + leftSidebarWidth
     const bottomRightY = (row * blockHeight) + blockHeight
     return {
       top: [topLeftX - 1, topLeftY, topLeftX + blockWidth + 1, topLeftY],
@@ -353,7 +353,6 @@ class TetrisGame {
   }
 
   processTheBoardGetNewState () {
-    console.log('processing.....')
     const blocksThatCanDrop = this.checkBoardForBlocksThatCanDrop()
     const thereAreBlocksToDrop = blocksThatCanDrop.length > 0
 
@@ -364,13 +363,10 @@ class TetrisGame {
       this.boardManager.setBlocksThatNeedToFall(blocksThatCanDrop)
       this.state.setDroppingBlocks()
     } else if (thereAreBlocksToBreak) {
-      // draw the lines
-      console.log('drawing the lines')
       // store the cells to break later
       this.cellsToBreakLater = blocksToBreak
+      // Determine which sides of each block must be bordered
       this.cellsToDrawBorders = this.processOutlineBorders(blocksToBreak)
-      console.log('storing', this.cellsToDrawBorders)
-      // set the state
       this.state.setBreakingBlocks()
     } else if (!this.boardManager.canSpawnNewPiece()) {
       this.handleGameIsOver()
@@ -388,10 +384,10 @@ class TetrisGame {
 
     for (const coloredSet of setsOfBreaks) {
       for (const [row, col] of coloredSet) {
-        const borderTop = coloredSet.find(([r, c]) => r === row - 1 && c === col)
-        const borderRight = coloredSet.find(([r, c]) => r === row && c === col + 1)
-        const borderBottom = coloredSet.find(([r, c]) => r === row + 1 && c === col)
-        const borderLeft = coloredSet.find(([r, c]) => r === row && c === col - 1)
+        const borderTop = !coloredSet.find(([r, c]) => r === row - 1 && c === col)
+        const borderRight = !coloredSet.find(([r, c]) => r === row && c === col + 1)
+        const borderBottom = !coloredSet.find(([r, c]) => r === row + 1 && c === col)
+        const borderLeft = !coloredSet.find(([r, c]) => r === row && c === col - 1)
 
         const cell = {
           row,
@@ -454,11 +450,10 @@ class TetrisGame {
   }
 
   timeToBreakTheBlocks () {
-    console.log('Breaking...', this.cellsToBreakLater)
-    // Stop drawing
     this.boardManager.breakBlocks(this.cellsToBreakLater)
     this.soundManager.play('success')
     this.cellsToBreakLater = null
+    this.cellsToDrawBorders = []
     this.state.setProcessingBoard()
   }
 
