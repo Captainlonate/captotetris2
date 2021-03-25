@@ -13,7 +13,9 @@ class GameStateManager {
       pieceIsDropping: false,
       gameIsOver: false,
       gameIsPaused: false,
-      breakingBlocks: false
+      // breakingBlocks: false, // TODO: Remove
+      borderingBlocks: false,
+      shatteringBlocks: false
     }
   }
 
@@ -45,8 +47,16 @@ class GameStateManager {
     return this._state.gameIsPaused
   }
 
-  get breakingBlocks () {
-    return this._state.breakingBlocks
+  // get breakingBlocks () {
+  //   return this._state.breakingBlocks
+  // }
+
+  get borderingBlocks () {
+    return this._state.borderingBlocks
+  }
+
+  get shatteringBlocks () {
+    return this._state.shatteringBlocks
   }
 
   updateGameState (newState) {
@@ -73,8 +83,16 @@ class GameStateManager {
     this.updateGameState({ gameIsPaused: true })
   }
 
-  setBreakingBlocks () {
-    this.updateGameState({ breakingBlocks: true })
+  // setBreakingBlocks () {
+  //   this.updateGameState({ breakingBlocks: true })
+  // }
+
+  setBorderingBlocks () {
+    this.updateGameState({ borderingBlocks: true })
+  }
+
+  setShatteringBlocks () {
+    this.updateGameState({ shatteringBlocks: true })
   }
 
   set hasStarted (isStarted) {

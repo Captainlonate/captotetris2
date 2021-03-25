@@ -5,6 +5,8 @@ import { BlockImageSize, BlockAnimationMeta } from '../TetrisGame/images'
 
 class Block {
   constructor ({ blockType = BlockTypes.NORMAL, color } = {}) {
+    this._blockImageName = null
+
     this._color = color || getRandomBlockColor()
     // Image & Animation
     this.imageMeta = { numberOfFrames: 1, framesPerColumn: 1, numberOfRows: 1 }

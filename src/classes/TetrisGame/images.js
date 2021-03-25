@@ -16,6 +16,8 @@ import greenGreyBlockImage from '../../images/blocks/greenGreyPiece.png'
 import yellowGreyBlockImage from '../../images/blocks/yellowGreyPiece.png'
 import cementBlockImage from '../../images/blocks/cementPiece.png'
 
+import yellowBlockShatterImage from '../../images/blocks/yellow_block_shatter.png'
+
 import pauseBtnPlayingImage from '../../images/buttons/pause_btn_playing_animation.png'
 import pauseBtnPausedImage from '../../images/buttons/pause_btn_paused_animation.png'
 
@@ -24,6 +26,9 @@ export const ImageKeys = {
   RedBlock: 'RedBlock',
   GreenBlock: 'GreenBlock',
   YellowBlock: 'YellowBlock',
+
+  YellowBlockShatter: 'YellowBlockShatter',
+
   // AnimationState.IDLE
   YellowBreaker: 'YellowBreaker',
   BlueBreaker: 'BlueBreaker',
@@ -47,6 +52,9 @@ export const ImageLabelsToPaths = {
   [ImageKeys.RedBlock]: redBlockImage,
   [ImageKeys.GreenBlock]: greenBlockImage,
   [ImageKeys.YellowBlock]: yellowBlockImage,
+
+  [ImageKeys.YellowBlockShatter]: yellowBlockShatterImage,
+
   // AnimationState.IDLE
   [ImageKeys.YellowBreaker]: yellowBreakerIdleImage,
   [ImageKeys.BlueBreaker]: blueBreakerIdleImage,
@@ -71,6 +79,9 @@ export const BlockAnimationMeta = {
   [ImageKeys.RedBlock]: { numberOfFrames: 1, framesPerColumn: 1, numberOfRows: 1 },
   [ImageKeys.GreenBlock]: { numberOfFrames: 1, framesPerColumn: 1, numberOfRows: 1 },
   [ImageKeys.YellowBlock]: { numberOfFrames: 1, framesPerColumn: 1, numberOfRows: 1 },
+
+  [ImageKeys.YellowBlockShatter]: { numberOfFrames: 30, framesPerColumn: 8, numberOfRows: 4 },
+
   // AnimationState.IDLE
   [ImageKeys.GreenBreaker]: { numberOfFrames: 30, framesPerColumn: 8, numberOfRows: 4 },
   [ImageKeys.YellowBreaker]: { numberOfFrames: 1, framesPerColumn: 1, numberOfRows: 1 },
@@ -88,6 +99,8 @@ export const BlockAnimationMeta = {
 
 // Applies to both Playing and Paused animation sheets
 export const PauseButtonAnimationMeta = { numberOfFrames: 30, framesPerColumn: 8, numberOfRows: 4, frameSize: 512 }
+
+export const ShatterAnimationMeta = { numberOfFrames: 30, framesPerColumn: 8, numberOfRows: 4, frameSize: 512 }
 
 // Within each sprite sheet, each animation frame will be
 // this width and height:

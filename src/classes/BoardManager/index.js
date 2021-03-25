@@ -1,6 +1,6 @@
-import { sortTuplesDesc } from '../../../utils/tuples'
-import Block from '../../Block'
-import { twentyPercentChance } from '../../../utils/random'
+import { sortTuplesDesc } from '../../utils/tuples'
+import Block from '../Block'
+import { twentyPercentChance } from '../../utils/random'
 
 class BoardManager {
   constructor ({ numRows, numCols, onEndTurn, onCannotSpawn, onDoneDroppingBlocks }) {
