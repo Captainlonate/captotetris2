@@ -1,3 +1,5 @@
+import TetrisGame from "../TetrisGame"
+
 class GameLoop {
   constructor (canvasRef, boundingRef) {
     this.canvasEl = canvasRef.current
@@ -71,12 +73,11 @@ class GameLoop {
   onWindowResize = () => {
     const { height: gameAreaHeight } = this.gameArea.getBoundingClientRect()
 
-    const maxBlockHeight = Math.floor(gameAreaHeight / 13)
-    const maxBlockWidth = maxBlockHeight
+    const maxBlockSize = Math.floor(gameAreaHeight / (TetrisGame.NUMROWS - 2))
 
-    const leftSidebarWidth = maxBlockWidth * 2
-    const boardWidth = maxBlockWidth * 7
-    const newCanvasHeight = maxBlockHeight * 13
+    const leftSidebarWidth = maxBlockSize * 2
+    const boardWidth = maxBlockSize * TetrisGame.NUMCOLS
+    const newCanvasHeight = maxBlockSize * (TetrisGame.NUMROWS - 2)
     const newCanvasWidth = boardWidth + leftSidebarWidth
 
     this.canvasWidth = newCanvasWidth

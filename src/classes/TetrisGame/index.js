@@ -15,6 +15,9 @@ import Timer, { SECONDS } from './Timer'
 import { BLOCKCOLORHEX } from '../Block/blockColors'
 
 class TetrisGame {
+  static NUMROWS = 15
+  static NUMCOLS = 7
+
   constructor ({ ctx }) {
     this.ctx = ctx
     // Initialized and holds all dimensions & positions
@@ -33,14 +36,14 @@ class TetrisGame {
     this.shatterAnimations = []
     // Contains the board, allows access and mechanical functions
     this.boardManager = new BoardManager({
-      numRows: this.dim.numRows,
-      numCols: this.dim.numCols,
+      numRows: TetrisGame.NUMROWS,
+      numCols: TetrisGame.NUMCOLS,
       onEndTurn: this.onEndTurn,
       onCannotSpawn: this.onCannotSpawn,
       onDoneDroppingBlocks: this.onDoneDroppingBlocks
     })
     // Handles drawing borders around cells
-    this.borders = new BorderManager({ numRows: this.dim.numRows, numCols: this.dim.numCols })
+    this.borders = new BorderManager({ numRows: TetrisGame.NUMROWS, numCols: TetrisGame.NUMCOLS })
     // Keyboard inputs are passed to inputManager to fire translated events ('up', 'down', etc)
     this.inputManager = new InputManager()
     this.registerInputHandlers()
@@ -82,8 +85,6 @@ class TetrisGame {
       sidebarBlockOneDims: [0, 0, 0, 0],
       sidebarBlockTwoDims: [0, 0, 0, 0],
       pauseButtonDims: [0, 0, 0, 0],
-      numRows: 15, // 2 are hidden
-      numCols: 7,
       shatterAnimationSize: 0,
       shatterAnimationOffset: 0
     }
@@ -265,8 +266,8 @@ class TetrisGame {
       shatterAnimationSize
     } = this.dim
 
-    for (let rowIdx = 2; rowIdx < this.dim.numRows; rowIdx++) {
-      for (let colIdx = 0; colIdx < this.dim.numCols; colIdx++) {
+    for (let rowIdx = 2; rowIdx < TetrisGame.NUMROWS; rowIdx++) {
+      for (let colIdx = 0; colIdx < TetrisGame.NUMCOLS; colIdx++) {
         const blockToDraw = this.boardManager.getCell(rowIdx, colIdx)
         if (blockToDraw) {
           x = leftSidebarWidth + (colIdx * blockWidth)
@@ -343,8 +344,8 @@ class TetrisGame {
   }
 
   recalculateBlockSize () {
-    this.dim.blockWidth = Math.floor(this.dim.boardWidth / this.dim.numCols)
-    this.dim.blockHeight = Math.floor(this.dim.canvasHeight / (this.dim.numRows - 2))
+    this.dim.blockWidth = Math.floor(this.dim.boardWidth / TetrisGame.NUMCOLS)
+    this.dim.blockHeight = Math.floor(this.dim.canvasHeight / (TetrisGame.NUMROWS - 2))
     this.dim.blockSrcDimensions = [BlockImageSize, BlockImageSize]
     this.dim.blockTargetSize = [this.dim.blockWidth, this.dim.blockHeight]
     this.dim.shatterAnimationSize = this.dim.blockWidth * 2
@@ -386,7 +387,6 @@ class TetrisGame {
       this.state.setDroppingBlocks()
     } else if (thereAreBlocksToBreak) {
       this.cellsToBreakLater = blocksToBreak
-      console.log(blocksToBreak)
       this.borders.setCellsToBeBordered(blocksToBreak)
       this.state.setBorderingBlocks()
     } else if (!this.boardManager.canSpawnNewPiece()) {
@@ -412,8 +412,8 @@ class TetrisGame {
     let cellAboveThisCellIsNotEmpty = null
     const blocksThatCanDrop = []
 
-    for (let rowIdx = this.dim.numRows - 1; rowIdx >= 2; rowIdx--) {
-      for (let colIdx = 0; colIdx < this.dim.numCols; colIdx++) {
+    for (let rowIdx = TetrisGame.NUMROWS - 1; rowIdx >= 2; rowIdx--) {
+      for (let colIdx = 0; colIdx < TetrisGame.NUMCOLS; colIdx++) {
         thisCellIsEmpty = this.boardManager.isCellAvailable(rowIdx, colIdx)
         cellAboveThisCellIsNotEmpty = !this.boardManager.isCellAvailable(rowIdx - 1, colIdx)
         if (thisCellIsEmpty && cellAboveThisCellIsNotEmpty) {
