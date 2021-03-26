@@ -1,4 +1,5 @@
-import { ImageKeys, ShatterAnimationMeta } from '../TetrisGame/images'
+import { ShatterAnimationMeta } from '../TetrisGame/images'
+import { BlockColorToShatterImage } from '../Block/blockImages'
 
 class ShatterAnimation {
   constructor ({ color, row, col }) {
@@ -9,7 +10,7 @@ class ShatterAnimation {
     this._frameIndex = 0
     this._frameXCoord = 0
     this._frameYCoord = 0
-    this._imageName = ImageKeys.YellowBlockShatter
+    this._imageName = BlockColorToShatterImage[color]
 
     this.updateImageCoordinates(this._frameIndex)
   }

@@ -34,3 +34,10 @@ export const BlockImages = {
     [BlockColors.YELLOW]: { [AnimationState.IDLE]: ImageKeys.YellowBreaker, [AnimationState.RARE]: ImageKeys.YellowBreaker }
   }
 }
+
+export const BlockColorToShatterImage = {
+  [BlockColors.RED]: ImageKeys.RedBlockShatter,
+  [BlockColors.BLUE]: ImageKeys.BlueBlockShatter,
+  [BlockColors.GREEN]: ImageKeys.GreenBlockShatter,
+  [BlockColors.YELLOW]: ImageKeys.YellowBlockShatter
+}

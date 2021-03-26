@@ -12,6 +12,7 @@ import InputManager from '../InputManager'
 import BorderManager from '../BorderManager'
 import ShatterAnimation from '../ShatterAnimation'
 import Timer, { SECONDS } from './Timer'
+import { BLOCKCOLORHEX } from '../Block/blockColors'
 
 class TetrisGame {
   constructor ({ ctx }) {
@@ -283,10 +284,9 @@ class TetrisGame {
     // Draw Cell Borders
     if (this.borders.doesAnythingNeedBordered) {
       this.ctx.lineWidth = 4
-      this.ctx.strokeStyle = '#75cfff'
       this.ctx.beginPath()
-      for (const { row, col, sides } of this.borders.cellsToBeBordered) {
-        this.drawBorder(row, col, sides)
+      for (const cellToBorder of this.borders.cellsToBeBordered) {
+        this.drawBorder(cellToBorder)
       }
       this.ctx.stroke()
     }
@@ -310,7 +310,8 @@ class TetrisGame {
   }
 
   // Draw borders around a single cell
-  drawBorder (row, col, sides) {
+  drawBorder ({ row, col, sides, color }) {
+    this.ctx.strokeStyle = BLOCKCOLORHEX[color]
     for (const side of sides) {
       // Because 2 rows are not drawn on the canvas, 2 must be subtracted
       // from the real row of the blocks, when calculating the y coordinates
@@ -385,6 +386,7 @@ class TetrisGame {
       this.state.setDroppingBlocks()
     } else if (thereAreBlocksToBreak) {
       this.cellsToBreakLater = blocksToBreak
+      console.log(blocksToBreak)
       this.borders.setCellsToBeBordered(blocksToBreak)
       this.state.setBorderingBlocks()
     } else if (!this.boardManager.canSpawnNewPiece()) {
@@ -515,8 +517,9 @@ class TetrisGame {
 
   setupCellsToShatter () {
     this.shatterAnimations = this.cellsToBreakLater
+      .map(({ color, cells }) => cells.map(([row, col]) => ({ row, col, color })))
       .flat()
-      .map(([row, col]) => new ShatterAnimation({ row, col }))
+      .map(shatterConfig => new ShatterAnimation(shatterConfig))
   }
 }
 

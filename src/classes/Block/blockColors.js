@@ -9,7 +9,7 @@ export const BlockColors = {
 
 export const BLOCKCOLORHEX = {
   [BlockColors.RED]: '#ff0000',
-  [BlockColors.BLUE]: '#0000ff',
+  [BlockColors.BLUE]: '#2ba2ff',
   [BlockColors.GREEN]: '#00ff00',
   [BlockColors.YELLOW]: '#ffff00'
 }

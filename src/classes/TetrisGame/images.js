@@ -17,6 +17,9 @@ import yellowGreyBlockImage from '../../images/blocks/yellowGreyPiece.png'
 import cementBlockImage from '../../images/blocks/cementPiece.png'
 
 import yellowBlockShatterImage from '../../images/blocks/yellow_block_shatter.png'
+import redBlockShatterImage from '../../images/blocks/red_block_shatter.png'
+import blueBlockShatterImage from '../../images/blocks/blue_block_shatter.png'
+import greenBlockShatterImage from '../../images/blocks/green_block_shatter.png'
 
 import pauseBtnPlayingImage from '../../images/buttons/pause_btn_playing_animation.png'
 import pauseBtnPausedImage from '../../images/buttons/pause_btn_paused_animation.png'
@@ -28,6 +31,9 @@ export const ImageKeys = {
   YellowBlock: 'YellowBlock',
 
   YellowBlockShatter: 'YellowBlockShatter',
+  RedBlockShatter: 'RedBlockShatter',
+  BlueBlockShatter: 'BlueBlockShatter',
+  GreenBlockShatter: 'GreenBlockShatter',
 
   // AnimationState.IDLE
   YellowBreaker: 'YellowBreaker',
@@ -54,6 +60,9 @@ export const ImageLabelsToPaths = {
   [ImageKeys.YellowBlock]: yellowBlockImage,
 
   [ImageKeys.YellowBlockShatter]: yellowBlockShatterImage,
+  [ImageKeys.RedBlockShatter]: redBlockShatterImage,
+  [ImageKeys.BlueBlockShatter]: blueBlockShatterImage,
+  [ImageKeys.GreenBlockShatter]: greenBlockShatterImage,
 
   // AnimationState.IDLE
   [ImageKeys.YellowBreaker]: yellowBreakerIdleImage,
@@ -81,6 +90,9 @@ export const BlockAnimationMeta = {
   [ImageKeys.YellowBlock]: { numberOfFrames: 1, framesPerColumn: 1, numberOfRows: 1 },
 
   [ImageKeys.YellowBlockShatter]: { numberOfFrames: 30, framesPerColumn: 8, numberOfRows: 4 },
+  [ImageKeys.RedBlockShatter]: { numberOfFrames: 30, framesPerColumn: 8, numberOfRows: 4 },
+  [ImageKeys.BlueBlockShatter]: { numberOfFrames: 30, framesPerColumn: 8, numberOfRows: 4 },
+  [ImageKeys.GreenBlockShatter]: { numberOfFrames: 30, framesPerColumn: 8, numberOfRows: 4 },
 
   // AnimationState.IDLE
   [ImageKeys.GreenBreaker]: { numberOfFrames: 30, framesPerColumn: 8, numberOfRows: 4 },

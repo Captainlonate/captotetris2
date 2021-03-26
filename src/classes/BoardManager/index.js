@@ -390,7 +390,7 @@ class BoardManager {
           const cellCoords = [rowIdx, colIdx]
           const blocksToBreak = this.findLinkedBlocks(cellCoords, cell.color, [cellCoords])
           if (blocksToBreak.length > 1) {
-            possibleBreaks.push(blocksToBreak)
+            possibleBreaks.push({ color: cell.color, cells: blocksToBreak })
           }
         }
       }
@@ -458,12 +458,17 @@ class BoardManager {
       of "breaks". Each "break" contains an array of tuples, where each
       represents a cell's coordinates.
       [
-        [[rowIdx, colIdx], ...], // Break #1
+        {
+          color: '',
+          cells: [[rowIdx, colIdx], ...], // Break #1
+        }
       ]
   */
   breakBlocks (setsOfBreaks = []) {
-    for (const [rowIdx, colIdx] of setsOfBreaks.flat()) {
-      this.board[rowIdx][colIdx] = null
+    for (const coloredSet of setsOfBreaks) {
+      for (const [rowIdx, colIdx] of coloredSet.cells) {
+        this.board[rowIdx][colIdx] = null
+      }
     }
   }
 

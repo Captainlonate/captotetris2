@@ -34,7 +34,7 @@
         <key>dataFormat</key>
         <string>spritesheet-only</string>
         <key>textureFileName</key>
-        <filename>../blocks/yellow_block_shatter.png</filename>
+        <filename>../blocks/blue_block_shatter.png</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrCompressionQuality</key>
@@ -175,36 +175,36 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0001.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0009.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0017.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0025.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0033.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0041.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0049.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0057.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0065.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0073.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0081.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0089.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0097.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0105.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0113.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0121.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0129.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0137.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0145.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0153.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0161.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0169.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0177.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0185.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0193.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0201.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0209.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0217.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0225.png</key>
-            <key type="filename">../blender/rendered_files/yellow_block_shatter_renders/0233.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0001.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0009.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0017.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0025.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0033.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0041.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0049.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0057.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0065.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0073.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0081.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0089.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0097.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0105.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0113.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0121.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0129.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0137.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0145.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0153.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0161.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0169.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0177.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0185.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0193.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0201.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0209.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0217.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0225.png</key>
+            <key type="filename">../blender/rendered_files/blue_block_shatter_renders/0233.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -222,7 +222,7 @@
         </map>
         <key>fileList</key>
         <array>
-            <filename>../blender/rendered_files/yellow_block_shatter_renders</filename>
+            <filename>../blender/rendered_files/blue_block_shatter_renders</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
