@@ -41,11 +41,6 @@ __Blocks:__
     * Add floating buttons for left, right, and rotate so it can work on iPad
     * Need to find some free music online
       * Might be nice to just have ambiance sounds
-    * Need to emphasize what was broken
-      * 1) Use borders to outline the shape of the break (border color matches the block color)
-      * 2) Wait a short time
-      * 3) Create shatter animation for all the blocks and breakers
-      * 4) Pause for a moment before dropping the next blocks (or spawning a new piece)
   * Web Site
     * Design it
       * Need "Play" button, title, my name

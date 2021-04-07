@@ -1,6 +1,7 @@
 import { sortTuplesDesc } from '../../utils/tuples'
 import Block from '../Block'
 import { twentyPercentChance } from '../../utils/random'
+import Break from '../GameProgress/Break'
 
 class BoardManager {
   constructor ({ numRows, numCols, onEndTurn, onCannotSpawn, onDoneDroppingBlocks }) {
@@ -390,7 +391,8 @@ class BoardManager {
           const cellCoords = [rowIdx, colIdx]
           const blocksToBreak = this.findLinkedBlocks(cellCoords, cell.color, [cellCoords])
           if (blocksToBreak.length > 1) {
-            possibleBreaks.push({ color: cell.color, cells: blocksToBreak })
+            // possibleBreaks.push({ color: cell.color, cells: blocksToBreak })
+            possibleBreaks.push(new Break({ color: cell.color, cells: blocksToBreak }))
           }
         }
       }

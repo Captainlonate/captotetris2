@@ -13,6 +13,7 @@ import BorderManager from '../BorderManager'
 import ShatterAnimation from '../ShatterAnimation'
 import Timer, { SECONDS } from './Timer'
 import { BLOCKCOLORHEX } from '../Block/blockColors'
+import GameProgress from '../GameProgress'
 
 class TetrisGame {
   static NUMROWS = 15
@@ -47,6 +48,8 @@ class TetrisGame {
     // Keyboard inputs are passed to inputManager to fire translated events ('up', 'down', etc)
     this.inputManager = new InputManager()
     this.registerInputHandlers()
+    //
+    this.progress = new GameProgress()
     // Facilitates sound and image loading
     this.soundManager = new SoundManager(sounds)
     this.imageManager = new ImageLoader({
@@ -387,6 +390,7 @@ class TetrisGame {
       this.state.setDroppingBlocks()
     } else if (thereAreBlocksToBreak) {
       this.cellsToBreakLater = blocksToBreak
+      console.log('blocksToBreak', blocksToBreak)
       this.borders.setCellsToBeBordered(blocksToBreak)
       this.state.setBorderingBlocks()
     } else if (!this.boardManager.canSpawnNewPiece()) {
@@ -444,6 +448,7 @@ class TetrisGame {
   // Once the cell borders have been drawn for a while, next it
   // will be time to start the cells' shattering animations
   stopBorderingsStartShattering () {
+    this.progress.addBreak(this.cellsToBreakLater.map(cell => cell.cells))
     this.boardManager.breakBlocks(this.cellsToBreakLater)
     this.soundManager.play('success')
     this.borders.clearCellsToBeBordered()
