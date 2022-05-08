@@ -5,10 +5,12 @@ export const SOCKET_EVENTS = {
   USERS: 'users',
   USER_CONNECTED: 'user_connected',
   DISCONNECT: 'disconnect',
+  GET_ALL_USERS: 'get_all_users',
   USER_DISCONNECTED: 'user_disconnected',
   CONNECT: 'connect',
   CONNECT_ERROR: 'connect_error',
-  CHALLENGE: 'challenge'
+  CHALLENGE: 'challenge',
+  CHALLENGED: 'challenged',
 }
 
 const serverURL = 'http://localhost:1337'

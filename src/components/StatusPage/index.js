@@ -21,11 +21,12 @@ const DetailsText = styled.div`
   color: white;
 `
 
-const LoadingPage = ({ text }) => (
+const StatusPage = ({ mainText, detailsText, cta }) => (
   <PageWrapper>
-    <BigText>Loading...</BigText>
-    <DetailsText>{text}</DetailsText>
+    <BigText>{mainText}</BigText>
+    <DetailsText>{detailsText}</DetailsText>
+    {cta}
   </PageWrapper>
 )
 
-export default LoadingPage
+export default StatusPage
