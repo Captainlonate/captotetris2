@@ -25,15 +25,16 @@ class BorderManager {
   setCellsToBeBordered (setsOfBreaks) {
     const borderedCells = []
 
-    for (const coloredSet of setsOfBreaks) {
-      for (const [row, col] of coloredSet.cells) {
-        const borderTop = !coloredSet.cells.some(([r, c]) => r === row - 1 && c === col)
-        const borderRight = !coloredSet.cells.some(([r, c]) => r === row && c === col + 1)
-        const borderBottom = !coloredSet.cells.some(([r, c]) => r === row + 1 && c === col)
-        const borderLeft = !coloredSet.cells.some(([r, c]) => r === row && c === col - 1)
+    for (const currentBreak of setsOfBreaks) {
+
+      for (const [row, col] of currentBreak.cells) {
+        const borderTop = !currentBreak.cells.some(([r, c]) => r === row - 1 && c === col)
+        const borderRight = !currentBreak.cells.some(([r, c]) => r === row && c === col + 1)
+        const borderBottom = !currentBreak.cells.some(([r, c]) => r === row + 1 && c === col)
+        const borderLeft = !currentBreak.cells.some(([r, c]) => r === row && c === col - 1)
 
         const cell = {
-          color: coloredSet.color,
+          color: currentBreak.color,
           row,
           col,
           sides: [

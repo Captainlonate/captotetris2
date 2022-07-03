@@ -7,6 +7,7 @@ import {
 
 import LobbyPage from '../Lobby/Lobby'
 import LoginPage from "../Login/Login"
+import GamePage from '../../pages/GamePage/GamePage'
 import { useAppContext } from '../../context/AppContext'
 import { APP_INIT_STATUS } from '../../context/AppContext/reducer'
 
@@ -14,7 +15,7 @@ const AuthenticatedRoutes = () => {
   return (
     <BRouter>
       <Routes>
-        {/* <Route path="/play/alone" element={<GamePage />} /> */}
+        <Route path="/play/alone" element={<GamePage />} />
         <Route path="/lobby" element={<LobbyPage />} />
         <Route path="*" element={<Navigate to='/lobby' replace />} />
       </Routes>
@@ -27,7 +28,7 @@ const UnAuthenticatedRoutes = () => {
 }
 
 const RoutesComp = () => {
-  const [appState, setAppState] = useAppContext()
+  const [appState] = useAppContext()
 
   return (
     appState.appInitStatus === APP_INIT_STATUS.DONE

@@ -15,15 +15,17 @@ export const initialAppContextState = {
   allUsers: [],
   socketHasConnectedOnce: false, // boolean
   socketIsCurrentlyConnected: false, // boolean
-  // socketTryingToConnect: false, // boolean
   socketConnectionError: null, // null or string
-  // socketReceivedInitialResponse: false, // boolean
   hasSetSocketSession: false, // boolean
-  // hasCheckedLocalStorageForSession: false, // boolean
-
   appInitStatus: APP_INIT_STATUS.NONE,
-  // appInitDone: false, // boolean
-  // foundPreviousSession: null,  // null or boolean
+  usersWhoChallengedYou: [],
+  usersYouChallenged: [],
+  chatMessages: [
+    // { id: '0001', authorName: 'Maximus Decimus Meridius', message: 'Is anyone here?' },
+    // { id: '0002', authorName: 'Emporer Commodus', message: 'Yeah, I\'m here.' },
+    // { id: '0003', authorName: 'Maximus Decimus Meridius', message: 'Want to play?' },
+    // { id: '0004', authorName: 'Emporer Commodus', message: 'Let\'s go!' },
+  ]
 }
 
 export const appContextReducer = (state, { type, payload }) => {
@@ -33,11 +35,6 @@ export const appContextReducer = (state, { type, payload }) => {
         ...state,
         appInitStatus: payload,
       }
-    // case 'SET_CHECKED_SOCKET_STORAGE':
-    //   return {
-    //     ...state,
-    //     hasCheckedLocalStorageForSession: !!payload,
-    //   }
     case 'SET_SOCKET_SESSION':
       return {
         ...state,
@@ -46,16 +43,6 @@ export const appContextReducer = (state, { type, payload }) => {
         socketUserID: payload.userID,
         socketUserName: payload.userName
       }
-    // case 'SET_SOCKET_PENDING_CONNECT':
-    //   return {
-    //     ...state,
-    //     socketTryingToConnect: !!payload
-    //   }
-    // case 'SET_SOCKET_INITIAL_CONNECT_FINISHED':
-    //   return {
-    //     ...state,
-    //     socketReceivedInitialResponse: !!payload
-    //   }
     case 'SET_SOCKET_CONNECTED':
       return {
         ...state,
@@ -78,16 +65,27 @@ export const appContextReducer = (state, { type, payload }) => {
         ...state,
         allUsers: Array.isArray(payload) ? payload : []
       }
-    case 'OTHER_USER_CONNECTED':
+    case 'SET_CHALLENGES':
       return {
         ...state,
-        // allUsers: payload.allUsers ?? []
+        usersYouChallenged: Array.isArray(payload?.byYou) ? payload?.byYou : [],
+        usersWhoChallengedYou: Array.isArray(payload?.toYou) ? payload?.toYou : []
       }
-    case 'OTHER_USER_DISCONNECTED':
+    case 'SET_ALL_CHATS':
       return {
         ...state,
-        // allUsers: payload.allUsers ?? []
+        chatMessages: Array.isArray(payload) ? payload : []
       }
+    // case 'SET_CHALLENGES_BY_YOU':
+    //   return {
+    //     ...state,
+    //     usersYouChallenged: Array.isArray(payload) ? payload : []
+    //   }
+    // case 'SET_CHALLENGES_TO_YOU':
+    //   return {
+    //     ...state,
+    //     usersWhoChallengedYou: Array.isArray(payload) ? payload : []
+    //   }
     default:
       return state
   }

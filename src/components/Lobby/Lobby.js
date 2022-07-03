@@ -1,11 +1,14 @@
-import { useEffect } from 'react'
+import { useCallback, useRef, useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { useNavigate } from 'react-router-dom'
 
-import { SOCKET_EVENTS } from '../../network/socketio'
 import { useAppContext } from '../../context/AppContext'
 import { useSocketContext } from '../../context/SocketContext'
+import { API } from '../../network/Api'
+import { SOCKET_EVENTS } from '../../network/socketio'
+import PlayersList from './PlayersList/index'
 
-// ===================================
+// =================Styled Components====================
 
 const LobbyPageWrapper = styled.div`
   position: absolute;
@@ -90,55 +93,6 @@ const ChatInput = styled.input`
   display: block;
 `
 
-const PlayerList = styled.div`
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-  flex: 1;
-  border-right: 1px solid black;
-`
-
-const PlayerListItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 8px;
-  border-bottom: 1px solid black;
-`
-
-const PlayerListItemUsername = styled.span`
-  font-weight: bold;
-`
-
-const OnlineIndicatorText = styled.span`
-  margin: 0 10px 0 15px;
-  font-style: italic;
-`
-
-const OnlineIndicatorIcon = styled.div`
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: ${({ isOnline }) => isOnline ? '#69ca48' : 'grey'};
-`
-
-const ChallengeButton = styled.button`
-  color: white;
-  border: none;
-  padding: 8px;
-  border-radius: 5px;
-  opacity: ${({ disabled }) => !!disabled ? '0.5' : '1'};
-  background-color: ${({ disabled }) => !!disabled ? 'grey' : '#69ca48'};
-  cursor: ${({ disabled }) => !!disabled ? 'auto' : 'pointer'};
-
-  &:hover {
-    background-color: ${({ disabled }) => !!disabled ? 'grey' : '#51bc2d'};
-  }
-  
-  &:active {
-    background-color: ${({ disabled }) => !!disabled ? 'grey' : '#319e0d'};
-  }
-`
-
 const MainArea = styled.div`
   display: flex;
   flex-direction: column;
@@ -175,32 +129,7 @@ const SinglePlayerButton = styled.button`
   }
 `
 
-// ===================================
-
-const PlayerListing = ({ userName, isOnline, onChallenge }) => {
-  const handleChallenge = (e) => {
-    if (isOnline && typeof onChallenge === 'function') {
-      onChallenge(e)
-    }
-  }
-
-  return (
-    <PlayerListItem>
-      <FlexBox dir='column'>
-        <PlayerListItemUsername>{userName}</PlayerListItemUsername>
-        <FlexBox align='center'>
-          <OnlineIndicatorText>Online</OnlineIndicatorText>
-          <OnlineIndicatorIcon isOnline={isOnline} />
-        </FlexBox>
-      </FlexBox>
-      <FlexBox flex='0 0 120px' justify='center' align='center'>
-        <ChallengeButton disabled={!isOnline} onClick={handleChallenge}>
-          Challenge
-        </ChallengeButton>
-      </FlexBox>
-    </PlayerListItem>
-  )
-}
+// ===================Component Parts===================
 
 const ChatMessage = ({ userName, message, self }) => (
   <ChatMessageItem self={!!self}>
@@ -209,60 +138,95 @@ const ChatMessage = ({ userName, message, self }) => (
   </ChatMessageItem>
 )
 
+const PracticeModeButton = () => {
+  let navigate = useNavigate();
+
+  const onClick = (e) => {
+    e.preventDefault()
+    navigate('/play/alone')
+  }
+
+  return (
+    <SinglePlayerButton onClick={onClick}>PRACTICE MODE</SinglePlayerButton>
+  )
+}
+
+// =====================================================
+
 const LobbyPage = () => {
   const [appState, setAppState] = useAppContext()
   const socketConn = useSocketContext()
+  const [chatMessage, setChatMessage] = useState('')
+  const bottomDivRef = useRef()
 
   useEffect(() => {
-    // socketConn.on(SOCKET_EVENTS.USERS, (users) => {
-    //   console.log("Received all users", users)
-    // })
-    socketConn.emit(SOCKET_EVENTS.GET_ALL_USERS)
+    // Fetch the initial list of players
+    API.GetAllUsers().then((apiResponse) => {
+      if (apiResponse.isError) {
+        console.error('Error fetching all users')
+      } else {
+        setAppState({ type: 'SET_ALL_USERS', payload: apiResponse.data })
+      }
+    })
+    // Fetch the initial list of chat messages
+    API.GetRecentChats().then((apiResponse) => {
+      if (apiResponse.isError) {
+        console.error('Error fetching recent chats')
+      } else {
+        setAppState({ type: 'SET_ALL_CHATS', payload: apiResponse.data })
+        if (bottomDivRef.current) {
+          bottomDivRef.current.scrollIntoView({ behavior: "smooth" })
+        }
+      }
+    })
+  }, [setAppState])
 
-    return () => {
-      socketConn.off(SOCKET_EVENTS.USERS)
+  useEffect(() => {
+    // Whenever the number of messages changes, scroll to the bottom
+    if (appState?.chatMessages.length > 0) {
+      setImmediate(() => {
+        bottomDivRef.current.scrollIntoView({ behavior: "smooth" })
+      })
     }
-  }, [])
+  }, [appState?.chatMessages.length])
 
-  const onChallenge = (otherUserID) => () => {
-    socketConn.emit(SOCKET_EVENTS.CHALLENGE, otherUserID)
-  }
+  const onPostNewChatMessage = useCallback((e) => {
+    if (e.key === 'Enter') {
+      socketConn.emit(SOCKET_EVENTS.C2S.POST_CHAT_MESSAGE, chatMessage)
+      setChatMessage('')
+    }
+  }, [chatMessage, socketConn])
 
   return (
     <LobbyPageWrapper>
       <CenteredContentBox>
         <FlexBox flex='1 0'>
-          <PlayerList>
-            {
-              appState.allUsers.filter((user) => user.userID !== appState.socketUserID).map((user, idx) => (
-                <PlayerListing
-                  key={user.userID}
-                  userName={user.userName}
-                  isOnline={user.connected}
-                  onChallenge={onChallenge(user.userID)}
-                />
-              ))
-            }
-          </PlayerList>
+          <PlayersList />
           <MainArea>
             <TitleText>Pirate Tetris</TitleText>
             <div>
-              <SinglePlayerButton>PRACTICE MODE</SinglePlayerButton>
+              <PracticeModeButton />
             </div>
           </MainArea>
         </FlexBox>
         <FlexBox dir='column' justify='space-between' flex='1 0'>
           <ChatMessages>
-            <ChatMessage userName='User Name One' message='Hi' />
-            <ChatMessage userName='User Name Two' message='Anyone here?' />
-            <ChatMessage userName='User Name Three' message='I am here.' self />
-            <ChatMessage userName='User Name First and Last' message='Who wants to play?.' />
-            <ChatMessage userName='User Short' message='I have a lot to type. This is a long message. It might even span multiple lines. I talk too much.' />
-            <ChatMessage userName='User Name ABCD EFG HI' message='Yes, I agree.' self />
-            <ChatMessage userName='Username' message='Lets fight!' />
+            {
+              appState?.chatMessages.map(({ id, authorName, message }) => (
+                <ChatMessage key={id} userName={authorName} message={message} />
+              ))
+            }
+            {/* This div is used for scrolling to the bottom */}
+            <div ref={bottomDivRef}></div>
           </ChatMessages>
           <ChatInputBox>
-            <ChatInput type="text" placeholder='Send a message' />
+            <ChatInput
+              type="text"
+              placeholder='Send a message'
+              value={chatMessage}
+              onChange={(e) => setChatMessage(e.target.value)}
+              onKeyDown={onPostNewChatMessage}
+            />
           </ChatInputBox>
         </FlexBox>
       </CenteredContentBox>

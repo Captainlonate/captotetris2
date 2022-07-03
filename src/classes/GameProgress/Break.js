@@ -21,12 +21,17 @@ class Break {
   }
 
   get cells () {
+    // return this._cells
+    //   .map(([row, col]) => ({ color: this._color, row, col }))
     return this._cells
-      .map(([row, col]) => ({ color: this._color, row, col }))
   }
 
   get count () {
     return this._cells.length
+  }
+
+  get color () {
+    return this._color
   }
 }
 

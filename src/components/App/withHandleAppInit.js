@@ -12,7 +12,6 @@ import StatusPage from '../StatusPage'
 export const withHandleAppInit = (WrappedComponent) => (props) => {
   const socketConn = useSocketContext()
   const [appState, setAppState] = useAppContext()
-  console.log(`withHandleAppInit(): Status="${appState.appInitStatus}", AppState=`, { appState })
 
   useEffect(() => {
     // Read the web socket session info from local storage (from last session)
@@ -21,7 +20,6 @@ export const withHandleAppInit = (WrappedComponent) => (props) => {
     // And load the previous session info into the context
     const foundPreviousSession = [sessionID, userID, userName].every((val) => !!val)
     if (foundPreviousSession) {
-      console.log("Prev Session from localStorage", { sessionID, userID, userName })
       // Save previous session into AppContext
       setAppState({ type: 'SET_SOCKET_SESSION', payload: { sessionID, userID, userName } })
       // Attempt to connect
@@ -65,6 +63,8 @@ export const withHandleAppInit = (WrappedComponent) => (props) => {
     case APP_INIT_STATUS.CONNECTED_WAITING_SERVER_SESSION:
       loadingStateText = 'Waiting for server session'
       break;
+    default:
+      loadingStateText = ''
   }
 
   return <StatusPage mainText='Loading...' detailsText={loadingStateText} />
