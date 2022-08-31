@@ -28,6 +28,11 @@ export const withSocketListeners = (WrappedComponent) => (props) => {
       setAppState,
       socketConn
     )
+    const onAllConnectedUsers = SockHandler.handleReceivedAllConnectedUsers(
+      appState,
+      setAppState,
+      socketConn
+    )
     const onUserConnected = SockHandler.handleOtherUserConnected(
       appState,
       setAppState,
@@ -53,6 +58,7 @@ export const withSocketListeners = (WrappedComponent) => (props) => {
     socketConn.on(SOCKET_EVENTS.CONNECT, onConnect)
     socketConn.on(SOCKET_EVENTS.DISCONNECT, onDisconnect)
     socketConn.on(SOCKET_EVENTS.CONNECT_ERROR, onConnectionError)
+    socketConn.on(SOCKET_EVENTS.S2C.ALL_CONNECTED_USERS, onAllConnectedUsers)
     socketConn.on(SOCKET_EVENTS.S2C.USER_CONNECTED, onUserConnected)
     socketConn.on(SOCKET_EVENTS.S2C.USER_DISCONNECTED, onUserDisconnected)
     socketConn.on(
@@ -67,6 +73,7 @@ export const withSocketListeners = (WrappedComponent) => (props) => {
       socketConn.off(SOCKET_EVENTS.DISCONNECT, onDisconnect)
       socketConn.off(SOCKET_EVENTS.CONNECT_ERROR, onConnectionError)
 
+      socketConn.off(SOCKET_EVENTS.S2C.ALL_CONNECTED_USERS, onAllConnectedUsers)
       socketConn.off(SOCKET_EVENTS.S2C.USER_CONNECTED, onUserConnected)
       socketConn.off(SOCKET_EVENTS.S2C.USER_DISCONNECTED, onUserDisconnected)
 

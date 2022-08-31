@@ -215,12 +215,6 @@ export const renewJWT = (oldJWT: string): RenewJWTResults => {
   return results
 }
 
-setTimeout(() => {
-  renewJWT(
-    'yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1dWlkIjoiNjMwZTRhMWMwZjU3MjY4M2EyYjYyYjU5IiwidXNlcm5hbWUiOiJjYXB0YWluIiwiaWF0IjoxNjYxODgwODYwLCJleHAiOjE2NjE4ODI2NjB9.eHQn-NYJURjwapIs8lXkri1cKN5z0FaM_kGuwCjG9Gs'
-  )
-}, 1000)
-
 /**
  * Utility to generate and return a JWT string which
  * should contain the data within `payload` as it's

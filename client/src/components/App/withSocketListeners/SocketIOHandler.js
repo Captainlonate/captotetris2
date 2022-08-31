@@ -132,6 +132,19 @@ export const handleConnectionError =
   }
 
 /*
+  ALL_CONNECTED_USERS
+*/
+export const handleReceivedAllConnectedUsers =
+  (appState, setAppState, socketConn) => (connectedUsers) => {
+    console.log(
+      '-- SOCKET EVENT -- Received all connected users.',
+      connectedUsers
+    )
+    // const updatedUsers = addOrUpdateUser(connectedUsers)(appState.allUsers)
+    // setAppState({ type: ACTION_TYPE.SET_ALL_USERS, payload: updatedUsers })
+  }
+
+/*
 
 */
 export const handleOtherUserConnected =

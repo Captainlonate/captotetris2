@@ -64,6 +64,9 @@ export const attachSocketIOServerToHttpServer = (
     // Join this user to their own room (userID room)
     socket.join(userId)
 
+    // Join this user to the "lobby" room.
+    socket.join('player_lobby')
+
     // Tell everyone else that this user has connected
     socket.broadcast.emit(
       SOCKET_EVENTS.S2C.USER_CONNECTED,
@@ -71,6 +74,14 @@ export const attachSocketIOServerToHttpServer = (
     )
 
     console.log(`SocketIO::${userName}/${userId} has connected.`)
+
+    socketIOServer
+      .in('player_lobby')
+      .allSockets()
+      .then((results) => {
+        console.log('all users in player_lobby', Array.from(results))
+        socket.emit(SOCKET_EVENTS.S2C.ALL_CONNECTED_USERS, Array.from(results))
+      })
 
     // Listen for events and handle them
     handleSocketDisconnect(socketIOServer, socket)
