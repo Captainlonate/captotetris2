@@ -4,7 +4,13 @@ import { twentyPercentChance } from '../../utils/random'
 import Break from '../GameProgress/Break'
 
 class BoardManager {
-  constructor ({ numRows, numCols, onEndTurn, onCannotSpawn, onDoneDroppingBlocks }) {
+  constructor({
+    numRows,
+    numCols,
+    onEndTurn,
+    onCannotSpawn,
+    onDoneDroppingBlocks,
+  }) {
     this.numRows = numRows
     this.numCols = numCols
     this.blockStartCol = 3
@@ -31,7 +37,7 @@ class BoardManager {
     Easier than lugging around the nested for loop everywhere
     This is intended for usage within the class only.
   */
-  * blocksIterable () {
+  *blocksIterable() {
     for (let rowIdx = 2; rowIdx < this.numRows; rowIdx++) {
       for (let colIdx = 0; colIdx < this.numCols; colIdx++) {
         const block = this.getCell(rowIdx, colIdx)
@@ -42,13 +48,23 @@ class BoardManager {
     }
   }
 
-  spawnNewActivePiece (blockOne, blockTwo) {
+  spawnNewActivePiece(blockOne, blockTwo) {
     if (this.canSpawnNewPiece()) {
-      this.activeBlock1 = { block: blockOne, row: this.startRowBlockOne, col: this.blockStartCol }
-      this.activeBlock2 = { block: blockTwo, row: this.startRowBlockTwo, col: this.blockStartCol }
+      this.activeBlock1 = {
+        block: blockOne,
+        row: this.startRowBlockOne,
+        col: this.blockStartCol,
+      }
+      this.activeBlock2 = {
+        block: blockTwo,
+        row: this.startRowBlockTwo,
+        col: this.blockStartCol,
+      }
 
-      this.board[this.startRowBlockOne][this.blockStartCol] = this.activeBlock1.block
-      this.board[this.startRowBlockTwo][this.blockStartCol] = this.activeBlock2.block
+      this.board[this.startRowBlockOne][this.blockStartCol] =
+        this.activeBlock1.block
+      this.board[this.startRowBlockTwo][this.blockStartCol] =
+        this.activeBlock2.block
     } else {
       console.log('The board is full. Game over?')
       this.onCannotSpawn()
@@ -60,8 +76,10 @@ class BoardManager {
   // }
 
   // TODO: Delete this at the end
-  resetBoard (numRows, numCols) {
-    let tempBoard = [...new Array(numRows)].map(() => [...new Array(numCols)].fill(null))
+  resetBoard(numRows, numCols) {
+    let tempBoard = [...new Array(numRows)].map(() =>
+      [...new Array(numCols)].fill(null)
+    )
     tempBoard = [
       [null, null, null, null, null, null, null], // 0
       [null, null, null, null, null, null, null], // 1
@@ -70,39 +88,95 @@ class BoardManager {
       [null, null, null, null, null, null, new Block({ color: 'RED' })], // 4
       [null, null, null, null, null, null, new Block({ color: 'RED' })], // 5
       [null, null, null, null, null, null, new Block({ color: 'RED' })], // 6
-      [new Block({ blockType: 'BREAKER', color: 'RED' }), null, null, null, null, null, new Block({ color: 'RED' })], // 7
-      [new Block({ blockType: 'BREAKER', color: 'GREEN' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 8
-      [new Block({ color: 'YELLOW' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 9
-      [new Block({ color: 'BLUE' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 10
-      [new Block({ blockType: 'BREAKER', color: 'YELLOW' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 11
-      [new Block({ blockType: 'BREAKER', color: 'RED' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 12
-      [new Block({ blockType: 'BREAKER', color: 'GREEN' }), null, null, null, null, null, new Block({ color: 'GREEN' })], // 13
-      [new Block({ blockType: 'BREAKER', color: 'BLUE' }), null, null, null, null, null, new Block({ color: 'GREEN' })] // 14
+      [
+        new Block({ blockType: 'BREAKER', color: 'RED' }),
+        null,
+        null,
+        null,
+        null,
+        null,
+        new Block({ color: 'RED' }),
+      ], // 7
+      [
+        new Block({ blockType: 'BREAKER', color: 'GREEN' }),
+        null,
+        null,
+        null,
+        null,
+        null,
+        new Block({ color: 'GREEN' }),
+      ], // 8
+      [
+        new Block({ color: 'YELLOW' }),
+        null,
+        null,
+        null,
+        null,
+        null,
+        new Block({ color: 'GREEN' }),
+      ], // 9
+      [
+        new Block({ color: 'BLUE' }),
+        null,
+        null,
+        null,
+        null,
+        null,
+        new Block({ color: 'GREEN' }),
+      ], // 10
+      [
+        new Block({ blockType: 'BREAKER', color: 'YELLOW' }),
+        null,
+        null,
+        null,
+        null,
+        null,
+        new Block({ color: 'GREEN' }),
+      ], // 11
+      [
+        new Block({ blockType: 'BREAKER', color: 'RED' }),
+        null,
+        null,
+        null,
+        null,
+        null,
+        new Block({ color: 'GREEN' }),
+      ], // 12
+      [
+        new Block({ blockType: 'BREAKER', color: 'GREEN' }),
+        null,
+        null,
+        null,
+        null,
+        null,
+        new Block({ color: 'GREEN' }),
+      ], // 13
+      [
+        new Block({ blockType: 'BREAKER', color: 'BLUE' }),
+        null,
+        null,
+        null,
+        null,
+        null,
+        new Block({ color: 'GREEN' }),
+      ], // 14
     ]
     return tempBoard
   }
 
-  getCell (row, col) {
+  getCell(row, col) {
     return this.board[row][col]
   }
 
-  isWithinBounds (row, col) {
-    return (
-      row >= 0 &&
-      col >= 0 &&
-      row < this.numRows &&
-      col < this.numCols
-    )
+  isWithinBounds(row, col) {
+    return row >= 0 && col >= 0 && row < this.numRows && col < this.numCols
   }
 
-  isCellAvailable (row, col) {
-    return (
-      this.isWithinBounds(row, col) &&
-      this.board[row][col] === null
-    )
+  isCellAvailable(row, col) {
+    return this.isWithinBounds(row, col) && this.board[row][col] === null
   }
 
-  moveActiveBlock (activeBlock, toRow, toCol) {
+  moveActiveBlock(activeBlock, toRow, toCol) {
     const { row: oldRow, col: oldCol, block } = activeBlock
 
     this.board[toRow][toCol] = block
@@ -112,7 +186,7 @@ class BoardManager {
     activeBlock.col = toCol
   }
 
-  rotateTheActivePieceCW () {
+  rotateTheActivePieceCW() {
     const { row: row1, col: col1 } = this.activeBlock1
     const { row: row2, col: col2 } = this.activeBlock2
 
@@ -121,7 +195,8 @@ class BoardManager {
     const blocksAreVertical = col1 === col2
     const blocksAreHoriz = row1 === row2
 
-    if (b1IsAbove && blocksAreVertical) { // B1 is above B2
+    if (b1IsAbove && blocksAreVertical) {
+      // B1 is above B2
       if (this.isCellAvailable(row2, col2 + 1)) {
         // Can B1 move to the right of B2?
         this.moveActiveBlock(this.activeBlock1, row1 + 1, col1 + 1)
@@ -132,7 +207,8 @@ class BoardManager {
       } else {
         this.swapActiveBlocks()
       }
-    } else if (!b1IsLeft && blocksAreHoriz) { // B1 is to the right of B2
+    } else if (!b1IsLeft && blocksAreHoriz) {
+      // B1 is to the right of B2
       if (this.isCellAvailable(row2 + 1, col2)) {
         // Can B1 move below B2?
         this.moveActiveBlock(this.activeBlock1, row1 + 1, col1 - 1)
@@ -143,7 +219,8 @@ class BoardManager {
       } else {
         this.swapActiveBlocks()
       }
-    } else if (!b1IsAbove && blocksAreVertical) { // B1 is below B2
+    } else if (!b1IsAbove && blocksAreVertical) {
+      // B1 is below B2
       if (this.isCellAvailable(row2, col2 - 1)) {
         // Can B1 move left of B2?
         this.moveActiveBlock(this.activeBlock1, row1 - 1, col1 - 1)
@@ -154,7 +231,8 @@ class BoardManager {
       } else {
         this.swapActiveBlocks()
       }
-    } else if (b1IsLeft && blocksAreHoriz) { // B1 is left of B2
+    } else if (b1IsLeft && blocksAreHoriz) {
+      // B1 is left of B2
       if (this.isCellAvailable(row2 - 1, col2)) {
         // Can B1 move above B2?
         this.moveActiveBlock(this.activeBlock1, row1 - 1, col1 + 1)
@@ -168,7 +246,7 @@ class BoardManager {
     }
   }
 
-  rotateTheActivePieceCCW () {
+  rotateTheActivePieceCCW() {
     const { row: row1, col: col1 } = this.activeBlock1
     const { row: row2, col: col2 } = this.activeBlock2
 
@@ -177,7 +255,8 @@ class BoardManager {
     const blocksAreVertical = col1 === col2
     const blocksAreHoriz = row1 === row2
 
-    if (b1IsAbove && blocksAreVertical) { // B1 is above B2
+    if (b1IsAbove && blocksAreVertical) {
+      // B1 is above B2
       if (this.isCellAvailable(row2, col2 - 1)) {
         // Can B1 move left of B2?
         this.moveActiveBlock(this.activeBlock1, row1 + 1, col1 - 1)
@@ -188,7 +267,8 @@ class BoardManager {
       } else {
         this.swapActiveBlocks()
       }
-    } else if (b1IsLeft && blocksAreHoriz) { // B1 is left of B2
+    } else if (b1IsLeft && blocksAreHoriz) {
+      // B1 is left of B2
       if (this.isCellAvailable(row2 + 1, col2)) {
         // Can B1 move below B2?
         this.moveActiveBlock(this.activeBlock1, row1 + 1, col1 + 1)
@@ -199,7 +279,8 @@ class BoardManager {
       } else {
         this.swapActiveBlocks()
       }
-    } else if (!b1IsAbove && blocksAreVertical) { // B1 is below B2
+    } else if (!b1IsAbove && blocksAreVertical) {
+      // B1 is below B2
       if (this.isCellAvailable(row2, col2 + 1)) {
         // Can B1 move right of B2?
         this.moveActiveBlock(this.activeBlock1, row1 - 1, col1 + 1)
@@ -210,7 +291,8 @@ class BoardManager {
       } else {
         this.swapActiveBlocks()
       }
-    } else if (!b1IsLeft && blocksAreHoriz) { // B1 is to the right of B2
+    } else if (!b1IsLeft && blocksAreHoriz) {
+      // B1 is to the right of B2
       if (this.isCellAvailable(row2 - 1, col2)) {
         // Can B1 move above B2?
         this.moveActiveBlock(this.activeBlock1, row1 - 1, col1 - 1)
@@ -224,25 +306,28 @@ class BoardManager {
     }
   }
 
-  dropTheActivePiece () {
+  dropTheActivePiece() {
     const { row: row1, col: col1 } = this.activeBlock1
     const { row: row2, col: col2 } = this.activeBlock2
 
-    if (row1 === row2) { // If the blocks are side-by-side
+    if (row1 === row2) {
+      // If the blocks are side-by-side
       if (this.blockCanDrop(row1, col1) && this.blockCanDrop(row2, col2)) {
         this.moveABDown(this.activeBlock1)
         this.moveABDown(this.activeBlock2)
       } else {
         this.onEndTurn()
       }
-    } else if (row1 < row2) { // If block 2 is lower than block 1
+    } else if (row1 < row2) {
+      // If block 2 is lower than block 1
       if (this.blockCanDrop(row2, col2)) {
         this.moveABDown(this.activeBlock2)
         this.moveABDown(this.activeBlock1)
       } else {
         this.onEndTurn()
       }
-    } else { // If block 1 is lower than block 2
+    } else {
+      // If block 1 is lower than block 2
       if (this.blockCanDrop(row1, col1)) {
         this.moveABDown(this.activeBlock1)
         this.moveABDown(this.activeBlock2)
@@ -252,21 +337,24 @@ class BoardManager {
     }
   }
 
-  leftTheActivePiece () {
+  leftTheActivePiece() {
     const { row: row1, col: col1 } = this.activeBlock1
     const { row: row2, col: col2 } = this.activeBlock2
 
-    if (col1 === col2) { // If the blocks are vertical
+    if (col1 === col2) {
+      // If the blocks are vertical
       if (this.blockCanLeft(row1, col1) && this.blockCanLeft(row2, col2)) {
         this.moveABLeft(this.activeBlock1)
         this.moveABLeft(this.activeBlock2)
       }
-    } else if (col1 < col2) { // If block 1 is left of block 2
+    } else if (col1 < col2) {
+      // If block 1 is left of block 2
       if (this.blockCanLeft(row1, col1)) {
         this.moveABLeft(this.activeBlock1)
         this.moveABLeft(this.activeBlock2)
       }
-    } else { // If block 2 is left of block 1
+    } else {
+      // If block 2 is left of block 1
       if (this.blockCanLeft(row2, col2)) {
         this.moveABLeft(this.activeBlock2)
         this.moveABLeft(this.activeBlock1)
@@ -274,21 +362,24 @@ class BoardManager {
     }
   }
 
-  rightTheActivePiece () {
+  rightTheActivePiece() {
     const { row: row1, col: col1 } = this.activeBlock1
     const { row: row2, col: col2 } = this.activeBlock2
 
-    if (col1 === col2) { // If the blocks are vertical
+    if (col1 === col2) {
+      // If the blocks are vertical
       if (this.blockCanRight(row1, col1) && this.blockCanRight(row2, col2)) {
         this.moveABRight(this.activeBlock1)
         this.moveABRight(this.activeBlock2)
       }
-    } else if (col1 < col2) { // If block 2 is right of block 1
+    } else if (col1 < col2) {
+      // If block 2 is right of block 1
       if (this.blockCanRight(row2, col2)) {
         this.moveABRight(this.activeBlock2)
         this.moveABRight(this.activeBlock1)
       }
-    } else { // If block 1 is right of block 2
+    } else {
+      // If block 1 is right of block 2
       if (this.blockCanRight(row1, col1)) {
         this.moveABRight(this.activeBlock1)
         this.moveABRight(this.activeBlock2)
@@ -296,41 +387,43 @@ class BoardManager {
     }
   }
 
-  blockCanDrop (row, col) {
+  blockCanDrop(row, col) {
     return this.isCellAvailable(row + 1, col)
   }
 
-  blockCanLeft (row, col) {
+  blockCanLeft(row, col) {
     return this.isCellAvailable(row, col - 1)
   }
 
-  blockCanRight (row, col) {
+  blockCanRight(row, col) {
     return this.isCellAvailable(row, col + 1)
   }
 
-  hasActivePiece () {
+  hasActivePiece() {
     return this.activeBlock1 && this.activeBlock2
   }
 
-  moveABUp (activeBlock) {
+  moveABUp(activeBlock) {
     this.moveActiveBlock(activeBlock, activeBlock.row - 1, activeBlock.col)
   }
 
-  moveABDown (activeBlock) {
+  moveABDown(activeBlock) {
     this.moveActiveBlock(activeBlock, activeBlock.row + 1, activeBlock.col)
   }
 
-  moveABLeft (activeBlock) {
+  moveABLeft(activeBlock) {
     this.moveActiveBlock(activeBlock, activeBlock.row, activeBlock.col - 1)
   }
 
-  moveABRight (activeBlock) {
+  moveABRight(activeBlock) {
     this.moveActiveBlock(activeBlock, activeBlock.row, activeBlock.col + 1)
   }
 
-  swapActiveBlocks () {
-    this.board[this.activeBlock1.row][this.activeBlock1.col] = this.activeBlock2.block
-    this.board[this.activeBlock2.row][this.activeBlock2.col] = this.activeBlock1.block
+  swapActiveBlocks() {
+    this.board[this.activeBlock1.row][this.activeBlock1.col] =
+      this.activeBlock2.block
+    this.board[this.activeBlock2.row][this.activeBlock2.col] =
+      this.activeBlock1.block
 
     const { row: oldRow1, col: oldCol1 } = this.activeBlock1
 
@@ -341,7 +434,7 @@ class BoardManager {
     this.activeBlock2.col = oldCol1
   }
 
-  dropBlocksWithSpacesBeneath () {
+  dropBlocksWithSpacesBeneath() {
     const blocksAtNewPosition = []
     let didAnythingFall = false
     for (const [rowIdx, colIdx] of this.blocksThatNeedToFall) {
@@ -362,14 +455,14 @@ class BoardManager {
     @param blocksThatNeedToFall an array of tuples
       ex: [[rowIdx, colIdx], [rowIdx, colIdx]...]
   */
-  setBlocksThatNeedToFall (blocksThatNeedToFall = []) {
+  setBlocksThatNeedToFall(blocksThatNeedToFall = []) {
     this.blocksThatNeedToFall = sortTuplesDesc(blocksThatNeedToFall)
   }
 
   /*
     The board is "full" if it's not possible to spawn a new piece
   */
-  canSpawnNewPiece () {
+  canSpawnNewPiece() {
     return (
       this.board[1][this.blockStartCol] === null &&
       this.board[2][this.blockStartCol] === null
@@ -381,7 +474,7 @@ class BoardManager {
     of the linked blocks of the same color. Returns an array
     of tuples [[rowIdx, colIdx], ...]
   */
-  getPossibleBreaks () {
+  getPossibleBreaks() {
     const possibleBreaks = []
 
     for (let rowIdx = 2; rowIdx < this.numRows; rowIdx++) {
@@ -389,10 +482,14 @@ class BoardManager {
         const cell = this.getCell(rowIdx, colIdx)
         if (cell !== null && cell.isBreaker) {
           const cellCoords = [rowIdx, colIdx]
-          const blocksToBreak = this.findLinkedBlocks(cellCoords, cell.color, [cellCoords])
+          const blocksToBreak = this.findLinkedBlocks(cellCoords, cell.color, [
+            cellCoords,
+          ])
           if (blocksToBreak.length > 1) {
             // possibleBreaks.push({ color: cell.color, cells: blocksToBreak })
-            possibleBreaks.push(new Break({ color: cell.color, cells: blocksToBreak }))
+            possibleBreaks.push(
+              new Break({ color: cell.color, cells: blocksToBreak })
+            )
           }
         }
       }
@@ -404,12 +501,12 @@ class BoardManager {
   /*
     A new match if there is a block of the same color that has not been matched yet
   */
-  isCellANewMatch ([row, col], matches, color) {
+  isCellANewMatch([row, col], matches, color) {
     return (
       this.isWithinBounds(row, col) &&
       this.getCell(row, col) !== null &&
       this.getCell(row, col).color === color &&
-      !matches.some(([rowIdx, colIdx]) => (rowIdx === row) && (colIdx === col))
+      !matches.some(([rowIdx, colIdx]) => rowIdx === row && colIdx === col)
     )
   }
 
@@ -419,7 +516,7 @@ class BoardManager {
     color. This function is recursive. It will return an array
     of tuples [[rowIdx, colIdx], ...]
   */
-  findLinkedBlocks ([currRow, currCol], color, blocksFoundSoFar) {
+  findLinkedBlocks([currRow, currCol], color, blocksFoundSoFar) {
     const cellAbove = [currRow - 1, currCol]
     const cellRight = [currRow, currCol + 1]
     const cellBelow = [currRow + 1, currCol]
@@ -466,7 +563,7 @@ class BoardManager {
         }
       ]
   */
-  breakBlocks (setsOfBreaks = []) {
+  breakBlocks(setsOfBreaks = []) {
     for (const coloredSet of setsOfBreaks) {
       for (const [rowIdx, colIdx] of coloredSet.cells) {
         this.board[rowIdx][colIdx] = null
@@ -474,13 +571,13 @@ class BoardManager {
     }
   }
 
-  updateBlockAnimations () {
+  updateBlockAnimations() {
     for (const block of this.blocksIterable()) {
       block.updateFrame()
     }
   }
 
-  tryToPlayRareAnimation () {
+  tryToPlayRareAnimation() {
     for (const block of this.blocksIterable()) {
       if (block.isBreaker && twentyPercentChance()) {
         block.playRareAnimation()

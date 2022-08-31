@@ -7,7 +7,7 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   font-size: 16px;
-  padding: .25em;
+  padding: 0.25em;
   position: fixed;
   top: 10px;
   right: 10px;
@@ -16,7 +16,7 @@ const Wrapper = styled.div`
 `
 
 const LightIndicator = styled.div`
-  background-color: ${({ connected }) => connected ? '#02be02' : 'grey' };
+  background-color: ${({ connected }) => (connected ? '#02be02' : 'grey')};
   border: 1px solid white;
   border-radius: 50%;
   width: 1em;
@@ -29,9 +29,9 @@ const NetworkIndicator = () => {
 
   return (
     <Wrapper>
-      {
-        !loading && <LightIndicator connected={appState?.socketIsCurrentlyConnected} />
-      }
+      {!loading && (
+        <LightIndicator connected={appState?.socketIsCurrentlyConnected} />
+      )}
     </Wrapper>
   )
 }

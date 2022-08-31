@@ -7,14 +7,17 @@ export const useAppContext = () => useContext(AppContext)
 
 export const AppContextProvider = ({ children }) => {
   return (
-    <AppContext.Provider value={useReducer(appContextReducer, initialAppContextState)}>
+    <AppContext.Provider
+      value={useReducer(appContextReducer, initialAppContextState)}
+    >
       {children}
     </AppContext.Provider>
   )
 }
 
-export const withAppContext = (WrappedComponent) => (props) => (
-  <AppContextProvider>
-    <WrappedComponent {...props} />
-  </AppContextProvider>
-)
+export const withAppContext = (WrappedComponent) => (props) =>
+  (
+    <AppContextProvider>
+      <WrappedComponent {...props} />
+    </AppContextProvider>
+  )

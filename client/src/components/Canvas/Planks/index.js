@@ -6,10 +6,10 @@ import {
   TopPlankBehind,
   BottomPlankBehind,
   LeftPlankBehind,
-  RightPlankBehind
+  RightPlankBehind,
 } from './styled'
-import foregroundPlankImage from '../../images/plank_frame.png'
-import backgroundPlankImage from '../../images/plank_frame_darker.png'
+import foregroundPlankImage from '../../../assets/images/plank_frame.png'
+import backgroundPlankImage from '../../../assets/images/plank_frame_darker.png'
 
 const Planks = () => (
   <>

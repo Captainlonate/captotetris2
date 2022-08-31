@@ -33,7 +33,7 @@ const OnlineIndicatorIcon = styled.div`
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background-color: ${({ isOnline }) => isOnline ? '#69ca48' : 'grey'};
+  background-color: ${({ isOnline }) => (isOnline ? '#69ca48' : 'grey')};
 `
 
 const ActionsContainer = styled.div`
@@ -48,42 +48,42 @@ const ButtonBase = styled.button`
   border: none;
   padding: 8px;
   border-radius: 5px;
-  cursor: ${({ disabled }) => !!disabled ? 'auto' : 'pointer'};
+  cursor: ${({ disabled }) => (!!disabled ? 'auto' : 'pointer')};
 `
 
 const ChallengeButton = styled(ButtonBase)`
   color: black;
-  background-color: ${({ disabled }) => !!disabled ? 'grey' : '#fff33d'};
+  background-color: ${({ disabled }) => (!!disabled ? 'grey' : '#fff33d')};
   &:hover {
-    background-color: ${({ disabled }) => !!disabled ? 'grey' : '#f2e626'};
+    background-color: ${({ disabled }) => (!!disabled ? 'grey' : '#f2e626')};
   }
   &:active {
-    background-color: ${({ disabled }) => !!disabled ? 'grey' : '#eea503'};
+    background-color: ${({ disabled }) => (!!disabled ? 'grey' : '#eea503')};
   }
 `
 
 const AcceptButton = styled(ButtonBase)`
-  background-color: ${({ disabled }) => !!disabled ? 'grey' : 'darkgreen'};
+  background-color: ${({ disabled }) => (!!disabled ? 'grey' : 'darkgreen')};
   &:hover {
-    background-color: ${({ disabled }) => !!disabled ? 'grey' : '#51bc2d'};
+    background-color: ${({ disabled }) => (!!disabled ? 'grey' : '#51bc2d')};
   }
   &:active {
-    background-color: ${({ disabled }) => !!disabled ? 'grey' : '#319e0d'};
+    background-color: ${({ disabled }) => (!!disabled ? 'grey' : '#319e0d')};
   }
 `
 
 const DeclineButton = styled(ButtonBase)`
-  background-color: ${({ disabled }) => !!disabled ? 'grey' : 'red'};
+  background-color: ${({ disabled }) => (!!disabled ? 'grey' : 'red')};
   &:hover {
-    background-color: ${({ disabled }) => !!disabled ? 'grey' : '#51bc2d'};
+    background-color: ${({ disabled }) => (!!disabled ? 'grey' : '#51bc2d')};
   }
   &:active {
-    background-color: ${({ disabled }) => !!disabled ? 'grey' : '#319e0d'};
+    background-color: ${({ disabled }) => (!!disabled ? 'grey' : '#319e0d')};
   }
 `
 
 const PendingButton = styled(ButtonBase).attrs({
-  disabled: true
+  disabled: true,
 })`
   background-color: blue;
   cursor: auto;
@@ -98,7 +98,7 @@ const ActionCanChallenge = ({ onChallenge, text }) => (
 )
 
 ActionCanChallenge.defaultProps = {
-  text: 'Challenge'
+  text: 'Challenge',
 }
 
 const ActionPendingChallenge = ({ text }) => (
@@ -108,10 +108,15 @@ const ActionPendingChallenge = ({ text }) => (
 )
 
 ActionPendingChallenge.defaultProps = {
-  text: 'Challenge Sent'
+  text: 'Challenge Sent',
 }
 
-const ActionDecidingIfAcceptOrDecline = ({ onAccept, onDecline, acceptText, declineText }) => (
+const ActionDecidingIfAcceptOrDecline = ({
+  onAccept,
+  onDecline,
+  acceptText,
+  declineText,
+}) => (
   <ActionsContainer>
     <AcceptButton onClick={onAccept}>{acceptText}</AcceptButton>
     <DeclineButton onClick={onDecline}>{declineText}</DeclineButton>
@@ -120,12 +125,18 @@ const ActionDecidingIfAcceptOrDecline = ({ onAccept, onDecline, acceptText, decl
 
 ActionDecidingIfAcceptOrDecline.defaultProps = {
   acceptText: 'Accept',
-  declineText: 'Decline'
+  declineText: 'Decline',
 }
 
 // =====================================================
 
-const PlayerListItem = ({ userID, userName, isOnline, actionVariant, onTakeAction }) => {
+const PlayerListItem = ({
+  userID,
+  userName,
+  isOnline,
+  actionVariant,
+  onTakeAction,
+}) => {
   let actions = null
   if (actionVariant === ACTION_VARIANTS.CAN_CHALLENGE) {
     actions = (
@@ -146,14 +157,14 @@ const PlayerListItem = ({ userID, userName, isOnline, actionVariant, onTakeActio
 
   return (
     <StyledPlayerListItem>
-      <FlexBox dir='column'>
+      <FlexBox dir="column">
         <PlayerListItemUsername>{userName}</PlayerListItemUsername>
-        <FlexBox align='center'>
+        <FlexBox align="center">
           <OnlineIndicatorText>Online</OnlineIndicatorText>
           <OnlineIndicatorIcon isOnline={isOnline} />
         </FlexBox>
       </FlexBox>
-      <FlexBox flex='0 0 120px' justify='center' align='center'>
+      <FlexBox flex="0 0 120px" justify="center" align="center">
         {actions}
       </FlexBox>
     </StyledPlayerListItem>

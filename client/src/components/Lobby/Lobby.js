@@ -1,8 +1,6 @@
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 
-import { useAppContext } from '../../context/AppContext'
-import { useSocketContext } from '../../context/SocketContext'
 import PlayersList from './PlayersList/index'
 import NetworkIndicator from '../NetworkIndicator/NetworkIndicator'
 import { FlexBox } from '../Common'
@@ -76,7 +74,7 @@ const SinglePlayerButton = styled.button`
 // ===================Component Parts===================
 
 const PracticeModeButton = () => {
-  let navigate = useNavigate();
+  let navigate = useNavigate()
 
   const onClick = (e) => {
     e.preventDefault()
@@ -84,22 +82,17 @@ const PracticeModeButton = () => {
   }
 
   return (
-    <SinglePlayerButton onClick={onClick}>
-      PRACTICE MODE
-    </SinglePlayerButton>
+    <SinglePlayerButton onClick={onClick}>PRACTICE MODE</SinglePlayerButton>
   )
 }
 
 // =====================================================
 
 const LobbyPage = () => {
-  // const [appState, setAppState] = useAppContext()
-  // console.log('appState', appState)
-
   return (
     <LobbyPageWrapper>
       <CenteredContentBox>
-        <FlexBox flex='1 0'>
+        <FlexBox flex="1 0">
           <PlayersList />
           <MainArea>
             <TitleText>Pirate Tetris</TitleText>

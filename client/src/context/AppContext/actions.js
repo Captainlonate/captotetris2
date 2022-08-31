@@ -1,7 +1,3 @@
-export const loginUpdateCtx = (dispatchAppCtx) => {
+export const loginUpdateCtx = (dispatchAppCtx) => {}
 
-}
-
-export const renewJWTUpdateCtx = (dispatchAppCtx) => {
-
-}
+export const renewJWTUpdateCtx = (dispatchAppCtx) => {}

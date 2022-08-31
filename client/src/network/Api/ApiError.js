@@ -4,9 +4,9 @@
   should be translated into this ApiError object, client side.
 */
 export class ApiError extends Error {
-  constructor ({ message, errorCode }) {
+  constructor({ message, errorCode }) {
     super(message)
-    this.name = this.constructor.name;
+    this.name = this.constructor.name
     this.message = message
     this.errorCode = errorCode
   }
@@ -20,5 +20,5 @@ export const ERROR_CODES = {
   //
   // Custom Client Side Interpretations
   //
-  non_200: "non_200"
+  non_200: 'non_200',
 }

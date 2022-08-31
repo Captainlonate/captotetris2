@@ -37,7 +37,7 @@ const sortUsersByChallenge = ({
     challengesToYou: [],
     challengesByYou: [],
     canBeChallenged: [],
-    offline: []
+    offline: [],
   }
 
   allUsers.forEach((user) => {
@@ -56,11 +56,10 @@ const sortUsersByChallenge = ({
   return users
 }
 
-const createListItemsJSX = ({ users, actionVariant, onTakeAction }) => (
+const createListItemsJSX = ({ users, actionVariant, onTakeAction }) =>
   !Array.isArray(users)
     ? []
-    : (
-      users.map(({ userID, connected, userName } = {}) => (
+    : users.map(({ userID, connected, userName } = {}) => (
         <PlayerListItem
           key={userID}
           userID={userID}
@@ -70,8 +69,6 @@ const createListItemsJSX = ({ users, actionVariant, onTakeAction }) => (
           onTakeAction={onTakeAction}
         />
       ))
-    )
-)
 
 // ===============Constants & Types==================
 
@@ -97,12 +94,15 @@ const PlayersList = () => {
     challengesToYou: [],
     challengesByYou: [],
     canBeChallenged: [],
-    offline: []
+    offline: [],
   })
 
   useEffect(() => {
     const users = sortUsersByChallenge({
-      allUsers: appState?.allUsers?.filter((user) => user.userID !== appState.socketUserID) ?? [],
+      allUsers:
+        appState?.allUsers?.filter(
+          (user) => user.userID !== appState.socketUserID
+        ) ?? [],
       usersWhoChallengedYou: appState?.usersWhoChallengedYou ?? [],
       usersYouChallenged: appState?.usersYouChallenged ?? [],
     })
@@ -117,7 +117,7 @@ const PlayersList = () => {
       } else {
         setAppState({
           type: 'SET_ALL_USERS',
-          payload: apiResponse.data.map(normalizeUsersFromApiForCtx)
+          payload: apiResponse.data.map(normalizeUsersFromApiForCtx),
         })
       }
     })
@@ -136,35 +136,41 @@ const PlayersList = () => {
   const playersChallengingYou = createListItemsJSX({
     users: users?.challengesToYou,
     onTakeAction,
-    actionVariant: ACTION_VARIANTS.DECIDING
+    actionVariant: ACTION_VARIANTS.DECIDING,
   })
 
   const playersYouChallenged = createListItemsJSX({
     users: users?.challengesByYou,
     onTakeAction,
-    actionVariant: ACTION_VARIANTS.PENDING
+    actionVariant: ACTION_VARIANTS.PENDING,
   })
 
   const playersYouCanChallenge = createListItemsJSX({
     users: users?.canBeChallenged,
     onTakeAction,
-    actionVariant: ACTION_VARIANTS.CAN_CHALLENGE
+    actionVariant: ACTION_VARIANTS.CAN_CHALLENGE,
   })
 
   const offlinePlayers = createListItemsJSX({
     users: users?.offline,
     onTakeAction,
-    actionVariant: ACTION_VARIANTS.OFFLINE
+    actionVariant: ACTION_VARIANTS.OFFLINE,
   })
 
   return (
     <ListContainer>
-      {playersChallengingYou.length > 0 && <ListSectionHeader>Your Challenges</ListSectionHeader>}
+      {playersChallengingYou.length > 0 && (
+        <ListSectionHeader>Your Challenges</ListSectionHeader>
+      )}
       {playersChallengingYou}
       {playersYouChallenged}
-      {playersYouCanChallenge.length > 0 && <ListSectionHeader>Challenge Someone</ListSectionHeader>}
+      {playersYouCanChallenge.length > 0 && (
+        <ListSectionHeader>Challenge Someone</ListSectionHeader>
+      )}
       {playersYouCanChallenge}
-      {offlinePlayers.length > 0 && <ListSectionHeader>Offline</ListSectionHeader>}
+      {offlinePlayers.length > 0 && (
+        <ListSectionHeader>Offline</ListSectionHeader>
+      )}
       {offlinePlayers}
     </ListContainer>
   )

@@ -10,7 +10,11 @@ import { API } from '../../network/Api'
 
 // ===================================================
 
-const attemptToResumeSession = async (previousSessionJWT, setAppState, socketConn) => {
+const attemptToResumeSession = async (
+  previousSessionJWT,
+  setAppState,
+  socketConn
+) => {
   // 1) Refresh a new JWT with the old one
   //    1.a) If you get an error, clear local storage, then
   //        set status to STATUS_NEEDS_MANUAL_LOGIN
@@ -19,7 +23,10 @@ const attemptToResumeSession = async (previousSessionJWT, setAppState, socketCon
   // 2) Call /me with the new JWT
   const meResponse = await API.Me(previousSessionJWT)
   if (meResponse.isError) {
-    console.log('Could not resume session, /me failed. Redirecting to login.', meResponse.errorMessage)
+    console.log(
+      'Could not resume session, /me failed. Redirecting to login.',
+      meResponse.errorMessage
+    )
     localStore.clearJWT()
     setAppState({ type: ACTION_TYPE.STATUS_NEEDS_MANUAL_LOGIN })
     return
@@ -34,8 +41,8 @@ const attemptToResumeSession = async (previousSessionJWT, setAppState, socketCon
         id: meResponse.data._id,
         jwt: previousSessionJWT,
       },
-      appState: APP_INIT_STATUS.AUTHENTICATED_ATTEMPTING_SOCKET
-    }
+      appState: APP_INIT_STATUS.AUTHENTICATED_ATTEMPTING_SOCKET,
+    },
   })
 
   // 4) Try to establish a websocket connection
@@ -46,18 +53,21 @@ const attemptToResumeSession = async (previousSessionJWT, setAppState, socketCon
 // ===================================================
 
 /**
- * 
- * @param {*} WrappedComponent 
- * @returns 
+ *
+ * @param {*} WrappedComponent
+ * @returns
  */
 export const withHandleAppInit = (WrappedComponent) => (props) => {
   const socketConn = useSocketContext()
   const [appState, setAppState] = useAppContext()
 
-  const attemptResumeSession = useCallback((jwt) => {
-    setAppState({ type: ACTION_TYPE.STATUS_ATTEMPTING_RESUME_SESSION })
-    attemptToResumeSession(jwt, setAppState, socketConn)
-  }, [socketConn, setAppState])
+  const attemptResumeSession = useCallback(
+    (jwt) => {
+      setAppState({ type: ACTION_TYPE.STATUS_ATTEMPTING_RESUME_SESSION })
+      attemptToResumeSession(jwt, setAppState, socketConn)
+    },
+    [socketConn, setAppState]
+  )
 
   /**
    * This is the App Init's Step #1.
@@ -73,6 +83,7 @@ export const withHandleAppInit = (WrappedComponent) => (props) => {
     } else {
       setAppState({ type: ACTION_TYPE.STATUS_NEEDS_MANUAL_LOGIN })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (appState.appInitStatus === APP_INIT_STATUS.AUTHENTICATED_WITH_SOCKET) {
@@ -86,10 +97,14 @@ export const withHandleAppInit = (WrappedComponent) => (props) => {
   if (appState.appInitStatus === APP_INIT_STATUS.ERROR_FIRST_CONNECT) {
     return (
       <StatusPage
-        mainText='Connection Error'
-        detailsText='Could not complete log in.'
+        mainText="Connection Error"
+        detailsText="Could not complete log in."
         cta={
-          <button onClick={() => setAppState({ type: ACTION_TYPE.STATUS_NEEDS_MANUAL_LOGIN })}>
+          <button
+            onClick={() =>
+              setAppState({ type: ACTION_TYPE.STATUS_NEEDS_MANUAL_LOGIN })
+            }
+          >
             Back to Log In
           </button>
         }
@@ -99,20 +114,20 @@ export const withHandleAppInit = (WrappedComponent) => (props) => {
 
   // The statuses that should show the Loading screen
   // with some loading message.
-  let loadingStateText = '';
+  let loadingStateText = ''
   switch (appState.appInitStatus) {
     case APP_INIT_STATUS.NONE:
       loadingStateText = ''
-      break;
+      break
     case APP_INIT_STATUS.ATTEMPTING_RESUME_SESSION:
       loadingStateText = 'Attempting to resume previous session.'
-      break;
+      break
     case APP_INIT_STATUS.AUTHENTICATED_ATTEMPTING_SOCKET:
       loadingStateText = 'Attempting websocket connection.'
-      break;
+      break
     default:
       loadingStateText = ''
   }
 
-  return <StatusPage mainText='Loading...' detailsText={loadingStateText} />
+  return <StatusPage mainText="Loading..." detailsText={loadingStateText} />
 }

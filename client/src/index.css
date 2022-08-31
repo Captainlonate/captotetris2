@@ -1,6 +1,6 @@
 @font-face {
-  font-family: "TradeWinds";		    
-  src: local('TradeWinds'), url(./fonts/TradeWinds-Regular.ttf);
+  font-family: 'TradeWinds';
+  src: local('TradeWinds'), url(./assets/fonts/TradeWinds-Regular.ttf);
 }
 
 body {

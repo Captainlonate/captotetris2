@@ -4,30 +4,30 @@ export const BlockTypes = {
   CEMENT: 'CEMENT',
   TRANSPARENT: 'TRANSPARENT',
   NORMAL: 'NORMAL',
-  BREAKER: 'BREAKER'
+  BREAKER: 'BREAKER',
 }
 
 export const BlockTypesInfo = {
   [BlockTypes.CEMENT]: {
     isBreakable: false,
     isStone: true,
-    isBreaker: false
+    isBreaker: false,
   },
   [BlockTypes.TRANSPARENT]: {
     isBreakable: false,
     isStone: true,
-    isBreaker: false
+    isBreaker: false,
   },
   [BlockTypes.NORMAL]: {
     isBreakable: true,
     isStone: false,
-    isBreaker: false
+    isBreaker: false,
   },
   [BlockTypes.BREAKER]: {
     isBreakable: true,
     isStone: false,
-    isBreaker: true
-  }
+    isBreaker: true,
+  },
 }
 
 export const isValidBlockType = (possible) => Boolean(BlockTypes[possible])
@@ -50,6 +50,5 @@ export const getNextBlockType = (currentBlockType) => {
   return nextBlockType
 }
 
-export const chanceToGetBreaker = () => (
+export const chanceToGetBreaker = () =>
   fifteenPercentChance() ? BlockTypes.BREAKER : BlockTypes.NORMAL
-)

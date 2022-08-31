@@ -1,16 +1,16 @@
 import { useRef, useEffect, useState } from 'react'
-import GameLoop from '../../classes/GameLoop'
-import TetrisGame from '../../classes/TetrisGame'
+import GameLoop from '../../game/classes/GameLoop'
+import TetrisGame from '../../game/classes/TetrisGame'
 import checkIsMobile from '../../utils/isMobile'
-import Planks from '../Planks'
-import BackgroundVideo from '../BackgroundVideo'
-import bgVideoFile from '../../videos/1000_40fps_medium_8-5MB.mp4'
+import Planks from './Planks'
+import BackgroundVideo from './BackgroundVideo'
+import bgVideoFile from './videos/1000_40fps_medium_8-5MB.mp4'
 import {
   GameContainer,
   InnerWrapper,
   GameArea,
   CanvasAndFrameWrapper,
-  GameCanvas
+  GameCanvas,
 } from './styled'
 
 const Game = () => {
@@ -40,10 +40,15 @@ const Game = () => {
       <InnerWrapper>
         <GameArea ref={gameAreaRef}>
           <CanvasAndFrameWrapper staticBG={isMobile}>
-            <GameCanvas id='gameCanvas' ref={canvasRef} width='500px' height='500px' />
-            {
-              !isMobile && (<BackgroundVideo videoUrl={bgVideoFile} playbackSpeed={0.5} />)
-            }
+            <GameCanvas
+              id="gameCanvas"
+              ref={canvasRef}
+              width="500px"
+              height="500px"
+            />
+            {!isMobile && (
+              <BackgroundVideo videoUrl={bgVideoFile} playbackSpeed={0.5} />
+            )}
             <Planks />
           </CanvasAndFrameWrapper>
         </GameArea>

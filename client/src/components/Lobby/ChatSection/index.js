@@ -77,55 +77,62 @@ const Chat = () => {
   const bottomDivRef = useRef()
 
   useEffect(() => {
-    // Fetch the initial list of chat messages
-    API.GetRecentChats(appState.user.jwt).then((apiResponse) => {
-      if (apiResponse.isError) {
-        console.error('Error fetching recent chats')
-      } else {
-        setAppState({
-          type: 'SET_ALL_CHATS',
-          payload: apiResponse.data
-            ?.map(normalizeChatMessageFromApiForCtx)
-            .reverse()
-        })
-        if (bottomDivRef.current) {
-          bottomDivRef.current.scrollIntoView({ behavior: "smooth" })
+    if (
+      Array.isArray(appState.chatMessages) &&
+      appState.chatMessages.length === 0
+    ) {
+      console.log('Fetching initial chat messages')
+      // Fetch the initial list of chat messages
+      API.GetRecentChats(appState.user.jwt).then((apiResponse) => {
+        if (apiResponse.isError) {
+          console.error('Error fetching recent chats')
+        } else {
+          setAppState({
+            type: 'SET_ALL_CHATS',
+            payload: apiResponse.data
+              ?.map(normalizeChatMessageFromApiForCtx)
+              .reverse(),
+          })
+          if (bottomDivRef.current) {
+            bottomDivRef.current.scrollIntoView({ behavior: 'smooth' })
+          }
         }
-      }
-    })
-  }, [setAppState])
+      })
+    }
+  }, [appState.chatMessages, appState.user.jwt, setAppState])
 
   useEffect(() => {
     // Whenever the number of messages changes, scroll to the bottom
     if (appState?.chatMessages.length > 0) {
       setImmediate(() => {
-        bottomDivRef.current.scrollIntoView({ behavior: "smooth" })
+        bottomDivRef.current.scrollIntoView({ behavior: 'smooth' })
       })
     }
   }, [appState?.chatMessages.length])
 
-  const onPostNewChatMessage = useCallback((e) => {
-    if (e.key === 'Enter' && chatMessage.trim().length > 0) {
-      socketConn.emit(SOCKET_EVENTS.C2S.POST_CHAT_MESSAGE, chatMessage)
-      setChatMessage('')
-    }
-  }, [chatMessage, socketConn])
+  const onPostNewChatMessage = useCallback(
+    (e) => {
+      if (e.key === 'Enter' && chatMessage.trim().length > 0) {
+        socketConn.emit(SOCKET_EVENTS.C2S.POST_CHAT_MESSAGE, chatMessage)
+        setChatMessage('')
+      }
+    },
+    [chatMessage, socketConn]
+  )
 
   return (
-    <FlexBox dir='column' justify='space-between' flex='1 0'>
+    <FlexBox dir="column" justify="space-between" flex="1 0">
       <ChatMessages>
-        {
-          appState?.chatMessages.map(({ id, author, message }) => (
-            <ChatMessage key={id} userName={author} message={message} />
-          ))
-        }
+        {appState?.chatMessages.map(({ id, author, message }) => (
+          <ChatMessage key={id} userName={author} message={message} />
+        ))}
         {/* This div is used for scrolling to the bottom */}
         <div ref={bottomDivRef}></div>
       </ChatMessages>
       <ChatInputBox>
         <ChatInput
           type="text"
-          placeholder='Send a message'
+          placeholder="Send a message"
           value={chatMessage}
           onChange={(e) => setChatMessage(e.target.value)}
           onKeyDown={onPostNewChatMessage}

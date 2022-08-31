@@ -1,11 +1,11 @@
-import { ERROR_CODES } from "./ApiError"
-import { ApiResponse } from "./ApiResponse"
+import { ERROR_CODES } from './ApiError'
+import { ApiResponse } from './ApiResponse'
 
 /*
   If all API requests use this wrapper, then the response will always
   be the same structured object.
 */
-export const makeApiCall = async apiCall => {
+export const makeApiCall = async (apiCall) => {
   const response = new ApiResponse()
 
   try {
@@ -19,7 +19,7 @@ export const makeApiCall = async apiCall => {
     if (apiResponse?.data?.success === false || apiResponse?.data?.error) {
       response.setError({
         errorCode: apiResponse?.data?.error?.error_code,
-        message: apiResponse?.data?.error?.human_msg
+        message: apiResponse?.data?.error?.human_msg,
       })
     } else {
       response.data = apiResponse?.data?.data
@@ -29,7 +29,7 @@ export const makeApiCall = async apiCall => {
     // status code. Most likely this is an unexpected exception.
     response.setError({
       errorCode: ERROR_CODES.non_200,
-      message: apiError?.response?.data || apiError.message
+      message: apiError?.response?.data || apiError.message,
     })
   }
 

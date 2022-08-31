@@ -17,9 +17,9 @@ export const initialAppContextState = {
   user: {
     id: null,
     userName: null,
-    jwt: null
+    jwt: null,
   },
-  
+
   attemptedToResumeSession: false,
   socketHasConnectedOnce: false, // boolean
   socketIsCurrentlyConnected: false, // boolean
@@ -29,8 +29,8 @@ export const initialAppContextState = {
   allUsers: [],
   usersWhoChallengedYou: [],
   usersYouChallenged: [],
-  
-  chatMessages: []
+
+  chatMessages: [],
 }
 
 export const ACTION_TYPE = {
@@ -64,7 +64,8 @@ export const appContextReducer = (state, { type, payload }) => {
         socketHasConnectedOnce: false,
         socketIsCurrentlyConnected: false,
         socketConnectionError: null,
-        appInitStatus: payload.appState ?? APP_INIT_STATUS.AUTHENTICATED_NO_SOCKET
+        appInitStatus:
+          payload.appState ?? APP_INIT_STATUS.AUTHENTICATED_NO_SOCKET,
       }
     // Authenticated with JWT and validated with /me,
     // and has established the first websocket conn.
@@ -74,9 +75,9 @@ export const appContextReducer = (state, { type, payload }) => {
         socketHasConnectedOnce: true,
         socketIsCurrentlyConnected: true,
         socketConnectionError: null,
-        appInitStatus: APP_INIT_STATUS.AUTHENTICATED_WITH_SOCKET
+        appInitStatus: APP_INIT_STATUS.AUTHENTICATED_WITH_SOCKET,
       }
-    // 
+    //
     case ACTION_TYPE.STATUS_NEEDS_MANUAL_LOGIN:
       return {
         ...state,
@@ -84,13 +85,13 @@ export const appContextReducer = (state, { type, payload }) => {
         socketHasConnectedOnce: false,
         socketIsCurrentlyConnected: false,
         socketConnectionError: null,
-        appInitStatus: APP_INIT_STATUS.NEED_TO_LOG_IN
+        appInitStatus: APP_INIT_STATUS.NEED_TO_LOG_IN,
       }
     case ACTION_TYPE.STATUS_ATTEMPTING_RESUME_SESSION:
       return {
         ...state,
         attemptedToResumeSession: true,
-        appInitStatus: APP_INIT_STATUS.ATTEMPTING_RESUME_SESSION
+        appInitStatus: APP_INIT_STATUS.ATTEMPTING_RESUME_SESSION,
       }
     case ACTION_TYPE.SET_APP_INIT_STATUS:
       return {
@@ -106,29 +107,31 @@ export const appContextReducer = (state, { type, payload }) => {
     case ACTION_TYPE.SET_SOCKET_DISCONNECTED:
       return {
         ...state,
-        socketIsCurrentlyConnected: false
+        socketIsCurrentlyConnected: false,
       }
     case ACTION_TYPE.SET_SOCKET_CONNECTION_ERROR:
       return {
         ...state,
         socketIsCurrentlyConnected: false,
-        socketConnectionError: payload
+        socketConnectionError: payload,
       }
     case ACTION_TYPE.SET_ALL_USERS:
       return {
         ...state,
-        allUsers: Array.isArray(payload) ? payload : []
+        allUsers: Array.isArray(payload) ? payload : [],
       }
     case ACTION_TYPE.SET_CHALLENGES:
       return {
         ...state,
         usersYouChallenged: Array.isArray(payload?.byYou) ? payload?.byYou : [],
-        usersWhoChallengedYou: Array.isArray(payload?.toYou) ? payload?.toYou : []
+        usersWhoChallengedYou: Array.isArray(payload?.toYou)
+          ? payload?.toYou
+          : [],
       }
     case ACTION_TYPE.SET_ALL_CHATS:
       return {
         ...state,
-        chatMessages: Array.isArray(payload) ? payload : []
+        chatMessages: Array.isArray(payload) ? payload : [],
       }
     default:
       return state

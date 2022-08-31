@@ -17,7 +17,7 @@ const LoginPageWrapper = styled.div`
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  background-image: linear-gradient(rgb(123 212 255),rgb(0 88 255));
+  background-image: linear-gradient(rgb(123 212 255), rgb(0 88 255));
 `
 
 const LoginFormContainer = styled.div`
@@ -34,22 +34,22 @@ const FormTitle = styled.h1`
 `
 
 const FormTextInput = styled.input.attrs({
-  type: "text",
+  type: 'text',
 })`
   border-radius: 5px;
   border: none;
-  padding: .3em .75em;
+  padding: 0.3em 0.75em;
   font-size: 30px;
   box-shadow: 0px 3px 5px 0px #9a9a9a;
   margin-bottom: 10px;
 `
 
 const FormPasswordInput = styled.input.attrs({
-  type: "password",
+  type: 'password',
 })`
   border-radius: 5px;
   border: none;
-  padding: .3em .75em;
+  padding: 0.3em 0.75em;
   font-size: 30px;
   box-shadow: 0px 3px 5px 0px #9a9a9a;
 `
@@ -67,7 +67,7 @@ const FormSubmitButton = styled.button`
   color: white;
   border-radius: 5px;
   border: none;
-  padding: .75em 1em;
+  padding: 0.75em 1em;
   display: block;
   width: 100%;
   font-weight: bold;
@@ -94,7 +94,7 @@ const FormSubmitButton = styled.button`
     cursor: not-allowed;
   }
 `
- 
+
 const LoginModal = styled.div`
   border-radius: 5px;
   box-shadow: 2px 2px 10px #111111;
@@ -105,7 +105,7 @@ const LoginModal = styled.div`
 // ===================================
 
 const LoginPage = () => {
-  const [userName, setUserName] = useState('fake_user')
+  const [userName, setUserName] = useState('mammaw')
   const [password, setPassword] = useState('fake_password')
   const [errorMessage, setErrorMessage] = useState('')
   const [loading, setLoading] = useState(false)
@@ -139,10 +139,10 @@ const LoginPage = () => {
           id: meResponse.data._id,
           jwt: loginResponse.data,
         },
-        appState: APP_INIT_STATUS.AUTHENTICATED_ATTEMPTING_SOCKET
-      }
+        appState: APP_INIT_STATUS.AUTHENTICATED_ATTEMPTING_SOCKET,
+      },
     })
-    
+
     socketConn.auth = { jwt: loginResponse.data }
     socketConn.connect()
   }, [userName, password, setAppCtxState, socketConn])
@@ -152,14 +152,20 @@ const LoginPage = () => {
       <LoginModal>
         <LoginFormContainer>
           <FormTitle>Sign Up/In</FormTitle>
-          <FormTextInput value={userName} onChange={(e) => setUserName(e.target.value)} placeholder='Username' />
-          <FormPasswordInput value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Password' />
-          {
-            errorMessage && (
-              <FormErrorMessage>{errorMessage}</FormErrorMessage>
-            )
-          }
-          <FormSubmitButton onClick={() => attemptLogin()} disabled={loading}>LOG IN</FormSubmitButton>
+          <FormTextInput
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            placeholder="Username"
+          />
+          <FormPasswordInput
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+          />
+          {errorMessage && <FormErrorMessage>{errorMessage}</FormErrorMessage>}
+          <FormSubmitButton onClick={() => attemptLogin()} disabled={loading}>
+            LOG IN
+          </FormSubmitButton>
         </LoginFormContainer>
       </LoginModal>
     </LoginPageWrapper>

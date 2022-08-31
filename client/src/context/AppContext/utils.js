@@ -11,11 +11,11 @@ export const normalizeChatMessageFromApiForCtx = (obj) => ({
   id: obj._id ?? obj.id,
   author: obj.author,
   message: obj.message,
-  createdAt: obj.createdAt
+  createdAt: obj.createdAt,
 })
 
 /**
- * 
+ *
  * @param {*} obj User objects from the api
  * @returns transformed/normalized user objects intended
  *  to be stored in the AppContext

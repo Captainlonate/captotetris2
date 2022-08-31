@@ -15,7 +15,7 @@ const AppWithProviders = pipe(
   withHandleAppInit,
   withSocketListeners,
   withSocketContext,
-  withAppContext,
+  withAppContext
 )(App)
 
 export default AppWithProviders

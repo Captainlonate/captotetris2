@@ -1,6 +1,6 @@
 import styled from 'styled-components'
-import islandBackgroundImage from '../../images/backgrounds/simple_plants.png'
-import plankFrameImage from '../../images/plank_frame.png'
+import islandBackgroundImage from '../../assets/images/backgrounds/simple_plants.png'
+import plankFrameImage from '../../assets/images/plank_frame.png'
 
 export const GameContainer = styled.div`
   position: fixed;
@@ -45,7 +45,8 @@ export const GameCanvas = styled.canvas`
 
 export const CanvasAndFrameWrapper = styled.div`
   position: relative;
-  ${({ staticBG }) => staticBG && 'background-image: url("' + islandBackgroundImage + '");'}
+  ${({ staticBG }) =>
+    staticBG && 'background-image: url("' + islandBackgroundImage + '");'}
   ${({ staticBG }) => staticBG && 'background-position: left;'}
   ${({ staticBG }) => staticBG && 'background-size: cover;'}
   ${({ staticBG }) => staticBG && 'background-repeat: no-repeat;'}

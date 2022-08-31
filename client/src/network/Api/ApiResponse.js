@@ -1,7 +1,7 @@
-import { ApiError } from "./ApiError"
+import { ApiError } from './ApiError'
 
 export class ApiResponse {
-  constructor () {
+  constructor() {
     this._data = null
     this._apiError = null
     this.axios = null
@@ -11,19 +11,19 @@ export class ApiResponse {
   // ===== Getters =====
   // ===================
 
-  get isError () {
-    return (this._apiError instanceof ApiError)
+  get isError() {
+    return this._apiError instanceof ApiError
   }
 
-  get errorMessage () {
-    return (this.isError) ? this?._apiError?.message : ""
+  get errorMessage() {
+    return this.isError ? this?._apiError?.message : ''
   }
 
-  get errorCode () {
-    return (this.isError) ? this?._apiError?.errorCode : ""
+  get errorCode() {
+    return this.isError ? this?._apiError?.errorCode : ''
   }
 
-  get data () {
+  get data() {
     return this._data
   }
 
@@ -31,13 +31,13 @@ export class ApiResponse {
   // ===== Setters =====
   // ===================
 
-  setError ({ errorCode, message } = {}) {
+  setError({ errorCode, message } = {}) {
     if (message) {
       this._apiError = new ApiError({ message, errorCode })
     }
   }
 
-  set data (newData) {
+  set data(newData) {
     this._apiError = null
     this._data = newData
   }
@@ -46,7 +46,7 @@ export class ApiResponse {
 // Static method to check if something IS an ApiResponse
 ApiResponse.is = function (anything) {
   try {
-    return (anything instanceof ApiResponse)
+    return anything instanceof ApiResponse
   } catch (ex) {
     return false
   }

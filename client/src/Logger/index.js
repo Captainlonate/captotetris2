@@ -1,19 +1,19 @@
 export class Logger {
-  debug (...msg) {
-    console.log("%c(ℹ)%c", "color: white; background: #3ec2ff;", "", ...msg);
+  debug(...msg) {
+    console.log('%c(ℹ)%c', 'color: white; background: #3ec2ff;', '', ...msg)
   }
 
-  error (...msg) {
-    console.error("%c(X)%c", "color: yellow; background: #e04800;", "", ...msg);
+  error(...msg) {
+    console.error('%c(X)%c', 'color: yellow; background: #e04800;', '', ...msg)
   }
 
-  logEnvironment () {
-    this.debug("Environment: " + process.env.NODE_ENV)
+  logEnvironment() {
+    this.debug('Environment: ' + process.env.NODE_ENV)
   }
 
-  logTime (...msg) {
+  logTime(...msg) {
     const d = new Date()
-    const time = (d.toLocaleString)
+    const time = d.toLocaleString
       ? d.toLocaleString('en-US')
       : `${d.getHours()}:${d.getSeconds()}:${d.getMilliseconds()}`
 
