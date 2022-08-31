@@ -1,6 +1,8 @@
 import styled from 'styled-components'
 
-const PageWrapper = styled.div`
+// ===============Styled Components==============
+
+export const PageWrapper = styled.div`
   background-color: #292d33;
   width: 100vw;
   height: 100vh;
@@ -11,21 +13,12 @@ const PageWrapper = styled.div`
   align-items: center;
 `
 
-const BigText = styled.div`
+export const BigText = styled.div`
   font-size: 48px;
   color: white;
 `
 
-const DetailsText = styled.div`
+export const DetailsText = styled.div`
   font-size: 32px;
   color: white;
 `
-
-const LoadingPage = ({ text }) => (
-  <PageWrapper>
-    <BigText>Loading...</BigText>
-    <DetailsText>{text}</DetailsText>
-  </PageWrapper>
-)
-
-export default LoadingPage

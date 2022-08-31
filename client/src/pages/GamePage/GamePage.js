@@ -1,4 +1,4 @@
-import Game from '../../components/Canvas/index'
+import Game from './GameComponent'
 
 const GamePage = () => {
   return (

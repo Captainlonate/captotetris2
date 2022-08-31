@@ -5,11 +5,13 @@ import {
   Navigate,
 } from 'react-router-dom'
 
-import LobbyPage from '../Lobby/Lobby'
-import LoginPage from '../Login/Login'
+import LobbyPage from '../../pages/LobbyPage/LobbyPage'
+import LoginPage from '../../pages/LoginPage/LoginPage'
 import GamePage from '../../pages/GamePage/GamePage'
 import { useAppContext } from '../../context/AppContext'
 import { APP_INIT_STATUS } from '../../context/AppContext/reducer'
+
+// ==============================================
 
 const AuthenticatedRoutes = () => {
   return (

@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+// ===============Styled Components==============
+
 export const FlexBox = styled.div`
   display: flex;
   flex: ${({ flex }) => flex ?? '1'};

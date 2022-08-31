@@ -23,6 +23,8 @@ const LightIndicator = styled.div`
   height: 1em;
 `
 
+// ==============================================
+
 const NetworkIndicator = () => {
   const [appState] = useAppContext()
   const loading = false

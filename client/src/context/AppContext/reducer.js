@@ -20,6 +20,11 @@ export const initialAppContextState = {
     jwt: null,
   },
 
+  errors: {
+    fetchingInitialChats: null,
+    refreshingToken: null,
+  },
+
   attemptedToResumeSession: false,
   socketHasConnectedOnce: false, // boolean
   socketIsCurrentlyConnected: false, // boolean
@@ -31,6 +36,7 @@ export const initialAppContextState = {
   usersYouChallenged: [],
 
   chatMessages: [],
+  hasFetchedInitialChats: false,
 }
 
 export const ACTION_TYPE = {
@@ -45,6 +51,7 @@ export const ACTION_TYPE = {
   SET_ALL_USERS: 'SET_ALL_USERS',
   SET_CHALLENGES: 'SET_CHALLENGES',
   SET_ALL_CHATS: 'SET_ALL_CHATS',
+  HAS_FETCHED_INITIAL_CHATS: 'HAS_FETCHED_INITIAL_CHATS',
 }
 
 export const appContextReducer = (state, { type, payload }) => {
@@ -132,6 +139,12 @@ export const appContextReducer = (state, { type, payload }) => {
       return {
         ...state,
         chatMessages: Array.isArray(payload) ? payload : [],
+        hasFetchedInitialChats: true,
+      }
+    case ACTION_TYPE.HAS_FETCHED_INITIAL_CHATS:
+      return {
+        ...state,
+        hasFetchedInitialChats: true,
       }
     default:
       return state

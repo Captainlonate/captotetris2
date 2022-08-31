@@ -1,6 +1,6 @@
 import { axiosConn } from './axios'
 import { makeApiCall } from './makeApiCall'
-import Logger from '../../Logger'
+import Logger from '../../utils/Logger'
 
 /*
   To keep api code organized, every api call will have a method

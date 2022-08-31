@@ -1,12 +1,15 @@
 import { useEffect, useCallback } from 'react'
+import { toast } from 'react-toastify'
 
 import { useAppContext } from '../../context/AppContext'
 import { APP_INIT_STATUS, ACTION_TYPE } from '../../context/AppContext/reducer'
 import { useSocketContext } from '../../context/SocketContext'
-import LoginPage from '../Login/Login'
+import LoginPage from '../../pages/LoginPage/LoginPage'
 import StatusPage from '../StatusPage'
 import * as localStore from '../../localStorage/localStorage'
 import { API } from '../../network/Api'
+import Logger from '../../utils/Logger'
+import { API_ERRORCODES } from '../../network/Api/ApiError'
 
 // ===================================================
 
@@ -23,10 +26,14 @@ const attemptToResumeSession = async (
   // 2) Call /me with the new JWT
   const meResponse = await API.Me(previousSessionJWT)
   if (meResponse.isError) {
-    console.log(
-      'Could not resume session, /me failed. Redirecting to login.',
-      meResponse.errorMessage
+    if (meResponse.errorCode === API_ERRORCODES.expired_jwt) {
+      toast('Session Expired. Re-login')
+    }
+
+    Logger.debug(
+      `Could not resume session, /me failed. Redirecting to login: "${meResponse.errorMessage}"`
     )
+
     localStore.clearJWT()
     setAppState({ type: ACTION_TYPE.STATUS_NEEDS_MANUAL_LOGIN })
     return

@@ -2,6 +2,8 @@ import styled from 'styled-components'
 import islandBackgroundImage from '../../assets/images/backgrounds/simple_plants.png'
 import plankFrameImage from '../../assets/images/plank_frame.png'
 
+// ===============Styled Components==============
+
 export const GameContainer = styled.div`
   position: fixed;
   left: 0;
