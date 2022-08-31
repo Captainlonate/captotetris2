@@ -1,37 +1,81 @@
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 
-import { getSocketSession } from '../../localStorage/localStorage'
 import { useAppContext } from '../../context/AppContext'
-import { APP_INIT_STATUS } from '../../context/AppContext/reducer'
+import { APP_INIT_STATUS, ACTION_TYPE } from '../../context/AppContext/reducer'
 import { useSocketContext } from '../../context/SocketContext'
 import LoginPage from '../Login/Login'
 import StatusPage from '../StatusPage'
+import * as localStore from '../../localStorage/localStorage'
+import { API } from '../../network/Api'
 
 // ===================================================
 
+const attemptToResumeSession = async (previousSessionJWT, setAppState, socketConn) => {
+  // 1) Refresh a new JWT with the old one
+  //    1.a) If you get an error, clear local storage, then
+  //        set status to STATUS_NEEDS_MANUAL_LOGIN
+  //    1.b) If you get a new JWT, set it in local storage
+
+  // 2) Call /me with the new JWT
+  const meResponse = await API.Me(previousSessionJWT)
+  if (meResponse.isError) {
+    console.log('Could not resume session, /me failed. Redirecting to login.', meResponse.errorMessage)
+    localStore.clearJWT()
+    setAppState({ type: ACTION_TYPE.STATUS_NEEDS_MANUAL_LOGIN })
+    return
+  }
+
+  // 3) Store user data and set status to AUTHENTICATED_ATTEMPTING_SOCKET
+  setAppState({
+    type: ACTION_TYPE.STATUS_AUTHENTICATED_NO_SOCKET,
+    payload: {
+      user: {
+        userName: meResponse.data.username,
+        id: meResponse.data._id,
+        jwt: previousSessionJWT,
+      },
+      appState: APP_INIT_STATUS.AUTHENTICATED_ATTEMPTING_SOCKET
+    }
+  })
+
+  // 4) Try to establish a websocket connection
+  socketConn.auth = { jwt: previousSessionJWT }
+  socketConn.connect()
+}
+
+// ===================================================
+
+/**
+ * 
+ * @param {*} WrappedComponent 
+ * @returns 
+ */
 export const withHandleAppInit = (WrappedComponent) => (props) => {
   const socketConn = useSocketContext()
   const [appState, setAppState] = useAppContext()
 
+  const attemptResumeSession = useCallback((jwt) => {
+    setAppState({ type: ACTION_TYPE.STATUS_ATTEMPTING_RESUME_SESSION })
+    attemptToResumeSession(jwt, setAppState, socketConn)
+  }, [socketConn, setAppState])
+
+  /**
+   * This is the App Init's Step #1.
+   * The status starts out NONE.
+   * This is the point where the app decides if it should try
+   * to resume a previous session, or take the user to login.
+   */
   useEffect(() => {
-    // Read the web socket session info from local storage (from last session)
-    // If this is a first visit, then there will not be session info yet
-    const { sessionID, userID, userName } = getSocketSession()
-    // And load the previous session info into the context
-    const foundPreviousSession = [sessionID, userID, userName].every((val) => !!val)
-    if (foundPreviousSession) {
-      // Save previous session into AppContext
-      setAppState({ type: 'SET_SOCKET_SESSION', payload: { sessionID, userID, userName } })
-      // Attempt to connect
-      setAppState({ type: 'SET_APP_INIT_STATUS', payload: APP_INIT_STATUS.ATTEMPTING_RESUME_SESSION })
-      socketConn.auth = { username: userName, sessionID }
-      socketConn.connect()
+    const previousSessionJWT = localStore.getJWT()
+    const alreadyTriedToResume = appState.attemptedToResumeSession
+    if (!alreadyTriedToResume && !!previousSessionJWT) {
+      attemptResumeSession(previousSessionJWT)
     } else {
-      setAppState({ type: 'SET_APP_INIT_STATUS', payload: APP_INIT_STATUS.NEED_TO_LOG_IN })
+      setAppState({ type: ACTION_TYPE.STATUS_NEEDS_MANUAL_LOGIN })
     }
   }, [])
 
-  if (appState.appInitStatus === APP_INIT_STATUS.DONE) {
+  if (appState.appInitStatus === APP_INIT_STATUS.AUTHENTICATED_WITH_SOCKET) {
     return <WrappedComponent {...props} />
   }
 
@@ -44,24 +88,27 @@ export const withHandleAppInit = (WrappedComponent) => (props) => {
       <StatusPage
         mainText='Connection Error'
         detailsText='Could not complete log in.'
-        cta={<button onClick={() => setAppState({ type: 'SET_APP_INIT_STATUS', payload: APP_INIT_STATUS.NEED_TO_LOG_IN })}>Back to Log In</button>}
+        cta={
+          <button onClick={() => setAppState({ type: ACTION_TYPE.STATUS_NEEDS_MANUAL_LOGIN })}>
+            Back to Log In
+          </button>
+        }
       />
     )
   }
 
+  // The statuses that should show the Loading screen
+  // with some loading message.
   let loadingStateText = '';
   switch (appState.appInitStatus) {
     case APP_INIT_STATUS.NONE:
       loadingStateText = ''
       break;
     case APP_INIT_STATUS.ATTEMPTING_RESUME_SESSION:
-      loadingStateText = 'Resuming last session'
+      loadingStateText = 'Attempting to resume previous session.'
       break;
-    case APP_INIT_STATUS.ATTEMPTING_LOG_IN:
-      loadingStateText = 'Signing in'
-      break;
-    case APP_INIT_STATUS.CONNECTED_WAITING_SERVER_SESSION:
-      loadingStateText = 'Waiting for server session'
+    case APP_INIT_STATUS.AUTHENTICATED_ATTEMPTING_SOCKET:
+      loadingStateText = 'Attempting websocket connection.'
       break;
     default:
       loadingStateText = ''

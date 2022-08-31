@@ -20,7 +20,7 @@ export class ApiResponse {
   }
 
   get errorCode () {
-    return (this.isError) ? this?._apiError?.error_code : ""
+    return (this.isError) ? this?._apiError?.errorCode : ""
   }
 
   get data () {

@@ -4,6 +4,7 @@ const FIELDS = {
   SOCKET_SESSIONID: "SOCKET_SESSIONID",
   SOCKET_USERID: "SOCKET_USERID",
   SOCKET_USERNAME: "SOCKET_USERNAME",
+  JWT: "JWT"
 };
 
 //======================================================
@@ -22,10 +23,24 @@ export const clearSocketSession = () => {
   window.localStorage.removeItem(FIELDS.SOCKET_USERNAME)
 }
 
-export const getSocketSession = () => {
-  return {
-    sessionID: window.localStorage.getItem(FIELDS.SOCKET_SESSIONID),
-    userID: window.localStorage.getItem(FIELDS.SOCKET_USERID),
-    userName: window.localStorage.getItem(FIELDS.SOCKET_USERNAME),
-  }
+export const getSocketSession = () => ({
+  sessionID: window.localStorage.getItem(FIELDS.SOCKET_SESSIONID),
+  userID: window.localStorage.getItem(FIELDS.SOCKET_USERID),
+  userName: window.localStorage.getItem(FIELDS.SOCKET_USERNAME),
+})
+
+//======================================================
+//=========================JWT==========================
+//======================================================
+
+export const setJWT = (jwtString) => {
+  window.localStorage.setItem(FIELDS.JWT, jwtString)
 }
+
+export const clearJWT = () => {
+  window.localStorage.removeItem(FIELDS.JWT)
+}
+
+export const getJWT = () => (
+  window.localStorage.getItem(FIELDS.JWT) ?? null
+)

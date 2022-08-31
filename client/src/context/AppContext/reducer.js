@@ -4,88 +4,132 @@ export const APP_INIT_STATUS = {
   ATTEMPTING_LOG_IN: 'ATTEMPTING_LOG_IN',
   ERROR_FIRST_CONNECT: 'ERROR_FIRST_CONNECT',
   NEED_TO_LOG_IN: 'NEED_TO_LOG_IN',
-  CONNECTED_WAITING_SERVER_SESSION: 'CONNECTED_WAITING_SERVER_SESSION',
-  DONE: 'DONE'
+  // CONNECTED_WAITING_SERVER_SESSION: 'CONNECTED_WAITING_SERVER_SESSION',
+  // DONE: 'DONE',
+
+  AUTHENTICATED_ATTEMPTING_SOCKET: 'AUTHENTICATED_ATTEMPTING_SOCKET',
+  AUTHENTICATED_NO_SOCKET: 'AUTHENTICATED_NO_SOCKET',
+  AUTHENTICATED_WITH_SOCKET: 'AUTHENTICATED_WITH_SOCKET',
+  ATTEMPTING_SOCKET_CONN: 'ATTEMPTING_SOCKET_CONN',
 }
 
 export const initialAppContextState = {
-  socketSessionID: null,
-  socketUserID: null,
-  socketUserName: null,
-  allUsers: [],
+  user: {
+    id: null,
+    userName: null,
+    jwt: null
+  },
+  
+  attemptedToResumeSession: false,
   socketHasConnectedOnce: false, // boolean
   socketIsCurrentlyConnected: false, // boolean
   socketConnectionError: null, // null or string
-  hasSetSocketSession: false, // boolean
   appInitStatus: APP_INIT_STATUS.NONE,
+
+  allUsers: [],
   usersWhoChallengedYou: [],
   usersYouChallenged: [],
-  chatMessages: [
-    // { id: '0001', authorName: 'Maximus Decimus Meridius', message: 'Is anyone here?' },
-    // { id: '0002', authorName: 'Emporer Commodus', message: 'Yeah, I\'m here.' },
-    // { id: '0003', authorName: 'Maximus Decimus Meridius', message: 'Want to play?' },
-    // { id: '0004', authorName: 'Emporer Commodus', message: 'Let\'s go!' },
-  ]
+  
+  chatMessages: []
+}
+
+export const ACTION_TYPE = {
+  STATUS_AUTHENTICATED_NO_SOCKET: 'STATUS_AUTHENTICATED_NO_SOCKET',
+  STATUS_AUTHENTICATED_WITH_SOCKET: 'STATUS_AUTHENTICATED_WITH_SOCKET',
+  STATUS_NEEDS_MANUAL_LOGIN: 'STATUS_NEEDS_MANUAL_LOGIN',
+  STATUS_ATTEMPTING_RESUME_SESSION: 'STATUS_ATTEMPTING_RESUME_SESSION',
+  SET_APP_INIT_STATUS: 'SET_APP_INIT_STATUS',
+  SET_SOCKET_CONNECTED: 'SET_SOCKET_CONNECTED',
+  SET_SOCKET_DISCONNECTED: 'SET_SOCKET_DISCONNECTED',
+  SET_SOCKET_CONNECTION_ERROR: 'SET_SOCKET_CONNECTION_ERROR',
+  SET_ALL_USERS: 'SET_ALL_USERS',
+  SET_CHALLENGES: 'SET_CHALLENGES',
+  SET_ALL_CHATS: 'SET_ALL_CHATS',
 }
 
 export const appContextReducer = (state, { type, payload }) => {
+  console.log(`Reducer::"${type}"`, payload)
   switch (type) {
-    case 'SET_APP_INIT_STATUS':
+    // Authenticated with JWT and validated with /me,
+    // but has not established the first websocket conn yet.
+    case ACTION_TYPE.STATUS_AUTHENTICATED_NO_SOCKET:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          userName: payload.user.userName,
+          id: payload.user.id,
+          jwt: payload.user.jwt,
+        },
+        socketHasConnectedOnce: false,
+        socketIsCurrentlyConnected: false,
+        socketConnectionError: null,
+        appInitStatus: payload.appState ?? APP_INIT_STATUS.AUTHENTICATED_NO_SOCKET
+      }
+    // Authenticated with JWT and validated with /me,
+    // and has established the first websocket conn.
+    case ACTION_TYPE.STATUS_AUTHENTICATED_WITH_SOCKET:
+      return {
+        ...state,
+        socketHasConnectedOnce: true,
+        socketIsCurrentlyConnected: true,
+        socketConnectionError: null,
+        appInitStatus: APP_INIT_STATUS.AUTHENTICATED_WITH_SOCKET
+      }
+    // 
+    case ACTION_TYPE.STATUS_NEEDS_MANUAL_LOGIN:
+      return {
+        ...state,
+        user: { id: null, userName: null, jwt: null },
+        socketHasConnectedOnce: false,
+        socketIsCurrentlyConnected: false,
+        socketConnectionError: null,
+        appInitStatus: APP_INIT_STATUS.NEED_TO_LOG_IN
+      }
+    case ACTION_TYPE.STATUS_ATTEMPTING_RESUME_SESSION:
+      return {
+        ...state,
+        attemptedToResumeSession: true,
+        appInitStatus: APP_INIT_STATUS.ATTEMPTING_RESUME_SESSION
+      }
+    case ACTION_TYPE.SET_APP_INIT_STATUS:
       return {
         ...state,
         appInitStatus: payload,
       }
-    case 'SET_SOCKET_SESSION':
-      return {
-        ...state,
-        hasSetSocketSession: true,
-        socketSessionID: payload.sessionID,
-        socketUserID: payload.userID,
-        socketUserName: payload.userName
-      }
-    case 'SET_SOCKET_CONNECTED':
+    case ACTION_TYPE.SET_SOCKET_CONNECTED:
       return {
         ...state,
         socketIsCurrentlyConnected: true,
         socketHasConnectedOnce: true,
       }
-    case 'SET_SOCKET_DISCONNECTED':
+    case ACTION_TYPE.SET_SOCKET_DISCONNECTED:
       return {
         ...state,
         socketIsCurrentlyConnected: false
       }
-    case 'SET_SOCKET_CONNECTION_ERROR':
+    case ACTION_TYPE.SET_SOCKET_CONNECTION_ERROR:
       return {
         ...state,
         socketIsCurrentlyConnected: false,
         socketConnectionError: payload
       }
-    case 'SET_ALL_USERS':
+    case ACTION_TYPE.SET_ALL_USERS:
       return {
         ...state,
         allUsers: Array.isArray(payload) ? payload : []
       }
-    case 'SET_CHALLENGES':
+    case ACTION_TYPE.SET_CHALLENGES:
       return {
         ...state,
         usersYouChallenged: Array.isArray(payload?.byYou) ? payload?.byYou : [],
         usersWhoChallengedYou: Array.isArray(payload?.toYou) ? payload?.toYou : []
       }
-    case 'SET_ALL_CHATS':
+    case ACTION_TYPE.SET_ALL_CHATS:
       return {
         ...state,
         chatMessages: Array.isArray(payload) ? payload : []
       }
-    // case 'SET_CHALLENGES_BY_YOU':
-    //   return {
-    //     ...state,
-    //     usersYouChallenged: Array.isArray(payload) ? payload : []
-    //   }
-    // case 'SET_CHALLENGES_TO_YOU':
-    //   return {
-    //     ...state,
-    //     usersWhoChallengedYou: Array.isArray(payload) ? payload : []
-    //   }
     default:
       return state
   }

@@ -31,7 +31,7 @@ const RoutesComp = () => {
   const [appState] = useAppContext()
 
   return (
-    appState.appInitStatus === APP_INIT_STATUS.DONE
+    appState.appInitStatus === APP_INIT_STATUS.AUTHENTICATED_WITH_SOCKET
       ? <AuthenticatedRoutes />
       : <UnAuthenticatedRoutes />
   )

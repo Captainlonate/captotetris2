@@ -12,6 +12,26 @@ export class GameAPI {
     Logger.debug("Api::Created a new API object!")
   }
 
+  async Login (username, password) {
+    Logger.debug("Api::Trying to log in...")
+    return await makeApiCall(() => 
+      axiosConn.post('/auth/login', {
+        username, password
+      }, { withCredentials: true })
+    )
+  }
+
+  async Me (jwtString) {
+    Logger.debug("Api::Trying to get /me...")
+    return await makeApiCall(() => 
+      axiosConn.get('/users/me', {
+        headers: {
+          'Authorization': `Bearer ${jwtString}`
+        }
+      }, { withCredentials: true })
+    )
+  }
+
   async GetAllUsers () {
     Logger.debug("Api::Fetching all users...")
     return await makeApiCall(() => 
@@ -19,10 +39,25 @@ export class GameAPI {
     )
   }
 
-  async GetRecentChats () {
+  async GetRecentChats (jwtString) {
     Logger.debug('Api::Fetching recent chat messages')
     return await makeApiCall(() =>
-      axiosConn.get('/chats', null, { withCredentials: true })
+      axiosConn.get('/chats', {
+        headers: {
+          'Authorization': `Bearer ${jwtString}`
+        }
+      }, { withCredentials: true })
+    )
+  }
+
+  async RenewJWT (jwtString) {
+    Logger.debug('Api::Renewing JWT')
+    return await makeApiCall(() =>
+      axiosConn.post('/auth/renewjwt', {
+        headers: {
+          'Authorization': `Bearer ${jwtString}`
+        }
+      }, { withCredentials: true })
     )
   }
 }

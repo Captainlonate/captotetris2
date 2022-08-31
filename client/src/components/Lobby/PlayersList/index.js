@@ -5,6 +5,8 @@ import { SOCKET_EVENTS } from '../../../network/socketio'
 import { useAppContext } from '../../../context/AppContext'
 import { useSocketContext } from '../../../context/SocketContext'
 import PlayerListItem from './PlayerListItem'
+import { API } from '../../../network/Api'
+import { normalizeUsersFromApiForCtx } from '../../../context/AppContext/utils'
 
 // =================Styled Components====================
 
@@ -89,7 +91,7 @@ export const ACTION_VARIANTS = {
 // ==================================================
 
 const PlayersList = () => {
-  const [appState] = useAppContext()
+  const [appState, setAppState] = useAppContext()
   const socketConn = useSocketContext()
   const [users, setUsers] = useState({
     challengesToYou: [],
@@ -106,6 +108,20 @@ const PlayersList = () => {
     })
     setUsers(users)
   }, [appState])
+
+  useEffect(() => {
+    // Fetch the initial list of players
+    API.GetAllUsers().then((apiResponse) => {
+      if (apiResponse.isError) {
+        console.error('Error fetching all users')
+      } else {
+        setAppState({
+          type: 'SET_ALL_USERS',
+          payload: apiResponse.data.map(normalizeUsersFromApiForCtx)
+        })
+      }
+    })
+  }, [setAppState])
 
   const onTakeAction = (intent, otherUserID) => (e) => {
     if (intent === ACTION_INTENTS.CHALLENGE) {
