@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { ACTION_INTENTS, ACTION_VARIANTS } from './index'
+import { ACTION_INTENTS, ACTION_VARIANTS } from './utils'
 
 // =================Styled Components====================
 
@@ -131,7 +131,7 @@ ActionDecidingIfAcceptOrDecline.defaultProps = {
 // =====================================================
 
 const PlayerListItem = ({
-  userID,
+  userId,
   userName,
   isOnline,
   actionVariant,
@@ -141,7 +141,7 @@ const PlayerListItem = ({
   if (actionVariant === ACTION_VARIANTS.CAN_CHALLENGE) {
     actions = (
       <ActionCanChallenge
-        onChallenge={onTakeAction(ACTION_INTENTS.CHALLENGE, userID)}
+        onChallenge={onTakeAction(ACTION_INTENTS.CHALLENGE, userId)}
       />
     )
   } else if (actionVariant === ACTION_VARIANTS.PENDING) {
@@ -149,8 +149,8 @@ const PlayerListItem = ({
   } else if (actionVariant === ACTION_VARIANTS.DECIDING) {
     actions = (
       <ActionDecidingIfAcceptOrDecline
-        onAccept={onTakeAction(ACTION_INTENTS.ACCEPT_CHALLENGE, userID)}
-        onDecline={onTakeAction(ACTION_INTENTS.DECLINE_CHALLENGE, userID)}
+        onAccept={onTakeAction(ACTION_INTENTS.ACCEPT_CHALLENGE, userId)}
+        onDecline={onTakeAction(ACTION_INTENTS.DECLINE_CHALLENGE, userId)}
       />
     )
   }

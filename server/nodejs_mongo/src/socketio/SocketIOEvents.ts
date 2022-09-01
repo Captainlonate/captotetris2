@@ -8,10 +8,11 @@ export const SOCKET_EVENTS = {
     // CHALLENGES_STATUS: 'challenges_status',
     // SESSION: 'session',
     NEW_CHAT_MESSAGE: 'new_chat_message',
-    ALL_CONNECTED_USERS: 'all_connected_users',
+    ALL_USERS: 'all_users',
   },
   // Clients emits these to the Server
   C2S: {
+    GET_ALL_USERS: 'get_all_users',
     // CHALLENGE: 'challenge',
     // ACCEPT_CHALLENGE: 'accept_challenge',
     // DECLINE_CHALLENGE: 'decline_challenge',

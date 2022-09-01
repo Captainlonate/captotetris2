@@ -4,22 +4,25 @@ import {
   ACTION_TYPE,
   APP_INIT_STATUS,
 } from '../../../context/AppContext/reducer'
+import Logger from '../../../utils/Logger'
+import { toast } from 'react-toastify'
+import { normalizeUsersFromApiForCtx } from '../../../context/AppContext/utils'
 import { normalizeChatMessageFromApiForCtx } from '../../../context/AppContext/utils'
 
 // ===================================================
 
 const addOrUpdateUser = (updatedUser) =>
   pipe(
-    reject(propEq('userID', updatedUser.userID)),
+    reject(propEq('userId', updatedUser.userId)),
     append(updatedUser),
-    sort((a, b) => a.userID - b.userID)
+    sort((a, b) => a.userId - b.userId)
   )
 
-const setUserOffline = (userID, allUsers) => {
+const setUserOffline = (userId, allUsers) => {
   // create a new array and copy object references
   return allUsers.map((user) => ({
     ...user,
-    connected: userID === user.userID ? false : user.connected,
+    online: userId === user.userId ? false : user.online,
   }))
 }
 
@@ -38,7 +41,7 @@ const SOCKETIO_ERROR_CODES = {
 export const handleConnection =
   (appState, setAppState) =>
   (msg = '') => {
-    console.log(`-- SOCKET EVENT -- Connected: '${msg}'`, msg)
+    Logger.network(`-- SOCKET EVENT -- Connected`)
     if (appState.appInitStatus !== APP_INIT_STATUS.AUTHENTICATED_WITH_SOCKET) {
       setAppState({ type: ACTION_TYPE.STATUS_AUTHENTICATED_WITH_SOCKET })
     } else {
@@ -51,30 +54,16 @@ export const handleConnection =
 */
 export const handleDisconnect =
   (appState, setAppState, socketConn) => (msg) => {
-    console.log(`-- SOCKET EVENT -- Disconnected: '${msg}'`, msg, typeof msg)
+    Logger.network(`-- SOCKET EVENT -- Disconnected: '${msg}'`, msg, typeof msg)
     setAppState({ type: ACTION_TYPE.SET_SOCKET_DISCONNECTED })
   }
-
-/*
-
-*/
-// export const handleReceiveSessionInfo = (appState, setAppState, socketConn) => (sessionInfo) => {
-//   console.log("-- SOCKET EVENT -- Session Information Received from server.", sessionInfo)
-//   setSocketSession({
-//     sessionID: sessionInfo.sessionID,
-//     userID: sessionInfo.userID,
-//     userName: sessionInfo.userName
-//   })
-//   setAppState({ type: 'SET_SOCKET_SESSION', payload: sessionInfo })
-//   setAppState({ type: 'SET_APP_INIT_STATUS', payload: APP_INIT_STATUS.DONE })
-// }
 
 /*
   When YOUR connection has an error
 */
 export const handleConnectionError =
   (appState, setAppState, socketConn) => (errObj) => {
-    console.log('-- SOCKET EVENT -- Connection Error', {
+    Logger.network('-- SOCKET EVENT -- Connection Error', {
       message: errObj.message,
       errObj,
     })
@@ -89,41 +78,32 @@ export const handleConnectionError =
     const badJWT = noJWT || jwtUnverifiable || missingFields
     const probablyDueToNetwork = errObj.message.includes('xhr poll error')
 
-    console.log('Websocket error debug', {
-      expiredJWT,
-      missingFields,
-      jwtUnverifiable,
-      noJWT,
-      wasAlreadyConnected,
-      badJWT,
-      probablyDueToNetwork,
-    })
-
     // Is this a disconnect that occured after already being
     // connected, or is it a failed initial-connection
     if (wasAlreadyConnected) {
       if (probablyDueToNetwork) {
         // If there is an actual connection/network problem, nothing
         // can be done.
-        console.log('Websocket connection seems to have a network error.')
+        Logger.error('Websocket connection seems to have a network error.')
       } else if (expiredJWT) {
         // If the JWT expired, we might be able to refresh it
-        console.log('Websocket JWT Expired, need to refresh.')
+        Logger.debug('Websocket JWT Expired, need to refresh.')
+        toast('Connection restored, but session expired. Re-Login')
       } else if (badJWT) {
         // The server has specifically told us what's wrong
         // with the JWT, but we probably need to re-login
         // to get a clean one.
-        console.log('Websocket JWT has some issue.')
+        Logger.error('Websocket JWT has some issue.')
       } else {
         // If the reason is unknown, not much can be done
         // except attempt to re-login
-        console.log('Unknown reason for disconnect.')
+        Logger.error('Unknown reason for disconnect.')
       }
       setAppState({ type: ACTION_TYPE.SET_SOCKET_DISCONNECTED })
     } else {
       // If we weren't already connected, this is an error
       // with the initial connection
-      console.log('Websocket connection failed on the first attempt.')
+      Logger.error('Websocket connection failed on the first attempt.')
       setAppState({
         type: ACTION_TYPE.SET_APP_INIT_STATUS,
         payload: APP_INIT_STATUS.ERROR_FIRST_CONNECT,
@@ -132,34 +112,35 @@ export const handleConnectionError =
   }
 
 /*
-  ALL_CONNECTED_USERS
+  When you receive a list of all users (and if they are online)
 */
-export const handleReceivedAllConnectedUsers =
-  (appState, setAppState, socketConn) => (connectedUsers) => {
-    console.log(
-      '-- SOCKET EVENT -- Received all connected users.',
-      connectedUsers
-    )
-    // const updatedUsers = addOrUpdateUser(connectedUsers)(appState.allUsers)
-    // setAppState({ type: ACTION_TYPE.SET_ALL_USERS, payload: updatedUsers })
+export const handleReceivedAllUsers =
+  (appState, setAppState, socketConn) => (allUserObjects) => {
+    Logger.network('-- SOCKET EVENT -- Received all users.', allUserObjects)
+    const normalizedUsers = allUserObjects.map(normalizeUsersFromApiForCtx)
+    setAppState({ type: ACTION_TYPE.SET_ALL_USERS, payload: normalizedUsers })
   }
 
 /*
-
+  When someone else comes online
 */
 export const handleOtherUserConnected =
-  (appState, setAppState, socketConn) => (connectedUser) => {
-    console.log('-- SOCKET EVENT -- A user connected.', connectedUser)
-    const updatedUsers = addOrUpdateUser(connectedUser)(appState.allUsers)
+  (appState, setAppState, socketConn) => (connectedUserObj) => {
+    Logger.network('-- SOCKET EVENT -- A user connected.', connectedUserObj)
+    const normalizedUser = normalizeUsersFromApiForCtx(connectedUserObj)
+    const updatedUsers = addOrUpdateUser(normalizedUser)(appState.allUsers)
     setAppState({ type: ACTION_TYPE.SET_ALL_USERS, payload: updatedUsers })
   }
 
 /*
-
+  When someone else goes offline
 */
 export const handleOtherUserDisconnected =
   (appState, setAppState, socketConn) => (disconnectedUserID) => {
-    console.log('-- SOCKET EVENT -- A user DISconnected.', disconnectedUserID)
+    Logger.network(
+      '-- SOCKET EVENT -- A user DISconnected.',
+      disconnectedUserID
+    )
     const updatedUsers = setUserOffline(disconnectedUserID, appState.allUsers)
     setAppState({ type: ACTION_TYPE.SET_ALL_USERS, payload: updatedUsers })
   }
@@ -170,7 +151,7 @@ export const handleOtherUserDisconnected =
 export const handleChallengeStatusUpdated =
   (appState, setAppState, socketConn) =>
   (challengeStatus = {}) => {
-    console.log(
+    Logger.network(
       `-- SOCKET EVENT -- Received updated challenge status.`,
       challengeStatus
     )
@@ -184,12 +165,12 @@ export const handleChallengeStatusUpdated =
   }
 
 /*
-
+  When someone posts a new message (it could be you too)
 */
 export const handleSomeonePostedNewMessage =
   (appState, setAppState, socketConn) =>
   (newChatMessage = {}) => {
-    console.log(
+    Logger.network(
       `-- SOCKET EVENT -- Someone posted a new chat message.`,
       newChatMessage
     )

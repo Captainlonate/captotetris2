@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import styled, { keyframes } from 'styled-components'
+import { Logger } from '../../utils/Logger'
 
 // Fall to the right
 const rainAnimation_One = keyframes`
@@ -52,7 +53,7 @@ const Droplet = styled.div`
 
 const createDroplets = (domElRef) => {
   if (!domElRef.current) {
-    console.log('The DOM Ref was not set')
+    Logger.error('Could not create rain. DomEl Ref not set.')
     return
   }
 
@@ -89,7 +90,6 @@ const RainBG = () => {
   const wrapperRef = useRef(null)
 
   useEffect(() => {
-    console.log('useEffect', wrapperRef.current)
     if (droplets.length === 0) {
       const rainDroplets = createDroplets(wrapperRef)
       setDroplets(rainDroplets)

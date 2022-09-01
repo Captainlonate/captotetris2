@@ -1,11 +1,11 @@
+import Logger from '../../utils/Logger'
+
 export const APP_INIT_STATUS = {
   NONE: 'NONE',
   ATTEMPTING_RESUME_SESSION: 'ATTEMPTING_RESUME_SESSION',
   ATTEMPTING_LOG_IN: 'ATTEMPTING_LOG_IN',
   ERROR_FIRST_CONNECT: 'ERROR_FIRST_CONNECT',
   NEED_TO_LOG_IN: 'NEED_TO_LOG_IN',
-  // CONNECTED_WAITING_SERVER_SESSION: 'CONNECTED_WAITING_SERVER_SESSION',
-  // DONE: 'DONE',
 
   AUTHENTICATED_ATTEMPTING_SOCKET: 'AUTHENTICATED_ATTEMPTING_SOCKET',
   AUTHENTICATED_NO_SOCKET: 'AUTHENTICATED_NO_SOCKET',
@@ -26,14 +26,15 @@ export const initialAppContextState = {
   },
 
   attemptedToResumeSession: false,
-  socketHasConnectedOnce: false, // boolean
-  socketIsCurrentlyConnected: false, // boolean
+  socketHasConnectedOnce: false,
+  socketIsCurrentlyConnected: false,
   socketConnectionError: null, // null or string
   appInitStatus: APP_INIT_STATUS.NONE,
 
   allUsers: [],
   usersWhoChallengedYou: [],
   usersYouChallenged: [],
+  hasFetchedInitialUsers: false,
 
   chatMessages: [],
   hasFetchedInitialChats: false,
@@ -52,10 +53,12 @@ export const ACTION_TYPE = {
   SET_CHALLENGES: 'SET_CHALLENGES',
   SET_ALL_CHATS: 'SET_ALL_CHATS',
   HAS_FETCHED_INITIAL_CHATS: 'HAS_FETCHED_INITIAL_CHATS',
+  HAS_FETCHED_INITIAL_USERS: 'HAS_FETCHED_INITIAL_USERS',
 }
 
 export const appContextReducer = (state, { type, payload }) => {
-  console.log(`Reducer::"${type}"`, payload)
+  Logger.state(`Reducer(AppContext)::"${type}"`, payload)
+
   switch (type) {
     // Authenticated with JWT and validated with /me,
     // but has not established the first websocket conn yet.
@@ -145,6 +148,11 @@ export const appContextReducer = (state, { type, payload }) => {
       return {
         ...state,
         hasFetchedInitialChats: true,
+      }
+    case ACTION_TYPE.HAS_FETCHED_INITIAL_USERS:
+      return {
+        ...state,
+        hasFetchedInitialUsers: true,
       }
     default:
       return state

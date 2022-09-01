@@ -41,6 +41,7 @@ const LoginPage = () => {
       setLoading(false)
       return
     }
+
     const meResponse = await API.Me(loginResponse.data)
     if (meResponse.isError) {
       toast(`Could not retrieve your profile: "${meResponse.errorMessage}"`)
@@ -49,6 +50,7 @@ const LoginPage = () => {
       setLoading(false)
       return
     }
+
     // Store the JWT in local storage
     localStore.setJWT(loginResponse.data)
     setAppCtxState({

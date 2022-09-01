@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { Server, Socket } from 'socket.io'
 
 import DBService from '../../database/DBService'
 import { UserModel } from '../../database/models'
@@ -30,6 +31,7 @@ export class UserController {
       user.userId,
       'username _id'
     )
+
     if (error) {
       return res.json(
         makeFailedResponse(IErrorCodes.unknown_mongo_error, error)
@@ -46,8 +48,43 @@ export class UserController {
 
     res.json(makeSuccessResponse(loggedInUser))
   }
+  /**
+   *
+   * @param req
+   * @param res
+   */
   static async getAllUsers(req: Request, res: Response) {
     const allUsers = await UserModel.find({}, 'username _id')
     res.json(makeSuccessResponse(allUsers))
+  }
+  /**
+   *
+   * @param req
+   * @param res
+   * @returns
+   */
+  static async getAllConnectedUsers(req: Request, res: Response) {
+    // This needs to be set with expressApp.set('socketios', SocketIOServer)
+    const socketIOServer = req.app.get('socketios') as Server | undefined
+
+    if (!socketIOServer) {
+      return res.json(
+        makeFailedResponse(
+          IErrorCodes.unknown_server_error,
+          'Could not access socketio from express handler.'
+        )
+      )
+    }
+
+    const allConnectedPlayerIdsSet = await socketIOServer
+      .in('player_lobby')
+      .allSockets()
+
+    const allUsers = await UserModel.find({}, 'username _id')
+    const onlineUsers = allUsers.filter(({ _id }) =>
+      allConnectedPlayerIdsSet.has(_id)
+    )
+
+    res.json(makeSuccessResponse(onlineUsers))
   }
 }

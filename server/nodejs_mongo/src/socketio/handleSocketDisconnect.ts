@@ -18,10 +18,6 @@ export const handleSocketDisconnect = (
 
     // Confirm that this socket is not in any other room, anywhere
     const matchingSockets = await socketIOServer.in(socket.userId).allSockets()
-    const socketsInPlayerLobby = await socketIOServer
-      .in('player_lobby')
-      .allSockets()
-    console.log('Disconnect::all users in player_lobby', socketsInPlayerLobby)
     const isDisconnectedFromEverywhere = matchingSockets.size === 0
     if (isDisconnectedFromEverywhere) {
       // Notify other users that this user has disconnected

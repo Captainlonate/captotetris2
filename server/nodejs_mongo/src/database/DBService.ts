@@ -165,7 +165,7 @@ class DBService {
     const result: T_Result<I_MDBUser> = { data: null, error: null }
 
     try {
-      const user = await UserModel.findOne({ id }, projection)
+      const user = await UserModel.findById(id, projection)
       result.data = user
     } catch (ex) {
       result.error =

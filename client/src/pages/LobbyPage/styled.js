@@ -1,14 +1,7 @@
 import styled from 'styled-components'
-import BGImage_treasure_map from '../../assets/images/treasure_map.png'
-import BGImage_water_beautiful from '../../assets/images/water_beautiful.png'
-import BGImage_bird from '../../assets/images/backgrounds/bird.png'
 import BGImage_simple_plants from '../../assets/images/backgrounds/simple_plants.png'
-import BGImage_fishbowl_4k from '../../assets/images/backgrounds/fishbowl_4k.png'
-import BGImage_kitchen_4k from '../../assets/images/backgrounds/kitchen_4k.png'
-import BGImage_stormy_sea from '../../assets/images/backgrounds/stormy_sea.png'
-import BGImage_cartoon_sky from '../../assets/images/backgrounds/cartoon_sky.png'
-
-import plankFrameImage from '../../assets/images/plank_frame.png'
+// import BGImage_stormy_sea from '../../assets/images/backgrounds/stormy_sea.png'
+// import BGImage_cartoon_sky from '../../assets/images/backgrounds/cartoon_sky.png'
 
 // ===============Styled Components==============
 

@@ -1,6 +1,7 @@
 import http from 'http'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
+import { Server, Socket } from 'socket.io'
 
 import expressApp from './expressApp'
 import { makeDBConnString } from './database/utils'
@@ -48,8 +49,9 @@ const allEnvVarsFound = CONFIG.requiredEnvVars.every((key) =>
 const httpServer = http.createServer(expressApp)
 
 // SocketIO Server
-attachSocketIOServerToHttpServer(httpServer)
-
+const socketIOServer = attachSocketIOServerToHttpServer(httpServer)
+// type TSocketIOS = Server
+expressApp.set('socketios', socketIOServer)
 // ===================================================
 
 async function run() {

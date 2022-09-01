@@ -4,9 +4,13 @@ import styled from 'styled-components'
 import { SOCKET_EVENTS } from '../../../network/socketio'
 import { useAppContext } from '../../../context/AppContext'
 import { useSocketContext } from '../../../context/SocketContext'
-import PlayerListItem from './PlayerListItem'
-import { API } from '../../../network/Api'
-import { normalizeUsersFromApiForCtx } from '../../../context/AppContext/utils'
+import { ACTION_TYPE } from '../../../context/AppContext/reducer'
+import {
+  sortUsersByChallenge,
+  createListItemsJSX,
+  ACTION_INTENTS,
+  ACTION_VARIANTS,
+} from './utils'
 
 // =================Styled Components====================
 
@@ -26,65 +30,8 @@ const ListSectionHeader = styled.div`
   padding: 12px 4px;
 `
 
-// ====================Utilities=======================
-
-const sortUsersByChallenge = ({
-  allUsers,
-  usersWhoChallengedYou,
-  usersYouChallenged,
-}) => {
-  const users = {
-    challengesToYou: [],
-    challengesByYou: [],
-    canBeChallenged: [],
-    offline: [],
-  }
-
-  allUsers.forEach((user) => {
-    const userCpy = { ...user }
-    if (!user?.connected) {
-      users.offline.push(userCpy)
-    } else if (usersWhoChallengedYou.includes(userCpy?.userID)) {
-      users.challengesToYou.push(userCpy)
-    } else if (usersYouChallenged.includes(userCpy?.userID)) {
-      users.challengesByYou.push(userCpy)
-    } else {
-      users.canBeChallenged.push(userCpy)
-    }
-  })
-
-  return users
-}
-
-const createListItemsJSX = ({ users, actionVariant, onTakeAction }) =>
-  !Array.isArray(users)
-    ? []
-    : users.map(({ userID, connected, userName } = {}) => (
-        <PlayerListItem
-          key={userID}
-          userID={userID}
-          isOnline={!!connected}
-          userName={userName}
-          actionVariant={actionVariant}
-          onTakeAction={onTakeAction}
-        />
-      ))
-
-// ===============Constants & Types==================
-
-export const ACTION_INTENTS = {
-  CHALLENGE: 'CHALLENGE',
-  ACCEPT_CHALLENGE: 'ACCEPT_CHALLENGE',
-  DECLINE_CHALLENGE: 'DECLINE_CHALLENGE',
-}
-
-export const ACTION_VARIANTS = {
-  DECIDING: 'DECIDING',
-  PENDING: 'PENDING',
-  CAN_CHALLENGE: 'CAN_CHALLENGE',
-  OFFLINE: 'OFFLINE',
-}
-
+// ==================================================
+// ==================================================
 // ==================================================
 
 const PlayersList = () => {
@@ -101,7 +48,7 @@ const PlayersList = () => {
     const users = sortUsersByChallenge({
       allUsers:
         appState?.allUsers?.filter(
-          (user) => user.userID !== appState.socketUserID
+          (user) => user.userId !== appState.user.id
         ) ?? [],
       usersWhoChallengedYou: appState?.usersWhoChallengedYou ?? [],
       usersYouChallenged: appState?.usersYouChallenged ?? [],
@@ -110,26 +57,19 @@ const PlayersList = () => {
   }, [appState])
 
   useEffect(() => {
-    // Fetch the initial list of players
-    API.GetAllUsers().then((apiResponse) => {
-      if (apiResponse.isError) {
-        console.error('Error fetching all users')
-      } else {
-        setAppState({
-          type: 'SET_ALL_USERS',
-          payload: apiResponse.data.map(normalizeUsersFromApiForCtx),
-        })
-      }
-    })
-  }, [setAppState])
+    if (!appState.hasFetchedInitialUsers) {
+      setAppState({ type: ACTION_TYPE.HAS_FETCHED_INITIAL_USERS })
+      socketConn.emit(SOCKET_EVENTS.C2S.GET_ALL_USERS)
+    }
+  }, [socketConn, setAppState, appState.hasFetchedInitialUsers])
 
-  const onTakeAction = (intent, otherUserID) => (e) => {
+  const onTakeAction = (intent, otherUserId) => (e) => {
     if (intent === ACTION_INTENTS.CHALLENGE) {
-      socketConn.emit(SOCKET_EVENTS.C2S.CHALLENGE, otherUserID)
+      socketConn.emit(SOCKET_EVENTS.C2S.CHALLENGE, otherUserId)
     } else if (intent === ACTION_INTENTS.ACCEPT_CHALLENGE) {
-      socketConn.emit(SOCKET_EVENTS.C2S.ACCEPT_CHALLENGE, otherUserID)
+      socketConn.emit(SOCKET_EVENTS.C2S.ACCEPT_CHALLENGE, otherUserId)
     } else if (intent === ACTION_INTENTS.DECLINE_CHALLENGE) {
-      socketConn.emit(SOCKET_EVENTS.C2S.DECLINE_CHALLENGE, otherUserID)
+      socketConn.emit(SOCKET_EVENTS.C2S.DECLINE_CHALLENGE, otherUserId)
     }
   }
 

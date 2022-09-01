@@ -37,7 +37,7 @@ const LobbyPage = () => {
         <FlexBox flex="1 0">
           <PlayersList />
           <MainArea>
-            <TitleText>Pirate Tetris</TitleText>
+            <TitleText>CaptoTetris</TitleText>
             <div>
               <PracticeModeButton />
             </div>

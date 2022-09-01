@@ -23,17 +23,28 @@ const LightIndicator = styled.div`
   height: 1em;
 `
 
+const UserNameText = styled.span`
+  line-height: 1;
+  font-size: 14px;
+  font-family: 'TradeWinds';
+  margin-right: 0.25em;
+  color: ${({ connected }) => (connected ? '#02be02' : 'grey')};
+`
+
 // ==============================================
 
 const NetworkIndicator = () => {
   const [appState] = useAppContext()
   const loading = false
 
+  const connected = appState?.socketIsCurrentlyConnected
+
   return (
     <Wrapper>
-      {!loading && (
-        <LightIndicator connected={appState?.socketIsCurrentlyConnected} />
-      )}
+      <UserNameText connected={connected}>
+        {appState.user.userName}
+      </UserNameText>
+      {!loading && <LightIndicator connected={connected} />}
     </Wrapper>
   )
 }

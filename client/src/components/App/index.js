@@ -7,8 +7,8 @@ import { withSocketListeners } from './withSocketListeners/index'
 import { withHandleAppInit } from './withHandleAppInit'
 import { GlobalStyles } from './globalStyles'
 import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-// import 'react-toastify/dist/ReactToastify.min.css'
+// import 'react-toastify/dist/ReactToastify.css'
+import 'react-toastify/dist/ReactToastify.min.css'
 
 // ==============================================
 

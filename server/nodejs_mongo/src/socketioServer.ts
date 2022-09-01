@@ -10,12 +10,21 @@ import { SOCKET_EVENTS } from './socketio/SocketIOEvents'
 import { handleSocketDisconnect } from './socketio/handleSocketDisconnect'
 import { handlePostChatMessage } from './socketio/handleSocketChats'
 import useSessionMiddleware from './socketio/useSessionMiddleware'
+import { handleOnlineUsers } from './socketio/handleOnlineUsers'
 
 // ==============================================
 
 export interface ISocketIOSocket extends Socket {
   userId?: string
   userName?: string
+}
+
+// This is the type that should be emitted whenever socketio
+// tells sockets that someone is connected or disconnected.
+export interface ISocketIOConnectedUser {
+  userId: string
+  userName: string
+  online: boolean
 }
 
 // ==============================================
@@ -53,15 +62,15 @@ export const attachSocketIOServerToHttpServer = (
       return
     }
 
-    const connectedUserSession = {
+    const connectedUserSession: ISocketIOConnectedUser = {
       userId,
       userName,
-      connected: true,
+      online: true,
     }
 
     // Save this session
 
-    // Join this user to their own room (userID room)
+    // Join this user to their own room (userId room)
     socket.join(userId)
 
     // Join this user to the "lobby" room.
@@ -75,17 +84,10 @@ export const attachSocketIOServerToHttpServer = (
 
     console.log(`SocketIO::${userName}/${userId} has connected.`)
 
-    socketIOServer
-      .in('player_lobby')
-      .allSockets()
-      .then((results) => {
-        console.log('all users in player_lobby', Array.from(results))
-        socket.emit(SOCKET_EVENTS.S2C.ALL_CONNECTED_USERS, Array.from(results))
-      })
-
     // Listen for events and handle them
     handleSocketDisconnect(socketIOServer, socket)
     handlePostChatMessage(socketIOServer, socket)
+    handleOnlineUsers(socketIOServer, socket)
   })
 
   return socketIOServer
