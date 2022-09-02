@@ -1,13 +1,11 @@
 import { useNavigate } from 'react-router-dom'
 
 import PlayersList from './PlayersList/index'
-import NetworkIndicator from '../../components/NetworkIndicator/NetworkIndicator'
 import { FlexBox } from '../../components/Common'
 import ChatSection from './ChatSection'
-import RainBG from './RainBG'
+import FilledContentWithRain from '../../components/Common/Layout/FilledContentWithRain'
 import {
-  LobbyPageWrapper,
-  CenteredContentBox,
+  LobbyCardWrapper,
   MainArea,
   TitleText,
   SinglePlayerButton,
@@ -30,25 +28,25 @@ const PracticeModeButton = () => {
 
 // =====================================================
 
-const LobbyPage = () => {
-  return (
-    <LobbyPageWrapper>
-      <CenteredContentBox>
-        <FlexBox flex="1 0">
-          <PlayersList />
-          <MainArea>
-            <TitleText>CaptoTetris</TitleText>
-            <div>
-              <PracticeModeButton />
-            </div>
-          </MainArea>
-        </FlexBox>
-        <ChatSection />
-      </CenteredContentBox>
-      <NetworkIndicator />
-      <RainBG />
-    </LobbyPageWrapper>
-  )
-}
+const LobbyCard = () => (
+  <LobbyCardWrapper>
+    <FlexBox flex="1 0">
+      <PlayersList />
+      <MainArea>
+        <TitleText>CaptoTetris</TitleText>
+        <div>
+          <PracticeModeButton />
+        </div>
+      </MainArea>
+    </FlexBox>
+    <ChatSection />
+  </LobbyCardWrapper>
+)
+
+const LobbyPage = () => (
+  <FilledContentWithRain>
+    <LobbyCard />
+  </FilledContentWithRain>
+)
 
 export default LobbyPage

@@ -12,12 +12,17 @@ import {
   ChatMessageBubble,
   ChatInputBox,
   ChatInput,
+  ChatMessageBubbleMessage,
+  ChatMessageBubbleTime,
 } from './styled'
 
-const ChatMessage = ({ userName, message, self }) => (
-  <ChatMessageItem self={!!self}>
-    <ChatUserName>{userName}: </ChatUserName>
-    <ChatMessageBubble>{message}</ChatMessageBubble>
+const ChatMessage = ({ userName, message, self, time }) => (
+  <ChatMessageItem title={time} self={!!self}>
+    <ChatUserName>{self ? 'Me' : userName}</ChatUserName>
+    <ChatMessageBubble>
+      <ChatMessageBubbleMessage>{message}</ChatMessageBubbleMessage>
+      <ChatMessageBubbleTime>{time}</ChatMessageBubbleTime>
+    </ChatMessageBubble>
   </ChatMessageItem>
 )
 
@@ -60,8 +65,14 @@ const Chat = () => {
   return (
     <FlexBox dir="column" justify="space-between" flex="1 0">
       <ChatMessages>
-        {appState?.chatMessages.map(({ id, author, message }) => (
-          <ChatMessage key={id} userName={author} message={message} />
+        {appState?.chatMessages.map(({ id, author, message, createdAt }) => (
+          <ChatMessage
+            key={id}
+            userName={author}
+            message={message}
+            time={createdAt}
+            self={appState.user.userName === author}
+          />
         ))}
         {/* This div is used for scrolling to the bottom */}
         <div ref={bottomDivRef}></div>

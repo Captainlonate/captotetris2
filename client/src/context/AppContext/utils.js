@@ -11,7 +11,10 @@ export const normalizeChatMessageFromApiForCtx = (chatObj) => ({
   id: chatObj._id ?? chatObj.id ?? chatObj.chatId ?? chatObj.chatID,
   author: chatObj.author,
   message: chatObj.message,
-  createdAt: chatObj.createdAt,
+  createdAt: chatObj.createdAt
+    ? new Date(chatObj.createdAt).toLocaleString('en-US')
+    : undefined,
+  // createdAt: chatObj.createdAt,
 })
 
 /**

@@ -19,15 +19,18 @@ const StyledPlayerListItem = styled.div`
   padding: 8px;
   border-bottom: 1px solid black;
 `
+StyledPlayerListItem.displayName = 'StyledPlayerListItem'
 
 const PlayerListItemUsername = styled.span`
   font-weight: bold;
 `
+PlayerListItemUsername.displayName = 'PlayerListItemUsername'
 
 const OnlineIndicatorText = styled.span`
   margin: 0 10px 0 15px;
   font-style: italic;
 `
+OnlineIndicatorText.displayName = 'OnlineIndicatorText'
 
 const OnlineIndicatorIcon = styled.div`
   width: 10px;
@@ -35,6 +38,7 @@ const OnlineIndicatorIcon = styled.div`
   border-radius: 50%;
   background-color: ${({ isOnline }) => (isOnline ? '#69ca48' : 'grey')};
 `
+OnlineIndicatorIcon.displayName = 'OnlineIndicatorIcon'
 
 const ActionsContainer = styled.div`
   display: flex;
@@ -42,6 +46,7 @@ const ActionsContainer = styled.div`
   align-items: center;
   justify-content: space-around;
 `
+ActionsContainer.displayName = 'ActionsContainer'
 
 const ButtonBase = styled.button`
   color: white;
@@ -50,6 +55,7 @@ const ButtonBase = styled.button`
   border-radius: 5px;
   cursor: ${({ disabled }) => (!!disabled ? 'auto' : 'pointer')};
 `
+ButtonBase.displayName = 'ButtonBase'
 
 const ChallengeButton = styled(ButtonBase)`
   color: black;
@@ -61,6 +67,7 @@ const ChallengeButton = styled(ButtonBase)`
     background-color: ${({ disabled }) => (!!disabled ? 'grey' : '#eea503')};
   }
 `
+ChallengeButton.displayName = 'ChallengeButton'
 
 const AcceptButton = styled(ButtonBase)`
   background-color: ${({ disabled }) => (!!disabled ? 'grey' : 'darkgreen')};
@@ -71,6 +78,7 @@ const AcceptButton = styled(ButtonBase)`
     background-color: ${({ disabled }) => (!!disabled ? 'grey' : '#319e0d')};
   }
 `
+AcceptButton.displayName = 'AcceptButton'
 
 const DeclineButton = styled(ButtonBase)`
   background-color: ${({ disabled }) => (!!disabled ? 'grey' : 'red')};
@@ -81,6 +89,7 @@ const DeclineButton = styled(ButtonBase)`
     background-color: ${({ disabled }) => (!!disabled ? 'grey' : '#319e0d')};
   }
 `
+DeclineButton.displayName = 'DeclineButton'
 
 const PendingButton = styled(ButtonBase).attrs({
   disabled: true,
@@ -88,6 +97,7 @@ const PendingButton = styled(ButtonBase).attrs({
   background-color: blue;
   cursor: auto;
 `
+PendingButton.displayName = 'PendingButton'
 
 // ===================Component Parts===================
 

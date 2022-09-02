@@ -14,21 +14,23 @@ import {
 
 // =================Styled Components====================
 
-const ListContainer = styled.div`
+const PlayerListContainer = styled.div`
   display: flex;
   flex-direction: column;
   overflow: auto;
   flex: 1;
   border-right: 1px solid black;
 `
+PlayerListContainer.displayName = 'PlayerListContainer'
 
-const ListSectionHeader = styled.div`
+const PlayerListSectionHeader = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 22px;
   padding: 12px 4px;
 `
+PlayerListSectionHeader.displayName = 'PlayerListSectionHeader'
 
 // ==================================================
 // ==================================================
@@ -98,21 +100,21 @@ const PlayersList = () => {
   })
 
   return (
-    <ListContainer>
+    <PlayerListContainer>
       {playersChallengingYou.length > 0 && (
-        <ListSectionHeader>Your Challenges</ListSectionHeader>
+        <PlayerListSectionHeader>Your Challenges</PlayerListSectionHeader>
       )}
       {playersChallengingYou}
       {playersYouChallenged}
       {playersYouCanChallenge.length > 0 && (
-        <ListSectionHeader>Challenge Someone</ListSectionHeader>
+        <PlayerListSectionHeader>Challenge Someone</PlayerListSectionHeader>
       )}
       {playersYouCanChallenge}
       {offlinePlayers.length > 0 && (
-        <ListSectionHeader>Offline</ListSectionHeader>
+        <PlayerListSectionHeader>Offline</PlayerListSectionHeader>
       )}
       {offlinePlayers}
-    </ListContainer>
+    </PlayerListContainer>
   )
 }
 

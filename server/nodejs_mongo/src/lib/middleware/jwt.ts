@@ -224,6 +224,7 @@ export const renewJWT = (oldJWT: string): RenewJWTResults => {
  */
 export const CreateJWT = (payload: TJWTPayload): string => {
   return jwt.sign(payload, process.env.JWT_SIGN_KEY as string, {
-    expiresIn: '5s', // 1800s === 30 minutes
+    expiresIn: '1800s', // 1800s === 30 minutes
+    // expiresIn: '5s', // 1800s === 30 minutes
   })
 }

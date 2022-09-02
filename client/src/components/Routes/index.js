@@ -8,8 +8,12 @@ import {
 import LobbyPage from '../../pages/LobbyPage/LobbyPage'
 import LoginPage from '../../pages/LoginPage/LoginPage'
 import GamePage from '../../pages/GamePage/GamePage'
+import AboutPage from '../../pages/AboutPage/AboutPage'
+import SinglePlayerPage from '../../pages/SinglePlayerPage/SinglePlayerPage'
+import ChatPage from '../../pages/ChatPage/ChatPage'
 import { useAppContext } from '../../context/AppContext'
 import { APP_INIT_STATUS } from '../../context/AppContext/reducer'
+import { PageWithSideBarLayout } from '../Common/Layout/PageWithSidebar/PageWithSideBar'
 
 // ==============================================
 
@@ -17,8 +21,12 @@ const AuthenticatedRoutes = () => {
   return (
     <BRouter>
       <Routes>
-        <Route path="/play/alone" element={<GamePage />} />
-        <Route path="/lobby" element={<LobbyPage />} />
+        <Route element={<PageWithSideBarLayout />}>
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/play/alone" element={<SinglePlayerPage />} />
+          <Route path="/lobby" element={<LobbyPage />} />
+        </Route>
         <Route path="*" element={<Navigate to="/lobby" replace />} />
       </Routes>
     </BRouter>
