@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+import { AbsoluteFill } from './CommonStyles'
+
 // ===============Styled Components==============
 
 export const PageWrapper = styled.div.attrs({
@@ -22,14 +24,8 @@ export const PageWrapper = styled.div.attrs({
 export const PageContent = styled.div.attrs({
   className: 'Page__Content',
 })`
+  ${AbsoluteFill}
   z-index: 20;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-
   display: ${({ flex }) => (flex ? 'flex' : 'block')};
   ${({ fJustify }) => (fJustify ? `justify-content: ${fJustify};` : '')};
   ${({ fAlign }) => (fAlign ? `align-items: ${fAlign};` : '')};
@@ -38,12 +34,7 @@ export const PageContent = styled.div.attrs({
 export const PageBackground = styled.div.attrs({
   className: 'Page__Background',
 })`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+  ${AbsoluteFill}
   display: flex;
 
   z-index: 1;

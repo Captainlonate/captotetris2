@@ -14,7 +14,7 @@ window.captotetris = window.captotetris ?? {}
 window.captotetris.logs = window.captotetris.logs ?? {
   debug: true,
   network: true,
-  state: true,
+  state: false,
   error: true,
 }
 

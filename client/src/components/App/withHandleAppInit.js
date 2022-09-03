@@ -1,8 +1,6 @@
 import { useEffect, useCallback } from 'react'
 import { toast } from 'react-toastify'
 
-import { useAppContext } from '../../context/AppContext'
-import { APP_INIT_STATUS, ACTION_TYPE } from '../../context/AppContext/reducer'
 import { useSocketContext } from '../../context/SocketContext'
 import LoginPage from '../../pages/LoginPage/LoginPage'
 import StatusPage from '../StatusPage'
@@ -10,6 +8,11 @@ import * as localStore from '../../localStorage/localStorage'
 import { API } from '../../network/Api'
 import Logger from '../../utils/Logger'
 import { API_ERRORCODES } from '../../network/Api/ApiError'
+import {
+  useAppContext,
+  APP_INIT_STATUS,
+  ACTION_TYPE,
+} from '../../context/AppContext'
 
 // ===================================================
 

@@ -1,6 +1,8 @@
 import { useRef, useEffect } from 'react'
 import styled from 'styled-components'
 
+// ==============================================
+
 const VideoFillsContainer = styled.video`
   position: absolute;
   top: 0;
@@ -10,6 +12,8 @@ const VideoFillsContainer = styled.video`
   width: 100%;
   height: 100%;
 `
+
+// ==============================================
 
 const BackgroundVideo = ({ videoUrl, playbackSpeed = 1 }) => {
   const videoRef = useRef(null)
@@ -24,7 +28,7 @@ const BackgroundVideo = ({ videoUrl, playbackSpeed = 1 }) => {
 
   return (
     <VideoFillsContainer playsinline autoPlay muted loop ref={videoRef}>
-      <source src={videoUrl} type='video/mp4' />
+      <source src={videoUrl} type="video/mp4" />
     </VideoFillsContainer>
   )
 }

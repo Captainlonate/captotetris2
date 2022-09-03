@@ -25,6 +25,11 @@ export const initialAppContextState = {
     refreshingToken: null,
   },
 
+  notifications: {
+    haveUnreadChats: false,
+    haveUnreadChallenges: false,
+  },
+
   attemptedToResumeSession: false,
   socketHasConnectedOnce: false,
   socketIsCurrentlyConnected: false,
@@ -54,6 +59,7 @@ export const ACTION_TYPE = {
   SET_ALL_CHATS: 'SET_ALL_CHATS',
   HAS_FETCHED_INITIAL_CHATS: 'HAS_FETCHED_INITIAL_CHATS',
   HAS_FETCHED_INITIAL_USERS: 'HAS_FETCHED_INITIAL_USERS',
+  SET_HAS_UNREAD_CHATS: 'SET_HAS_UNREAD_CHATS',
 }
 
 export const appContextReducer = (state, { type, payload }) => {
@@ -143,6 +149,10 @@ export const appContextReducer = (state, { type, payload }) => {
         ...state,
         chatMessages: Array.isArray(payload) ? payload : [],
         hasFetchedInitialChats: true,
+        notifications: {
+          ...state.notifications,
+          haveUnreadChats: true,
+        },
       }
     case ACTION_TYPE.HAS_FETCHED_INITIAL_CHATS:
       return {
@@ -153,6 +163,14 @@ export const appContextReducer = (state, { type, payload }) => {
       return {
         ...state,
         hasFetchedInitialUsers: true,
+      }
+    case ACTION_TYPE.SET_HAS_UNREAD_CHATS:
+      return {
+        ...state,
+        notifications: {
+          ...state.notifications,
+          haveUnreadChats: !!payload,
+        },
       }
     default:
       return state

@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { SOCKET_EVENTS } from '../../../network/socketio'
-import { useAppContext } from '../../../context/AppContext'
+import { ACTION_TYPE, useAppContext } from '../../../context/AppContext'
 import { useSocketContext } from '../../../context/SocketContext'
-import { ACTION_TYPE } from '../../../context/AppContext/reducer'
 import {
   sortUsersByChallenge,
   createListItemsJSX,

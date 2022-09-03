@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
 // ===============Styled Components==============
@@ -23,18 +23,18 @@ export const Notifications = styled.div.attrs({
   className: 'SideBar__Notifications',
 })`
   position: absolute;
-  bottom: 0.2em;
-  right: 0.2em;
+  bottom: 0.3em;
+  right: 0.3em;
   border-radius: 50%;
-  width: 1.25em;
-  height: 1.25em;
+  width: 1em;
+  height: 1em;
 
   color: white;
   background-color: red;
 
   & span {
     font-weight: bold;
-    font-size: 0.7em;
+    font-size: 1.3em;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -42,10 +42,10 @@ export const Notifications = styled.div.attrs({
   }
 `
 
-export const NotificationCircle = ({ count = 0 }) =>
-  typeof count === 'number' && count > 0 ? (
+export const NotificationCircle = ({ show = false }) =>
+  show ? (
     <Notifications>
-      <span>{Math.min(99, count)}</span>
+      <span>!</span>
     </Notifications>
   ) : null
 
@@ -54,12 +54,13 @@ export const SideBarSquare = styled.div.attrs({
 })`
   position: relative;
   border-radius: 5px;
-  color: ${({ active }) => (active ? '#9eda55' : '#55a4da')};
   padding: 0.7em 0.1em 0.5em;
   text-align: center;
-  margin-bottom: 1.25em;
   cursor: pointer;
   transition: background-color 0.25s ease;
+  margin-top: ${({ pushDown }) => (pushDown ? 'auto' : '0')};
+  margin-bottom: ${({ pushDown }) => (pushDown ? '0' : '1.25em')};
+  color: ${({ variant }) => (variant === 'red' ? '#da5555' : '#55a4da')};
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.1);
@@ -71,5 +72,15 @@ export const SideBarSquare = styled.div.attrs({
 `
 SideBarSquare.displayName = 'SideBarSquare'
 
-export const StyledSideBarLink = styled(Link)``
+export const StyledSideBarLink = styled(NavLink)`
+  &.active {
+    color: #9eda55;
+    ${SideBarSquare} {
+      color: #9eda55;
+      path {
+        fill: #9eda55;
+      }
+    }
+  }
+`
 StyledSideBarLink.displayName = 'StyledSideBarLink'

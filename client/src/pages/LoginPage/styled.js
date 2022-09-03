@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 import BGImage_stormy_sea from '../../assets/images/backgrounds/stormy_sea.png'
-import { PageWrapper } from '../../components/Common/Page'
+import { PageWrapper } from '../../components/Common'
 
 // ===============Styled Components==============
 

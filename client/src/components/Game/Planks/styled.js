@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+// ===============Styled Components==============
+
 const BaseFGPlank = styled.img`
   position: absolute;
   z-index: 4;

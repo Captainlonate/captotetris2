@@ -1,14 +1,10 @@
-import { SinglePlayerPageContent } from './styled'
-import FilledContentWithRain from '../../components/Common/Layout/FilledContentWithRain'
+// import { SinglePlayerPageContent } from './styled'
+import EmbeddedGame from '../GamePage/EmbeddedGame/EmbeddedGame'
 
-const SinglePlayerPageContents = () => {
-  return <SinglePlayerPageContent>SinglePlayer Page</SinglePlayerPageContent>
-}
+// const SinglePlayerPageContents = () => {
+//   return <Game />
+// }
 
-const SinglePlayerPage = () => (
-  <FilledContentWithRain>
-    <SinglePlayerPageContents />
-  </FilledContentWithRain>
-)
+const SinglePlayerPage = () => <EmbeddedGame />
 
 export default SinglePlayerPage

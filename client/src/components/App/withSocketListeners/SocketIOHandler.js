@@ -1,13 +1,13 @@
 import { pipe, reject, append, sort, propEq } from 'ramda'
+import { toast } from 'react-toastify'
 
+import Logger from '../../../utils/Logger'
 import {
   ACTION_TYPE,
   APP_INIT_STATUS,
-} from '../../../context/AppContext/reducer'
-import Logger from '../../../utils/Logger'
-import { toast } from 'react-toastify'
-import { normalizeUsersFromApiForCtx } from '../../../context/AppContext/utils'
-import { normalizeChatMessageFromApiForCtx } from '../../../context/AppContext/utils'
+  normalizeUsersFromApiForCtx,
+  normalizeChatMessageFromApiForCtx,
+} from '../../../context/AppContext'
 
 // ===================================================
 

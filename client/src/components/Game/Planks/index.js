@@ -11,6 +11,8 @@ import {
 import foregroundPlankImage from '../../../assets/images/plank_frame.png'
 import backgroundPlankImage from '../../../assets/images/plank_frame_darker.png'
 
+// ==============================================
+
 const Planks = () => (
   <>
     {/* Foreground Planks */}

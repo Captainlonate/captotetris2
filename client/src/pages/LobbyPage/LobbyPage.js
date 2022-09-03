@@ -1,9 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 
 import PlayersList from './PlayersList/index'
-import { FlexBox } from '../../components/Common'
-import ChatSection from './ChatSection'
-import FilledContentWithRain from '../../components/Common/Layout/FilledContentWithRain'
+import { FlexBox, FilledContentWithRain } from '../../components/Common'
 import {
   LobbyCardWrapper,
   MainArea,
@@ -39,7 +37,6 @@ const LobbyCard = () => (
         </div>
       </MainArea>
     </FlexBox>
-    <ChatSection />
   </LobbyCardWrapper>
 )
 

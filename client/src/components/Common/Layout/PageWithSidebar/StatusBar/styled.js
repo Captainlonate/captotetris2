@@ -6,7 +6,6 @@ export const StatusBarWrapper = styled.div.attrs({
   className: 'StatusBar__Wrapper',
 })`
   font-size: 1em;
-  font-family: 'TradeWinds';
   height: 100%;
   color: white;
   background-color: #3183bc;
@@ -46,7 +45,6 @@ export const UserNameText = styled.span.attrs({
 })`
   font-size: 1em;
   line-height: 1;
-  font-family: 'TradeWinds';
   margin-right: 0.25em;
   color: white;
 `

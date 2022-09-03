@@ -1,6 +1,4 @@
 import styled from 'styled-components'
-import { SideBarWrapper } from './SideBar/styled'
-import { StatusBarWrapper } from './StatusBar/styled'
 
 // ===============Styled Components==============
 
@@ -15,12 +13,6 @@ export const PageWithSideBarWrapper = styled.div.attrs({
   height: 100vh;
   display: flex;
   flex-direction: column;
-
-  ${SideBarWrapper} {
-  }
-
-  ${StatusBarWrapper} {
-  }
 `
 PageWithSideBarWrapper.displayName = 'PageWithSideBarWrapper'
 

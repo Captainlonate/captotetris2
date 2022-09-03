@@ -8,7 +8,7 @@ import {
   PageWithSideBarStatusBar,
 } from './styled'
 
-export const PageWithSideBarLayout = () => (
+const PageWithSideBarOutlet = () => (
   <PageWithSideBarWrapper>
     <SideBarAndContent>
       <SideBar />
@@ -22,18 +22,4 @@ export const PageWithSideBarLayout = () => (
   </PageWithSideBarWrapper>
 )
 
-const PageWithSideBar = ({ children }) => {
-  return (
-    <PageWithSideBarWrapper>
-      <SideBarAndContent>
-        <SideBar />
-        <PageWithSideBarContent>{children}</PageWithSideBarContent>
-      </SideBarAndContent>
-      <PageWithSideBarStatusBar>
-        <StatusBar />
-      </PageWithSideBarStatusBar>
-    </PageWithSideBarWrapper>
-  )
-}
-
-export default PageWithSideBar
+export default PageWithSideBarOutlet

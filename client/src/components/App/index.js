@@ -1,4 +1,5 @@
 import { pipe } from 'ramda'
+import { BrowserRouter } from 'react-router-dom'
 
 import Routes from '../Routes'
 import { withAppContext } from '../../context/AppContext'
@@ -7,7 +8,6 @@ import { withSocketListeners } from './withSocketListeners/index'
 import { withHandleAppInit } from './withHandleAppInit'
 import { GlobalStyles } from './globalStyles'
 import { ToastContainer } from 'react-toastify'
-// import 'react-toastify/dist/ReactToastify.css'
 import 'react-toastify/dist/ReactToastify.min.css'
 
 // ==============================================
@@ -21,7 +21,7 @@ const AppWithProviders = pipe(
 )(Routes)
 
 const AppWithGlobalStyles = () => (
-  <>
+  <BrowserRouter>
     <GlobalStyles />
     <ToastContainer
       position="top-left"
@@ -35,7 +35,7 @@ const AppWithGlobalStyles = () => (
       pauseOnHover
     />
     <AppWithProviders />
-  </>
+  </BrowserRouter>
 )
 
 export default AppWithGlobalStyles

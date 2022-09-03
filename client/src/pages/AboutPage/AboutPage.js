@@ -1,8 +1,10 @@
-import { AboutPageContent } from './styled'
-import FilledContentWithRain from '../../components/Common/Layout/FilledContentWithRain'
+// import { AboutPageContent } from './styled'
+import { FloatingCard, FilledContentWithRain } from '../../components/Common'
+
+// ==============================================
 
 const AboutPageContents = () => {
-  return <AboutPageContent>About Page</AboutPageContent>
+  return <FloatingCard>About Page</FloatingCard>
 }
 
 const AboutPage = () => (

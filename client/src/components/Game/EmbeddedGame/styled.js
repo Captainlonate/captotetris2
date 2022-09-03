@@ -1,23 +1,27 @@
 import styled from 'styled-components'
-import islandBackgroundImage from '../../assets/images/backgrounds/simple_plants.png'
-import plankFrameImage from '../../assets/images/plank_frame.png'
+
+import { AbsoluteFill } from '../../Common'
+import islandBackgroundImage from '../../../assets/images/backgrounds/simple_plants.png'
+import plankFrameImage from '../../../assets/images/plank_frame.png'
 
 // ===============Styled Components==============
 
-export const GameContainer = styled.div`
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  overflow: hidden;
+export const GameContainer = styled.div.attrs({
+  className: 'EmbeddedGame__Container',
+})`
+  ${AbsoluteFill}
+
   background-color: #4a2400;
   background-image: url(${plankFrameImage});
   background-position: top left;
   background-size: 50% 10%;
+
+  z-index: 50;
 `
 
-export const InnerWrapper = styled.div`
+export const InnerWrapper = styled.div.attrs({
+  className: 'EmbeddedGame__Inner',
+})`
   display: block;
   width: 100%;
   height: 100%;
@@ -29,7 +33,9 @@ export const InnerWrapper = styled.div`
   align-items: center;
 `
 
-export const GameArea = styled.div`
+export const GameArea = styled.div.attrs({
+  className: 'EmbeddedGame__GameArea',
+})`
   width: 90%;
   height: 90%;
   display: flex;
@@ -37,7 +43,9 @@ export const GameArea = styled.div`
   align-items: flex-start;
 `
 
-export const GameCanvas = styled.canvas`
+export const GameCanvas = styled.canvas.attrs({
+  className: 'EmbeddedGame__Canvas',
+})`
   display: block;
   box-sizing: border-box;
   width: 100%;
@@ -45,7 +53,9 @@ export const GameCanvas = styled.canvas`
   border: 5px solid #462a1a;
 `
 
-export const CanvasAndFrameWrapper = styled.div`
+export const CanvasAndFrameWrapper = styled.div.attrs({
+  className: 'EmbeddedGame__CanvasAndFrame',
+})`
   position: relative;
   ${({ staticBG }) =>
     staticBG && 'background-image: url("' + islandBackgroundImage + '");'}

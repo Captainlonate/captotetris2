@@ -1,17 +1,9 @@
 import styled from 'styled-components'
 
 import { ACTION_INTENTS, ACTION_VARIANTS } from './utils'
+import { FlexBox } from '../../../components/Common'
 
 // =================Styled Components====================
-
-const FlexBox = styled.div`
-  display: flex;
-  flex: ${({ flex }) => flex ?? '1'};
-  flex-direction: ${({ dir }) => dir ?? 'row'};
-  justify-content: ${({ justify }) => justify ?? 'stretch'};
-  align-items: ${({ align }) => align ?? 'normal'};
-  overflow: hidden;
-`
 
 const StyledPlayerListItem = styled.div`
   display: flex;

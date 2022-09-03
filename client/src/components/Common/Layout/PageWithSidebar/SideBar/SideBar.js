@@ -10,6 +10,7 @@ import {
   NotificationCircle,
   StyledSideBarLink,
 } from './styled'
+import { useAppContext } from '../../../../../context/AppContext'
 
 // ==============================================
 
@@ -23,23 +24,27 @@ const applicationLogOut = () => {
 // ==============================================
 
 const SideBar = () => {
+  const [appState] = useAppContext()
+
+  const { notifications } = appState
+
   return (
     <SideBarWrapper>
       <StyledSideBarLink to="/chat">
         <SideBarSquare>
           <BsChatDots />
+          <NotificationCircle show={notifications.haveUnreadChats} />
         </SideBarSquare>
       </StyledSideBarLink>
       <StyledSideBarLink to="/lobby">
-        <SideBarSquare active>
+        <SideBarSquare>
           <GiBattleGear />
-          <NotificationCircle count={10} />
+          <NotificationCircle show={notifications.haveUnreadChallenges} />
         </SideBarSquare>
       </StyledSideBarLink>
       <StyledSideBarLink to="/play/alone">
         <SideBarSquare>
           <IoLogoGameControllerB />
-          <NotificationCircle count={2} />
         </SideBarSquare>
       </StyledSideBarLink>
       <StyledSideBarLink to="/about">
@@ -47,7 +52,7 @@ const SideBar = () => {
           <FcAbout />
         </SideBarSquare>
       </StyledSideBarLink>
-      <SideBarSquare onClick={applicationLogOut}>
+      <SideBarSquare variant="red" onClick={applicationLogOut} pushDown>
         <GiExitDoor />
       </SideBarSquare>
     </SideBarWrapper>

@@ -1,7 +1,6 @@
 import { LoginPageWrapper } from './styled'
 import LoginForm from './LoginForm/LoginForm'
-import RainBG from '../../components/Common/RainBG'
-import { PageContent, PageBackground } from '../../components/Common/Page'
+import { RainBG, PageContent, PageBackground } from '../../components/Common'
 
 // ==============================================
 

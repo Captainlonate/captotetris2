@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from 'react'
 import styled, { keyframes } from 'styled-components'
+
 import { Logger } from '../../utils/Logger'
+import { AbsoluteFill } from './CommonStyles'
 
 // ================KeyFrames=====================
 
@@ -42,12 +44,7 @@ const lightningAnimation = keyframes`
 const RainBGWrapper = styled.div.attrs({
   className: 'RainBG',
 })`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+  ${AbsoluteFill}
   z-index: 3;
 `
 RainBGWrapper.displayName = 'RainBGWrapper'
@@ -55,27 +52,42 @@ RainBGWrapper.displayName = 'RainBGWrapper'
 const Lightning = styled.div.attrs({
   className: 'RainBG__Lightning',
 })`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  ${AbsoluteFill}
   background-color: rgba(0, 0, 0, 1);
   animation: ${lightningAnimation} 15s linear infinite;
   opacity: 0.4;
 `
 Lightning.displayName = 'Lightning'
 
-const Droplet = styled.div.attrs({
+/**
+ * It's important to use this approach to setting the left
+ * and top. styled-components would create a css class for each
+ * variant (hundreds of them).
+ *
+ * This approach will only create one variant.
+ * The base class, and the base class + the css classes
+ * I've defined.
+ *
+ * Also remember that styled-components WILL generate classes
+ * even if you have commented code. It finds commented code
+ * and generates classes.
+ *
+ * Even if you comment this out, styled-components will still
+ * find it, and create hundreds of classes.
+ * left: ${({ leftX }) => leftX ?? '0'};
+ * top: ${({ topY }) => topY ?? '0'};
+ */
+const Droplet = styled.div.attrs((props) => ({
   className: 'RainBG__Droplet',
-})`
-  left: ${({ leftX }) => leftX ?? '0'};
-  top: ${({ topY }) => topY ?? '0'};
+  style: {
+    left: props.leftX ?? 0,
+    top: props.topY ?? 0,
+  },
+}))`
   position: absolute;
-  /* On Top Of the Lightning */
+  /* z-index on top of the Lightning */
   z-index: 5;
   width: 2px;
-
   &.RainBG__Droplet--StyleOne {
     background-color: rgb(89 146 177);
     height: 40px;
@@ -100,7 +112,7 @@ const createDroplets = (containerElRef) => {
   }
 
   const rainDroplets = []
-  const numberOfDroplets = 40
+  const numberOfDroplets = 30
   const screenWidth = containerEl.offsetWidth
   const screenHeight = containerEl.offsetHeight
 

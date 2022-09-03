@@ -103,7 +103,6 @@ export const SpecialLetters = styled.span`
 export const FormTitle = styled.h1.attrs({
   className: 'LoginPage__FormTitle',
 })`
-  font-family: 'TradeWinds';
   text-align: center;
   margin-top: 0;
   color: white;
@@ -115,7 +114,6 @@ export const FormTitle = styled.h1.attrs({
 export const FormTextInput = styled.input.attrs({
   type: 'text',
 })`
-  font-family: 'TradeWinds';
   border-radius: 5px;
   border: none;
   padding: 0.3em 0.75em;
@@ -142,7 +140,6 @@ export const FormErrorMessage = styled.div`
 `
 
 export const FormSubmitButton = styled.button`
-  font-family: 'TradeWinds';
   color: white;
   border-radius: 5px;
   border: none;

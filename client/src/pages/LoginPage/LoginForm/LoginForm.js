@@ -1,15 +1,15 @@
 import { useState, useCallback } from 'react'
 import { toast } from 'react-toastify'
 
-import { useSocketContext } from '../../../context/SocketContext'
-import { useAppContext } from '../../../context/AppContext'
-import {
-  APP_INIT_STATUS,
-  ACTION_TYPE,
-} from '../../../context/AppContext/reducer'
+import Logger from '../../../utils/Logger'
 import { API } from '../../../network/Api'
 import * as localStore from '../../../localStorage/localStorage'
-import Logger from '../../../utils/Logger'
+import { useSocketContext } from '../../../context/SocketContext'
+import {
+  useAppContext,
+  APP_INIT_STATUS,
+  ACTION_TYPE,
+} from '../../../context/AppContext'
 import {
   LoginFormContainer,
   FormTitle,
