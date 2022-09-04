@@ -1,4 +1,6 @@
-import PlayerListItem from './PlayerListItem'
+import { map, propEq, curry, find } from 'ramda'
+
+import PlayerListItem from './PlayerListItem/PlayerListItem'
 
 // ===================Utilities==================
 
@@ -7,47 +9,81 @@ import PlayerListItem from './PlayerListItem'
  * who is online, who is offline, who have you challenged
  * and who has challenged you.
  */
-export const sortUsersByChallenge = ({
+export const categorizeListItems = ({
   allUsers,
-  usersWhoChallengedYou,
-  usersYouChallenged,
+  challengesToYou,
+  challengesFromYou,
 }) => {
-  const users = {
+  const listItems = {
     challengesToYou: [],
     challengesByYou: [],
-    canBeChallenged: [],
-    offline: [],
+    usersCanBeChallenged: [],
+    usersOffline: [],
   }
 
   allUsers.forEach((user) => {
     const userCpy = { ...user }
+    const findById = find(propEq('userID', user?.userId))
+    const challengeToYou = findById(challengesToYou)
+    const challengeByYou = findById(challengesFromYou)
+
     if (!user?.online) {
-      users.offline.push(userCpy)
-    } else if (usersWhoChallengedYou.includes(userCpy?.userId)) {
-      users.challengesToYou.push(userCpy)
-    } else if (usersYouChallenged.includes(userCpy?.userId)) {
-      users.challengesByYou.push(userCpy)
+      listItems.usersOffline.push({ user: userCpy, matchID: null })
+    } else if (challengeToYou) {
+      listItems.challengesToYou.push({
+        user: userCpy,
+        matchID: challengeToYou.matchID,
+      })
+    } else if (challengeByYou) {
+      listItems.challengesByYou.push({
+        user: userCpy,
+        matchID: challengeByYou.matchID,
+      })
     } else {
-      users.canBeChallenged.push(userCpy)
+      listItems.usersCanBeChallenged.push({ user: userCpy, matchID: null })
     }
   })
 
-  return users
+  return listItems
 }
 
-export const createListItemsJSX = ({ users, actionVariant, onTakeAction }) =>
-  !Array.isArray(users)
-    ? []
-    : users.map(({ userId, online, userName } = {}) => (
-        <PlayerListItem
-          key={userId}
-          userId={userId}
-          isOnline={!!online}
-          userName={userName}
-          actionVariant={actionVariant}
-          onTakeAction={onTakeAction}
-        />
-      ))
+const makePlayerListItem = curry(
+  (onTakeAction, actionVariant, { user, matchID }) => (
+    <PlayerListItem
+      key={user?.userId}
+      userId={user?.userId}
+      isOnline={!!user?.online}
+      userName={user?.userName}
+      actionVariant={actionVariant}
+      onTakeAction={onTakeAction}
+      matchID={matchID}
+    />
+  )
+)
+
+export const createListItemsJSX = (
+  {
+    challengesToYou = [],
+    challengesByYou = [],
+    usersCanBeChallenged = [],
+    usersOffline = [],
+  },
+  onTakeAction
+) => {
+  const makeListItem = makePlayerListItem(onTakeAction)
+
+  const makeToYou = map(makeListItem(ACTION_VARIANTS.DECIDING))
+  const makeByYou = map(makeListItem(ACTION_VARIANTS.PENDING))
+  const makeCanBe = map(makeListItem(ACTION_VARIANTS.CAN_CHALLENGE))
+  const makeOffline = map(makeListItem(ACTION_VARIANTS.OFFLINE))
+
+  return {
+    challengesToYouJSX: makeToYou(challengesToYou),
+    challengesByYouJSX: makeByYou(challengesByYou),
+    usersCanBeChallengedJSX: makeCanBe(usersCanBeChallenged),
+    offlineUsersJSX: makeOffline(usersOffline),
+  }
+}
 
 // ===============Constants & Types==================
 

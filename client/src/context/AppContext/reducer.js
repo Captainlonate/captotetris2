@@ -37,8 +37,12 @@ export const initialAppContextState = {
   appInitStatus: APP_INIT_STATUS.NONE,
 
   allUsers: [],
-  usersWhoChallengedYou: [],
-  usersYouChallenged: [],
+
+  challenges: {
+    toYou: [], // [{ matchID, userID }]
+    fromYou: [], // [{ matchID, userID }]
+  },
+
   hasFetchedInitialUsers: false,
 
   chatMessages: [],
@@ -139,10 +143,11 @@ export const appContextReducer = (state, { type, payload }) => {
     case ACTION_TYPE.SET_CHALLENGES:
       return {
         ...state,
-        usersYouChallenged: Array.isArray(payload?.byYou) ? payload?.byYou : [],
-        usersWhoChallengedYou: Array.isArray(payload?.toYou)
-          ? payload?.toYou
-          : [],
+        challenges: {
+          ...state.challenges,
+          toYou: Array.isArray(payload.toYou) ? payload.toYou : [],
+          fromYou: Array.isArray(payload.fromYou) ? payload.fromYou : [],
+        },
       }
     case ACTION_TYPE.SET_ALL_CHATS:
       return {

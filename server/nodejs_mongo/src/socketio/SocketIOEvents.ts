@@ -5,17 +5,21 @@ export const SOCKET_EVENTS = {
   S2C: {
     USER_CONNECTED: 'user_connected',
     USER_DISCONNECTED: 'user_disconnected',
-    // CHALLENGES_STATUS: 'challenges_status',
-    // SESSION: 'session',
     NEW_CHAT_MESSAGE: 'new_chat_message',
     ALL_USERS: 'all_users',
+    SOMEONE_CHALLENGED_YOU: 'someone_challenged_you',
+    DECLINED_CHALLENGE: 'declined_challenge',
+    CHALLENGE_START: 'challenge_start',
+    MATCH_STARTED: 'match_started',
+    YOU_CHALLENGED_ANOTHER: 'you_challenged_another',
   },
   // Clients emits these to the Server
   C2S: {
-    GET_ALL_USERS: 'get_all_users',
-    // CHALLENGE: 'challenge',
-    // ACCEPT_CHALLENGE: 'accept_challenge',
-    // DECLINE_CHALLENGE: 'decline_challenge',
+    CHALLENGE_TO: 'challenge_to',
+    CHALLENGE_ACCEPT: 'challenge_accept',
+    CHALLENGE_DECLINE: 'challenge_decline',
+    MATCH_PLAYER_READY: 'match_player_ready',
     POST_CHAT_MESSAGE: 'post_chat_message',
+    GET_ALL_USERS: 'get_all_users',
   },
 }

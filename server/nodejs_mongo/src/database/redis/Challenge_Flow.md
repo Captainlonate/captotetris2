@@ -42,20 +42,20 @@ Server creates this structure in Redis:
 Using this pseudoCode:
 
 ```js
-await redisClient.hset(
-  `match:${matchId}`,
-  'challengerID',
-  '< NathanID >',
-  'challengeeID',
-  '< LuccaID >',
-  'ready:NathanID',
-  'false',
-  'ready:LuccaID',
-  'false',
-  'matchBegan',
-  'false'
+const numberOfFieldsAdded = await redisClient.hSet(
+  // Key
+  `match:${matchID}`,
+  // Hash Fields
+  {
+    challengerID: challengerId,
+    challengeeID: challengeeId,
+    [`ready:${challengerId}`]: 'false',
+    [`ready:${challengeeId}`]: 'false',
+    matchBegan: 'false',
+  }
 )
-// TODO: Set TTL on this to 3hours?
+// Set TTL on the entire hash to 3 hours
+await redisClient.expire(`match:${matchID}`, 60 * 60 * 3)
 ```
 
 **If either player logs out, need a way to link `LuccaID` to `matchId`??? But the clients will know that `LuccaID` is offline, and will reset their buttons. Any new challenges will generate new `matchID`'s.**
@@ -138,7 +138,7 @@ When each player clicks "Ready", their Client Emits:
 
 ```json
 {
-  "event": "player_ready",
+  "event": "match_player_ready",
   "payload": {
     "matchId": "abcd1234"
   }
@@ -147,7 +147,7 @@ When each player clicks "Ready", their Client Emits:
 
 ## Next
 
-When the server receives `player_ready`, it updates Redis
+When the server receives `match_player_ready`, it updates Redis
 with the following pseudocode:
 
 ```js

@@ -2,7 +2,8 @@ import crypto from 'crypto'
 
 // ========================================================
 
-export const makeRandomID = (): string => crypto.randomBytes(8).toString('hex')
+export const makeRandomID = (numChars: number = 8): string =>
+  crypto.randomBytes(numChars).toString('hex')
 
 /**
  * Take a big object, and create a new object that only has

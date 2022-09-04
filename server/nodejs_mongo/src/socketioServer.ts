@@ -3,14 +3,16 @@
 */
 import http from 'http'
 import { Server, Socket } from 'socket.io'
-import { checkJWTFields, ParseJWT } from './lib/middleware/jwt'
-import { stringIsLength } from './lib/validators'
 
 import { SOCKET_EVENTS } from './socketio/SocketIOEvents'
 import { handleSocketDisconnect } from './socketio/handleSocketDisconnect'
 import { handlePostChatMessage } from './socketio/handleSocketChats'
 import useSessionMiddleware from './socketio/useSessionMiddleware'
 import { handleOnlineUsers } from './socketio/handleOnlineUsers'
+import { handleSocketChallengeReady } from './socketio/handleSocketChallengeReady'
+import { handleSocketChallengeIssue } from './socketio/handleSocketChallengeIssue'
+import { handleSocketChallengeAccept } from './socketio/handleSocketChallengeAccept'
+import { handleSocketChallengeDecline } from './socketio/handleSocketChallengeDecline'
 
 // ==============================================
 
@@ -88,6 +90,11 @@ export const attachSocketIOServerToHttpServer = (
     handleSocketDisconnect(socketIOServer, socket)
     handlePostChatMessage(socketIOServer, socket)
     handleOnlineUsers(socketIOServer, socket)
+
+    handleSocketChallengeIssue(socketIOServer, socket)
+    handleSocketChallengeAccept(socketIOServer, socket)
+    handleSocketChallengeDecline(socketIOServer, socket)
+    handleSocketChallengeReady(socketIOServer, socket)
   })
 
   return socketIOServer

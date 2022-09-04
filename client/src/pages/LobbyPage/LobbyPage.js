@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 
-import PlayersList from './PlayersList/index'
+import PlayersList from './PlayersList/PlayersList'
 import { FlexBox, FilledContentWithRain } from '../../components/Common'
 import {
   LobbyCardWrapper,
