@@ -8,3 +8,12 @@ export const AbsoluteFill = css`
   height: 100%;
   overflow: hidden;
 `
+
+/**
+ * Centered with Display Flex
+ */
+export const DFlexCenter = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`

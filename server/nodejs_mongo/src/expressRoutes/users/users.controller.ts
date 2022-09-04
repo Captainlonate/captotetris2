@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { Server, Socket } from 'socket.io'
 
+import RedisService from '../../database/redis/RedisService'
 import DBService from '../../database/DBService'
 import { UserModel } from '../../database/models'
 import { IRequestWithLocals, localsUserIsValid } from '../../lib/middleware/jwt'
@@ -45,6 +46,13 @@ export class UserController {
         )
       )
     }
+
+    // await RedisService.CreateChallenge('captain', 'mammaw')
+    // const challenge = await RedisService.GetChallenge('captain', 'mammaw')
+    // const challenge = await RedisService.GetChallenge('mammaw', 'captain')
+    // console.log('Challenge?', challenge)
+    // const allChallenges = await RedisService.GetAllChallenges()
+    // console.log('allChallenges?', allChallenges)
 
     res.json(makeSuccessResponse(loggedInUser))
   }

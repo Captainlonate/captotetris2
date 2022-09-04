@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { AbsoluteFill } from '../../Common'
+import { AbsoluteFill, DFlexCenter } from '../../Common'
 import islandBackgroundImage from '../../../assets/images/backgrounds/simple_plants.png'
 import plankFrameImage from '../../../assets/images/plank_frame.png'
 
@@ -22,15 +22,13 @@ export const GameContainer = styled.div.attrs({
 export const InnerWrapper = styled.div.attrs({
   className: 'EmbeddedGame__Inner',
 })`
-  display: block;
+  ${DFlexCenter}
+
+  flex-direction: row;
   width: 100%;
   height: 100%;
   box-sizing: border-box;
   padding: 15px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
 `
 
 export const GameArea = styled.div.attrs({

@@ -13,3 +13,11 @@ export const makeDBConnString = ({
 }): string =>
   `mongodb://${dbUserName}:${dbPassword}@${dbMongoHost}:${dbMongoPort}/${dbDBName}?authSource=admin`
 // `mongodb://${dbUserName}:${dbPassword}@${dbMongoHost}:${dbMongoPort}`
+
+export const makeRedisConnString = ({
+  redisHost,
+  redisPort,
+}: {
+  redisHost: string
+  redisPort: string
+}): string => `redis://${redisHost}:${redisPort}`

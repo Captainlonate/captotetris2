@@ -12,8 +12,8 @@ export const SideBarWrapper = styled.div.attrs({
   justify-content: start;
   align-items: stretch;
   width: 5em;
-  background-color: #1c1f21;
-  color: white;
+  background-color: ${({ theme }) => theme.colors?.sideBarBG};
+  color: ${({ theme }) => theme.colors?.sideBarFont};
   padding: 0.75em 0.5em;
   box-sizing: border-box;
 `
@@ -60,10 +60,13 @@ export const SideBarSquare = styled.div.attrs({
   transition: background-color 0.25s ease;
   margin-top: ${({ pushDown }) => (pushDown ? 'auto' : '0')};
   margin-bottom: ${({ pushDown }) => (pushDown ? '0' : '1.25em')};
-  color: ${({ variant }) => (variant === 'red' ? '#da5555' : '#55a4da')};
+  color: ${({ theme, variant }) =>
+    variant === 'red'
+      ? theme.colors.sideBarExitIcon
+      : theme.colors.sideBarIcon};
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: ${({ theme }) => theme.colors.sideBarHoverIcon};
   }
 
   svg {
@@ -74,11 +77,11 @@ SideBarSquare.displayName = 'SideBarSquare'
 
 export const StyledSideBarLink = styled(NavLink)`
   &.active {
-    color: #9eda55;
+    color: ${({ theme }) => theme.colors.sideBarActiveIcon};
     ${SideBarSquare} {
-      color: #9eda55;
+      color: ${({ theme }) => theme.colors.sideBarActiveIcon};
       path {
-        fill: #9eda55;
+        fill: ${({ theme }) => theme.colors.sideBarActiveIcon};
       }
     }
   }

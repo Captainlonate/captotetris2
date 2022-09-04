@@ -1,7 +1,9 @@
 import { pipe } from 'ramda'
+import { ThemeProvider } from 'styled-components'
 import { BrowserRouter } from 'react-router-dom'
 
 import Routes from '../Routes'
+import { theme } from '../theme/theme'
 import { withAppContext } from '../../context/AppContext'
 import { withSocketContext } from '../../context/SocketContext'
 import { withSocketListeners } from './withSocketListeners/index'
@@ -22,19 +24,21 @@ const AppWithProviders = pipe(
 
 const AppWithGlobalStyles = () => (
   <BrowserRouter>
-    <GlobalStyles />
-    <ToastContainer
-      position="top-left"
-      autoClose={5000}
-      hideProgressBar={false}
-      newestOnTop={false}
-      closeOnClick
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-    />
-    <AppWithProviders />
+    <ThemeProvider theme={theme}>
+      <GlobalStyles />
+      <ToastContainer
+        position="top-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+      <AppWithProviders />
+    </ThemeProvider>
   </BrowserRouter>
 )
 

@@ -36,6 +36,5 @@ export const PageBackground = styled.div.attrs({
 })`
   ${AbsoluteFill}
   display: flex;
-
   z-index: 1;
 `

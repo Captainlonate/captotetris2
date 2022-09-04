@@ -1,5 +1,5 @@
-import { pipe, reject, append, sort, propEq } from 'ramda'
 import { toast } from 'react-toastify'
+import { pipe, reject, append, sort, propEq } from 'ramda'
 
 import Logger from '../../../utils/Logger'
 import {
@@ -38,16 +38,14 @@ const SOCKETIO_ERROR_CODES = {
 /*
   This is when YOU connect
 */
-export const handleConnection =
-  (appState, setAppState) =>
-  (msg = '') => {
-    Logger.network(`-- SOCKET EVENT -- Connected`)
-    if (appState.appInitStatus !== APP_INIT_STATUS.AUTHENTICATED_WITH_SOCKET) {
-      setAppState({ type: ACTION_TYPE.STATUS_AUTHENTICATED_WITH_SOCKET })
-    } else {
-      setAppState({ type: ACTION_TYPE.SET_SOCKET_CONNECTED })
-    }
+export const handleConnection = (appState, setAppState) => () => {
+  Logger.network(`-- SOCKET EVENT -- Connected`)
+  if (appState.appInitStatus !== APP_INIT_STATUS.AUTHENTICATED_WITH_SOCKET) {
+    setAppState({ type: ACTION_TYPE.STATUS_AUTHENTICATED_WITH_SOCKET })
+  } else {
+    setAppState({ type: ACTION_TYPE.SET_SOCKET_CONNECTED })
   }
+}
 
 /*
   This is when YOU disconnect

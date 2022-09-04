@@ -7,8 +7,8 @@ export const StatusBarWrapper = styled.div.attrs({
 })`
   font-size: 1em;
   height: 100%;
-  color: white;
-  background-color: #3183bc;
+  background-color: ${({ theme }) => theme.colors.statusBarBG};
+  color: ${({ theme }) => theme.colors.statusBarFont};
   display: flex;
   align-items: center;
   padding: 0 1em;

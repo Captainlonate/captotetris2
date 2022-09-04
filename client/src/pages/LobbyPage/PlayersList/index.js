@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { SOCKET_EVENTS } from '../../../network/socketio'
 import { ACTION_TYPE, useAppContext } from '../../../context/AppContext'
 import { useSocketContext } from '../../../context/SocketContext'
+import { DFlexCenter } from '../../../components/Common'
 import {
   sortUsersByChallenge,
   createListItemsJSX,
@@ -23,9 +24,7 @@ const PlayerListContainer = styled.div`
 PlayerListContainer.displayName = 'PlayerListContainer'
 
 const PlayerListSectionHeader = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  ${DFlexCenter}
   font-size: 22px;
   padding: 12px 4px;
 `

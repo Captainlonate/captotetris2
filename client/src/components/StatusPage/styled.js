@@ -1,16 +1,15 @@
 import styled from 'styled-components'
+import { DFlexCenter } from '../Common'
 
 // ===============Styled Components==============
 
 export const PageWrapper = styled.div`
+  ${DFlexCenter}
   background-color: #292d33;
   width: 100vw;
   height: 100vh;
   color: white;
-  display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
 `
 
 export const BigText = styled.div`

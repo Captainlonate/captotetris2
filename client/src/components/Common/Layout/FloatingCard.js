@@ -19,7 +19,7 @@ export const FloatingCard = styled.div.attrs({
 })`
   position: relative;
   width: 90%;
-  height: 85%;
+  height: 90%;
   border-radius: 5px;
   display: flex;
   flex-direction: column;

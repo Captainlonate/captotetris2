@@ -1,5 +1,5 @@
 // import { SinglePlayerPageContent } from './styled'
-import EmbeddedGame from '../GamePage/EmbeddedGame/EmbeddedGame'
+import EmbeddedGame from '../../components/Game/EmbeddedGame/EmbeddedGame'
 
 // const SinglePlayerPageContents = () => {
 //   return <Game />

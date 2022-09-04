@@ -1,10 +1,10 @@
 import http from 'http'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
-import { Server, Socket } from 'socket.io'
 
+import { redisClient } from './database/redis/RedisService'
 import expressApp from './expressApp'
-import { makeDBConnString } from './database/utils'
+import { makeDBConnString, makeRedisConnString } from './database/utils'
 import { stringIsLength } from './lib/validators'
 import { attachSocketIOServerToHttpServer } from './socketioServer'
 
@@ -23,9 +23,17 @@ const CONFIG = {
     connectionString: makeDBConnString({
       dbMongoHost: process.env.MONGO_HOST ?? 'localhost',
       dbUserName: process.env.MONGO_USERNAME ?? '',
-      dbMongoPort: process.env.MONGO_PORT ?? '',
+      dbMongoPort: process.env.MONGO_PORT ?? '27017',
       dbPassword: process.env.MONGO_PASSWORD ?? '',
       dbDBName: process.env.MONGO_DATABASE ?? '',
+    }),
+  },
+  redis: {
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+    connectionString: makeRedisConnString({
+      redisHost: process.env.REDIS_HOST ?? 'localhost',
+      redisPort: process.env.REDIS_PORT ?? '6379',
     }),
   },
   requiredEnvVars: [
@@ -36,6 +44,8 @@ const CONFIG = {
     'MONGO_HOST',
     'MONGO_PORT',
     'MONGO_DATABASE',
+    'REDIS_HOST',
+    'REDIS_PORT',
   ],
 }
 
@@ -52,6 +62,7 @@ const httpServer = http.createServer(expressApp)
 const socketIOServer = attachSocketIOServerToHttpServer(httpServer)
 // type TSocketIOS = Server
 expressApp.set('socketios', socketIOServer)
+
 // ===================================================
 
 async function run() {
@@ -60,6 +71,12 @@ async function run() {
     await mongoose.connect(CONFIG.db.connectionString)
     console.log(
       `Successfully connected to MongoDB on "${CONFIG.db.host}:${CONFIG.db.port}"`
+    )
+
+    // Connect to Redis
+    await redisClient.connect()
+    console.log(
+      `Successfully connected to Redis on "${CONFIG.redis.host}:${CONFIG.redis.port}"`
     )
 
     // If the MongoDB connection was successful, then start

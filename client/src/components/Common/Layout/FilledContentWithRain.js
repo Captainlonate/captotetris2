@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 import RainBG from '../RainBG'
-import { AbsoluteFill } from '../CommonStyles'
+import { AbsoluteFill, DFlexCenter } from '../CommonStyles'
 import { PageContent, PageBackground } from '../Page'
 import BGImage_stormy_sea from '../../../assets/images/backgrounds/stormy_sea.png'
 
@@ -11,10 +11,8 @@ const FilledContentWrapper = styled.div.attrs({
   className: 'FilledContent__Wrapper',
 })`
   ${AbsoluteFill}
-  display: flex;
+  ${DFlexCenter}
 
-  justify-content: center;
-  align-items: center;
   box-sizing: border-box;
   z-index: 20;
 

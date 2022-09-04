@@ -16,7 +16,7 @@ import {
 
 // ==============================================
 
-const Game = () => {
+const EmbeddedGame = () => {
   // The game needs these to handle resizing
   const canvasRef = useRef(null)
   const gameAreaRef = useRef(null)
@@ -41,7 +41,7 @@ const Game = () => {
     <GameContainer>
       <InnerWrapper>
         <GameArea ref={gameAreaRef}>
-          <CanvasAndFrameWrapper staticBG={isMobile}>
+          <CanvasAndFrameWrapper staticBG={true || isMobile}>
             <GameCanvas id="gameCanvas" ref={canvasRef} />
             {!isMobile && (
               <BackgroundVideo videoUrl={bgVideoFile} playbackSpeed={0.5} />
@@ -54,4 +54,4 @@ const Game = () => {
   )
 }
 
-export default Game
+export default EmbeddedGame
