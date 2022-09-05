@@ -1,16 +1,17 @@
-import { handleConnection } from './handleConnection'
-import { handleDisconnect } from './handleDisconnect'
-import { handleConnectionError } from './handleConnectionError'
-import { handleReceivedAllUsers } from './handleReceivedAllUsers'
-import { handleOtherUserConnected } from './handleOtherUserConnected'
-import { handleOtherUserDisconnected } from './handleOtherUserDisconnected'
-import { handleYouChallengedAnother } from './handleYouChallengedAnother'
-import { handleSomeoneChallengedYou } from './handleSomeoneChallengedYou'
-import { handleDeclineChallenge } from './handleDeclineChallenge'
-import { handleSomeonePostedNewMessage } from './handleSomeonePostedNewMessage'
+import { handleConnection } from './socketIOHandlers/handleConnection'
+import { handleDisconnect } from './socketIOHandlers/handleDisconnect'
+import { handleConnectionError } from './socketIOHandlers/handleConnectionError'
+import { handleReceivedAllUsers } from './socketIOHandlers/handleReceivedAllUsers'
+import { handleOtherUserConnected } from './socketIOHandlers/handleOtherUserConnected'
+import { handleOtherUserDisconnected } from './socketIOHandlers/handleOtherUserDisconnected'
+import { handleYouChallengedAnother } from './socketIOHandlers/handleYouChallengedAnother'
+import { handleSomeoneChallengedYou } from './socketIOHandlers/handleSomeoneChallengedYou'
+import { handleDeclineChallenge } from './socketIOHandlers/handleDeclineChallenge'
+import { handleSomeonePostedNewMessage } from './socketIOHandlers/handleSomeonePostedNewMessage'
+import { handleChallengeStart } from './socketIOHandlers/handleChallengeStart'
 
-import Logger from '../../../../utils/Logger'
-import { SOCKET_EVENTS } from '../../../../network/socketio'
+import Logger from '../../../utils/Logger'
+import { SOCKET_EVENTS } from '../../../network/socketio'
 
 const {
   CONNECT,
@@ -24,12 +25,13 @@ const {
     SOMEONE_CHALLENGED_YOU,
     DECLINED_CHALLENGE,
     NEW_CHAT_MESSAGE,
+    CHALLENGE_START,
   },
 } = SOCKET_EVENTS
 
 // ==============================================
 
-export class SocketHandlers {
+class SocketHandlers {
   constructor(appState, setAppState, socketConn) {
     this.state = appState
     this.setState = setAppState
@@ -57,6 +59,8 @@ export class SocketHandlers {
     this.socket.on(DECLINED_CHALLENGE, this.handleDeclineChallenge)
     // When you receive a new chat message
     this.socket.on(NEW_CHAT_MESSAGE, this.handleSomeonePostedNewMessage)
+    // Both players have accepted the challenge
+    this.socket.on(CHALLENGE_START, this.handleChallengeStart)
   }
 
   unRegister = () => {
@@ -70,12 +74,13 @@ export class SocketHandlers {
     this.socket.off(SOMEONE_CHALLENGED_YOU, this.handleSomeoneChallengedYou)
     this.socket.off(DECLINED_CHALLENGE, this.handleDeclineChallenge)
     this.socket.off(NEW_CHAT_MESSAGE, this.handleSomeonePostedNewMessage)
+    this.socket.off(CHALLENGE_START, this.handleChallengeStart)
   }
 
   // =============== Handlers ===================
 
   handleConnection = (data) => {
-    Logger.network(`-- SOCKET EVENT -- Connected`, data)
+    Logger.network('-- SOCKET EVENT -- Connected', data)
     handleConnection(this.state, this.setState, this.socket)(data)
   }
 
@@ -123,4 +128,11 @@ export class SocketHandlers {
     Logger.network('-- SOCKET EVENT -- Received new chat message.', data)
     handleSomeonePostedNewMessage(this.state, this.setState, this.socket)(data)
   }
+
+  handleChallengeStart = (data) => {
+    Logger.network('-- SOCKET EVENT -- Both players accepted challenge.', data)
+    handleChallengeStart(this.state, this.setState, this.socket)(data)
+  }
 }
+
+export default SocketHandlers

@@ -13,38 +13,74 @@ export const APP_INIT_STATUS = {
   ATTEMPTING_SOCKET_CONN: 'ATTEMPTING_SOCKET_CONN',
 }
 
+export const MATCH_STATE = {
+  // There is no two-player match
+  NONE: 'NONE',
+  // Waiting for both players to confirm
+  LOADING: 'LOADING',
+  // Both players confirmed, match is going on now
+  PLAYING: 'PLAYING',
+}
+
+const EMPTY_MATCH = () => ({
+  // status: MATCH_STATE.NONE,
+  // opponentID: null,
+  // opponentName: null,
+  // matchID: null,
+
+  // Fake Stuff
+  // status: MATCH_STATE.LOADING,
+  status: MATCH_STATE.PLAYING,
+  matchID: '5773f037b7beab8da1ff',
+  //
+  opponentID: '6313e7980d42a681b5cf3482', // captain
+  opponentName: 'captain',
+  //
+  // opponentID: '6313e7940d42a681b5cf347f', // mammaw
+  // opponentName: 'mammaw',
+})
+
 export const initialAppContextState = {
+  // Authentication / User
   user: {
     id: null,
     userName: null,
     jwt: null,
   },
 
+  // Errors
   errors: {
     fetchingInitialChats: null,
     refreshingToken: null,
   },
+  socketConnectionError: null, // null or string
 
+  // Notifications
   notifications: {
     haveUnreadChats: false,
     haveUnreadChallenges: false,
   },
 
+  // Session / Connection
   attemptedToResumeSession: false,
   socketHasConnectedOnce: false,
   socketIsCurrentlyConnected: false,
-  socketConnectionError: null, // null or string
+
   appInitStatus: APP_INIT_STATUS.NONE,
 
-  allUsers: [],
-
+  // Challenges / Matches
   challenges: {
     toYou: [], // [{ matchID, userID }]
     fromYou: [], // [{ matchID, userID }]
   },
+  // Two-Player match state
+  match: EMPTY_MATCH(),
 
+  // Users
+  allUsers: [],
   hasFetchedInitialUsers: false,
 
+  // Chats
   chatMessages: [],
   hasFetchedInitialChats: false,
 }
@@ -64,6 +100,10 @@ export const ACTION_TYPE = {
   HAS_FETCHED_INITIAL_CHATS: 'HAS_FETCHED_INITIAL_CHATS',
   HAS_FETCHED_INITIAL_USERS: 'HAS_FETCHED_INITIAL_USERS',
   SET_HAS_UNREAD_CHATS: 'SET_HAS_UNREAD_CHATS',
+  // Match
+  SET_MATCH_LOADING: 'SET_MATCH_LOADING',
+  SET_MATCH_STARTED: 'SET_MATCH_STARTED',
+  SET_MATCH_CLEAR: 'SET_MATCH_CLEAR',
 }
 
 export const appContextReducer = (state, { type, payload }) => {
@@ -176,6 +216,29 @@ export const appContextReducer = (state, { type, payload }) => {
           ...state.notifications,
           haveUnreadChats: !!payload,
         },
+      }
+    case ACTION_TYPE.SET_MATCH_LOADING:
+      return {
+        ...state,
+        match: {
+          status: MATCH_STATE.LOADING,
+          opponentID: payload?.opponentID,
+          opponentName: payload?.opponentName,
+          matchID: payload?.matchID,
+        },
+      }
+    case ACTION_TYPE.SET_MATCH_STARTED:
+      return {
+        ...state,
+        match: {
+          ...state.match,
+          status: MATCH_STATE.PLAYING,
+        },
+      }
+    case ACTION_TYPE.SET_MATCH_CLEAR:
+      return {
+        ...state,
+        match: EMPTY_MATCH(),
       }
     default:
       return state

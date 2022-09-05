@@ -1,7 +1,7 @@
-import TetrisGame from "../TetrisGame"
+import TetrisGame from '../TetrisGame'
 
 class GameLoop {
-  constructor (canvasRef, boundingRef) {
+  constructor(canvasRef, boundingRef) {
     this.canvasEl = canvasRef.current
     this.gameArea = boundingRef.current
     this._ctx = this.canvasEl.getContext('2d')
@@ -24,7 +24,7 @@ class GameLoop {
     this.canvasEl.addEventListener('mouseup', this.onClick)
   }
 
-  updateCanvasBounds () {
+  updateCanvasBounds() {
     this.canvasWidth = this.canvasEl.width
     this.canvasHeight = this.canvasEl.height
     this.onWindowResize()
@@ -35,7 +35,9 @@ class GameLoop {
     this.onWindowResize()
   }
 
-  clearCanvas () {
+  initialize = () => {}
+
+  clearCanvas() {
     // Clear the entire canvas
     this._ctx.clearRect(0, 0, this._ctx.canvas.width, this._ctx.canvas.height)
     // Fill the canvas with a dark, tinted background to increase contrast
@@ -92,7 +94,12 @@ class GameLoop {
     this._ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
 
     if (this.game) {
-      this.game.updateCanvasBounds(newCanvasWidth, newCanvasHeight, leftSidebarWidth, boardWidth)
+      this.game.updateCanvasBounds(
+        newCanvasWidth,
+        newCanvasHeight,
+        leftSidebarWidth,
+        boardWidth
+      )
     }
   }
 

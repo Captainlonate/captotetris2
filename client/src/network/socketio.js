@@ -22,6 +22,7 @@ export const SOCKET_EVENTS = {
     CHALLENGE_ACCEPT: 'challenge_accept',
     CHALLENGE_DECLINE: 'challenge_decline',
     MATCH_PLAYER_READY: 'match_player_ready',
+    MATCH_CANCELLED: 'match_cancelled',
     POST_CHAT_MESSAGE: 'post_chat_message',
     GET_ALL_USERS: 'get_all_users',
   },

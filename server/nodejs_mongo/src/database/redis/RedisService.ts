@@ -145,12 +145,62 @@ class RedisService {
     return results
   }
 
+  /**
+   *
+   * @param matchID
+   */
   static async DeleteChallengeByMatchId(matchID: string) {
     try {
       await redisClient.del(`match:${matchID}`)
     } catch (ex: any) {
-      console.log('Error deleting match.', ex?.message)
+      console.log(
+        'RedisService::DeleteChallengeByMatchId()::Error deleting match.',
+        ex?.message
+      )
     }
+  }
+
+  /**
+   *
+   * @param matchID
+   * @param userID
+   * @returns
+   */
+  static async SetPlayerReady(matchID: string, userID: string) {
+    let error: string | null = null
+
+    try {
+      await redisClient.hSet(`match:${matchID}`, `ready:${userID}`, 'true')
+    } catch (ex: any) {
+      console.log(
+        'RedisService::SetPlayerReady()::Error setting player read for match.',
+        ex?.message
+      )
+      error = ex?.message
+    }
+
+    return error
+  }
+
+  /**
+   *
+   * @param matchID
+   * @returns
+   */
+  static async SetMatchBegan(matchID: string) {
+    let error: string | null = null
+
+    try {
+      await redisClient.hSet(`match:${matchID}`, 'matchBegan', 'true')
+    } catch (ex: any) {
+      console.log(
+        'RedisService::SetMatchBegan()::Error setting the match began.',
+        ex?.message
+      )
+      error = ex?.message
+    }
+
+    return error
   }
 
   /**

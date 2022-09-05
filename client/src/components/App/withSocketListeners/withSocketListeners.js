@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 import { useSocketContext } from '../../../context/SocketContext'
 import { useAppContext } from '../../../context/AppContext'
-import { SocketHandlers } from './socketIOHandlers'
+import SocketHandlers from './SocketHandlers'
 
 // ===================================================
 

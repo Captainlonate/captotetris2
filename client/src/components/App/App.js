@@ -8,6 +8,7 @@ import { withAppContext } from '../../context/AppContext'
 import { withSocketContext } from '../../context/SocketContext'
 import { withSocketListeners } from './withSocketListeners/withSocketListeners'
 import { withHandleAppInit } from './withHandleAppInit'
+import { withGameState } from './withGameState'
 import { GlobalStyles } from './globalStyles'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.min.css'
@@ -15,7 +16,9 @@ import 'react-toastify/dist/ReactToastify.min.css'
 // ==============================================
 
 // wrapped: inner first -> outer last
+// Code executes: bottom first
 const AppWithProviders = pipe(
+  withGameState,
   withHandleAppInit,
   withSocketListeners,
   withSocketContext,
