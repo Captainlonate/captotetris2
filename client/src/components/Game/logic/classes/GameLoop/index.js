@@ -1,3 +1,4 @@
+import { GiTrumpetFlag } from 'react-icons/gi'
 import TetrisGame from '../TetrisGame'
 
 class GameLoop {
@@ -13,6 +14,10 @@ class GameLoop {
 
     this.deltaTime = 0
     this.timeLastUpdate = 0
+
+    // Two Player
+    this.isTwoPlayer = false
+    this.socket = null
 
     this.onWindowResize()
 
@@ -30,12 +35,28 @@ class GameLoop {
     this.onWindowResize()
   }
 
-  setGame = (GameClass) => {
-    this.game = new GameClass({ ctx: this._ctx })
+  initializeOnePlayer = () => {
+    this.isTwoPlayer = false
+    this.socket = null
+    this.game = new TetrisGame({
+      ctx: this._ctx,
+      twoPlayerMatchID: null,
+      socket: null,
+    })
     this.onWindowResize()
   }
 
-  initialize = () => {}
+  initializeTwoPlayer = (socketConn, matchID) => {
+    this.isTwoPlayer = true
+    this.socket = socketConn
+    this.registerSocketHandlers()
+    this.game = new TetrisGame({
+      ctx: this._ctx,
+      twoPlayerMatchID: matchID,
+      socket: socketConn,
+    })
+    this.onWindowResize()
+  }
 
   clearCanvas() {
     // Clear the entire canvas
@@ -137,6 +158,28 @@ class GameLoop {
     window.removeEventListener('focus', this.onTabFocus)
     window.removeEventListener('blur', this.onTabBlur)
     this.canvasEl.removeEventListener('mouseup', this.onClick)
+
+    this.unRegisterSocketHandlers()
+  }
+
+  registerSocketHandlers = () => {
+    if (this.socket) {
+      this.socket.on('MATCH_RECEIVE_TRASH', this.onSocketReceiveTrash)
+    }
+  }
+
+  unRegisterSocketHandlers = () => {
+    if (this.socket) {
+      this.socket.off('MATCH_RECEIVE_TRASH', this.onSocketReceiveTrash)
+    }
+  }
+
+  // Socket Event Handler
+  onSocketReceiveTrash = (payload) => {
+    console.log('Socket::Tetris::Received Trash', payload)
+    if (this.game) {
+      this.game.queueTrash(payload)
+    }
   }
 }
 

@@ -1,3 +1,5 @@
+import { Socket } from 'socket.io-client'
+
 import ImageLoader from '../ImageLoader'
 import Block from '../Block'
 import { ImageLabelsToPaths, BlockImageSize } from './images'
@@ -19,7 +21,7 @@ class TetrisGame {
   static NUMROWS = 15
   static NUMCOLS = 7
 
-  constructor ({ ctx }) {
+  constructor({ ctx, twoPlayerMatchID = null, socket = null }) {
     this.ctx = ctx
     // Initialized and holds all dimensions & positions
     this.dim = this.getInitialPositionsAndSizes()
@@ -35,16 +37,28 @@ class TetrisGame {
     // Holds cells that are marked for shattering animation and removal
     this.cellsToBreakLater = null
     this.shatterAnimations = []
+    // One Player vs Two Player
+    // Double check that socket is truly an instance of SocketIO
+    const isValidSocket = socket && socket instanceof Socket
+    const isValidMatchID =
+      typeof twoPlayerMatchID === 'string' && twoPlayerMatchID.trim().length > 2
+    const isTwoPlayer = isValidSocket && isValidMatchID
+    this.socket = isTwoPlayer ? socket : null
+    this.matchID = isTwoPlayer ? twoPlayerMatchID : null
+
     // Contains the board, allows access and mechanical functions
     this.boardManager = new BoardManager({
       numRows: TetrisGame.NUMROWS,
       numCols: TetrisGame.NUMCOLS,
       onEndTurn: this.onEndTurn,
       onCannotSpawn: this.onCannotSpawn,
-      onDoneDroppingBlocks: this.onDoneDroppingBlocks
+      onDoneDroppingBlocks: this.onDoneDroppingBlocks,
     })
     // Handles drawing borders around cells
-    this.borders = new BorderManager({ numRows: TetrisGame.NUMROWS, numCols: TetrisGame.NUMCOLS })
+    this.borders = new BorderManager({
+      numRows: TetrisGame.NUMROWS,
+      numCols: TetrisGame.NUMCOLS,
+    })
     // Keyboard inputs are passed to inputManager to fire translated events ('up', 'down', etc)
     this.inputManager = new InputManager()
     this.registerInputHandlers()
@@ -54,11 +68,11 @@ class TetrisGame {
     this.soundManager = new SoundManager(sounds)
     this.imageManager = new ImageLoader({
       imagesToLoad: ImageLabelsToPaths,
-      onDone: () => this.allImagesAreLoaded()
+      onDone: () => this.allImagesAreLoaded(),
     })
   }
 
-  getInitialTimers () {
+  getInitialTimers() {
     return {
       pieceDrop: new Timer({ duration: 1 * SECONDS }), // speed for active piece to fall
       blockFall: new Timer({ duration: 0.05 * SECONDS }), // speed for blocks to fall
@@ -67,11 +81,13 @@ class TetrisGame {
       pauseBtnAnim: new Timer({ duration: Math.floor((2 * SECONDS) / 30) }), // pause button animation speed
       drawBorders: new Timer({ duration: 1.5 * SECONDS }), // how long to draw borders for pieces that will then break
       shatterAnim: new Timer({ duration: Math.floor((0.5 * SECONDS) / 30) }), // blocks shattering animation speed
-      shattering: new Timer({ duration: 0.5 * SECONDS }) // total duration it takes to shatter a block
+      shattering: new Timer({ duration: 0.5 * SECONDS }), // total duration it takes to shatter a block
+
+      sendBoard: new Timer({ duration: 20 * SECONDS }), // How often to socket emit the board
     }
   }
 
-  getInitialPositionsAndSizes () {
+  getInitialPositionsAndSizes() {
     return {
       canvasWidth: 0,
       canvasHeight: 0,
@@ -89,15 +105,19 @@ class TetrisGame {
       sidebarBlockTwoDims: [0, 0, 0, 0],
       pauseButtonDims: [0, 0, 0, 0],
       shatterAnimationSize: 0,
-      shatterAnimationOffset: 0
+      shatterAnimationOffset: 0,
     }
   }
 
   // Registers the functions that should run when keyboard events have fired
-  registerInputHandlers () {
-    this.inputManager.on('up', () => this.boardManager.rotateTheActivePieceCCW())
+  registerInputHandlers() {
+    this.inputManager.on('up', () =>
+      this.boardManager.rotateTheActivePieceCCW()
+    )
     this.inputManager.on('right', () => this.boardManager.rightTheActivePiece())
-    this.inputManager.on('down', () => this.boardManager.rotateTheActivePieceCW())
+    this.inputManager.on('down', () =>
+      this.boardManager.rotateTheActivePieceCW()
+    )
     this.inputManager.on('left', () => this.boardManager.leftTheActivePiece())
     this.inputManager.on('space', () => this.boardManager.dropTheActivePiece())
   }
@@ -119,17 +139,20 @@ class TetrisGame {
   }
 
   // When all image assets have been loaded into memory
-  allImagesAreLoaded () {
+  allImagesAreLoaded() {
     // TODO: Game can start, establish network connection
     this.startTheGame()
   }
 
   // When the game is done initializing, and the user may begin playing
-  startTheGame () {
+  startTheGame() {
     this.state.hasStarted = true
     // this.boardManager.spawnNewActivePiece(this.makeRegularBlock(), this.makeRegularBlock())
     // TODO: Delete
-    this.boardManager.spawnNewActivePiece(new Block({ blockType: 'BREAKER', color: 'GREEN' }), this.makeRegularBlock())
+    this.boardManager.spawnNewActivePiece(
+      new Block({ blockType: 'BREAKER', color: 'GREEN' }),
+      this.makeRegularBlock()
+    )
     this.state.setControllingPiece()
     if (!document.hasFocus()) {
       console.log('The game begins paused, document does not have focus.')
@@ -138,11 +161,12 @@ class TetrisGame {
   }
 
   // Called by requestAnimationFrame() to progress the game logic and animations
-  update (deltaTime) {
+  update(deltaTime) {
     if (this.state.hasStarted) {
       if (!this.state.gameIsPaused) {
         this.updateGameLogic(deltaTime)
         this.updateBlockAnimations(deltaTime)
+        this.updateSocketSendBoard(deltaTime)
       }
       this.updatePausePlayButtonAnimation(deltaTime)
     }
@@ -150,7 +174,7 @@ class TetrisGame {
 
   // Called with each requestAnimationFrame()
   // Uses the current state of the game to know what to do next
-  updateGameLogic (deltaTime) {
+  updateGameLogic(deltaTime) {
     if (this.state.needToProcessTheBoard) {
       this.processTheBoardGetNewState()
     } else if (this.state.pieceIsDropping) {
@@ -167,7 +191,8 @@ class TetrisGame {
       }
     } else if (this.state.shatteringBlocks) {
       const doneShattering = this.time.shattering.updateAndCheck(deltaTime)
-      const doneWithShatterFrame = this.time.shatterAnim.updateAndCheck(deltaTime)
+      const doneWithShatterFrame =
+        this.time.shatterAnim.updateAndCheck(deltaTime)
       if (doneShattering) {
         this.time.shatterAnim.reset()
         this.stopShattering()
@@ -180,7 +205,7 @@ class TetrisGame {
   }
 
   // The simple block animations for each block
-  updateBlockAnimations (deltaTime) {
+  updateBlockAnimations(deltaTime) {
     if (this.time.blockAnim.updateAndCheck(deltaTime)) {
       this.boardManager.updateBlockAnimations()
     }
@@ -190,15 +215,24 @@ class TetrisGame {
   }
 
   // The simple animation for the Pause/Play button
-  updatePausePlayButtonAnimation (deltaTime) {
+  updatePausePlayButtonAnimation(deltaTime) {
     if (this.time.pauseBtnAnim.updateAndCheck(deltaTime)) {
       this.pauseButton.updateFrame()
     }
   }
 
+  // Check if the player needs to send their board to the server
+  updateSocketSendBoard(deltaTime) {
+    if (this.socket && !this.state.gameIsOver) {
+      if (this.time.sendBoard.updateAndCheck(deltaTime)) {
+        this.socketEmitGameBoard()
+      }
+    }
+  }
+
   // Called with each requestAnimationFrame()
   // Responsible for drawing everything that the user sees
-  draw () {
+  draw() {
     if (this.state.hasStarted) {
       this.drawLeftSidebar()
       this.drawBoard()
@@ -208,7 +242,7 @@ class TetrisGame {
     }
   }
 
-  drawLeftSidebar () {
+  drawLeftSidebar() {
     const {
       leftSidebarWidth,
       canvasHeight,
@@ -217,7 +251,7 @@ class TetrisGame {
       sidebarBlockOneDims,
       sidebarBlockTwoDims,
       blockWidth,
-      pauseButtonDims
+      pauseButtonDims,
     } = this.dim
 
     // The dark background
@@ -256,7 +290,7 @@ class TetrisGame {
 
   // Draws the blocks on the board (in their animated state, idle, rare, shattering)
   // Draws any borders around those blocks
-  drawBoard () {
+  drawBoard() {
     let x = 0
     let y = 0
     const {
@@ -266,20 +300,22 @@ class TetrisGame {
       blockSrcDimensions,
       blockTargetSize,
       shatterAnimationOffset,
-      shatterAnimationSize
+      shatterAnimationSize,
     } = this.dim
 
     for (let rowIdx = 2; rowIdx < TetrisGame.NUMROWS; rowIdx++) {
       for (let colIdx = 0; colIdx < TetrisGame.NUMCOLS; colIdx++) {
         const blockToDraw = this.boardManager.getCell(rowIdx, colIdx)
         if (blockToDraw) {
-          x = leftSidebarWidth + (colIdx * blockWidth)
+          x = leftSidebarWidth + colIdx * blockWidth
           y = (rowIdx - 2) * blockHeight
           this.ctx.drawImage(
             this.imageManager.getImage(blockToDraw.imageName),
             ...blockToDraw.getImageSrcXandY(),
             ...blockSrcDimensions,
-            x, y, ...blockTargetSize
+            x,
+            y,
+            ...blockTargetSize
           )
         }
       }
@@ -303,8 +339,8 @@ class TetrisGame {
           this.imageManager.getImage(shatter.imageName),
           ...shatter.getImageSrcXandY(),
           ...blockSrcDimensions,
-          (leftSidebarWidth - shatterAnimationOffset) + (shatter.col * blockWidth),
-          ((shatter.row - 2) * blockWidth) - shatterAnimationOffset,
+          leftSidebarWidth - shatterAnimationOffset + shatter.col * blockWidth,
+          (shatter.row - 2) * blockWidth - shatterAnimationOffset,
           shatterAnimationSize,
           shatterAnimationSize
         )
@@ -314,7 +350,7 @@ class TetrisGame {
   }
 
   // Draw borders around a single cell
-  drawBorder ({ row, col, sides, color }) {
+  drawBorder({ row, col, sides, color }) {
     this.ctx.strokeStyle = BLOCKCOLORHEX[color]
     for (const side of sides) {
       // Because 2 rows are not drawn on the canvas, 2 must be subtracted
@@ -326,36 +362,50 @@ class TetrisGame {
   }
 
   // When the game is paused, some text appears within the board
-  drawPaused () {
+  drawPaused() {
     const { blockWidth, leftSidebarWidth, canvasHeight, boardWidth } = this.dim
 
     this.ctx.font = `${blockWidth * 0.7}px TradeWinds`
     this.ctx.fillStyle = 'red'
     this.ctx.textAlign = 'center'
-    this.ctx.fillText('Paused', leftSidebarWidth + (boardWidth / 2), canvasHeight / 2)
+    this.ctx.fillText(
+      'Paused',
+      leftSidebarWidth + boardWidth / 2,
+      canvasHeight / 2
+    )
   }
 
   // Called when the window resizes
-  updateCanvasBounds (newCanvasWidth, newCanvasHeight, leftSidebarWidth, boardWidth) {
+  updateCanvasBounds(
+    newCanvasWidth,
+    newCanvasHeight,
+    leftSidebarWidth,
+    boardWidth
+  ) {
     this.dim.canvasWidth = newCanvasWidth
     this.dim.canvasHeight = newCanvasHeight
     this.dim.leftSidebarWidth = leftSidebarWidth
     this.dim.boardWidth = boardWidth
     this.recalculateBlockSize()
     this.recalculateSidebar()
-    this.borders.recalculateAllCellCoordinates({ blockSize: this.dim.blockWidth, xOffset: leftSidebarWidth })
+    this.borders.recalculateAllCellCoordinates({
+      blockSize: this.dim.blockWidth,
+      xOffset: leftSidebarWidth,
+    })
   }
 
-  recalculateBlockSize () {
+  recalculateBlockSize() {
     this.dim.blockWidth = Math.floor(this.dim.boardWidth / TetrisGame.NUMCOLS)
-    this.dim.blockHeight = Math.floor(this.dim.canvasHeight / (TetrisGame.NUMROWS - 2))
+    this.dim.blockHeight = Math.floor(
+      this.dim.canvasHeight / (TetrisGame.NUMROWS - 2)
+    )
     this.dim.blockSrcDimensions = [BlockImageSize, BlockImageSize]
     this.dim.blockTargetSize = [this.dim.blockWidth, this.dim.blockHeight]
     this.dim.shatterAnimationSize = this.dim.blockWidth * 2
     this.dim.shatterAnimationOffset = this.dim.blockWidth / 2
   }
 
-  recalculateSidebar () {
+  recalculateSidebar() {
     // "Next" text
     this.dim.sidebarNextOffsetY = Math.floor(this.dim.blockHeight)
     // Preview Blocks - Offsets
@@ -363,14 +413,32 @@ class TetrisGame {
     this.dim.sidebarBlockOffsetY = Math.floor(this.dim.blockHeight * 1.5)
     this.dim.sidebarBlockGapY = Math.floor(this.dim.blockHeight / 4)
     // Preview blocks - location and sizes
-    this.dim.sidebarBlockOneDims = [this.dim.sidebarBlockOffsetX, this.dim.sidebarBlockOffsetY, this.dim.blockWidth, this.dim.blockHeight]
-    const sidebarBlockTwoY = this.dim.sidebarBlockOffsetY + this.dim.blockHeight + this.dim.sidebarBlockGapY
-    this.dim.sidebarBlockTwoDims = [this.dim.sidebarBlockOffsetX, sidebarBlockTwoY, this.dim.blockWidth, this.dim.blockHeight]
+    this.dim.sidebarBlockOneDims = [
+      this.dim.sidebarBlockOffsetX,
+      this.dim.sidebarBlockOffsetY,
+      this.dim.blockWidth,
+      this.dim.blockHeight,
+    ]
+    const sidebarBlockTwoY =
+      this.dim.sidebarBlockOffsetY +
+      this.dim.blockHeight +
+      this.dim.sidebarBlockGapY
+    this.dim.sidebarBlockTwoDims = [
+      this.dim.sidebarBlockOffsetX,
+      sidebarBlockTwoY,
+      this.dim.blockWidth,
+      this.dim.blockHeight,
+    ]
     // Where the pause button should be drawn
-    this.dim.pauseButtonDims = [this.dim.sidebarBlockOffsetX, this.dim.canvasHeight - 2 * this.dim.blockHeight, this.dim.blockWidth, this.dim.blockHeight]
+    this.dim.pauseButtonDims = [
+      this.dim.sidebarBlockOffsetX,
+      this.dim.canvasHeight - 2 * this.dim.blockHeight,
+      this.dim.blockWidth,
+      this.dim.blockHeight,
+    ]
   }
 
-  handleGameIsOver (isWin) {
+  handleGameIsOver(isWin) {
     this.state.setGameIsOver()
     const msg = isWin ? 'You won!' : 'You lost!'
     console.info(msg)
@@ -378,11 +446,13 @@ class TetrisGame {
 
   // The primary Game Logic function. Called in between states. Responsible
   // for figuring out the game's next state when one completes
-  processTheBoardGetNewState () {
+  processTheBoardGetNewState() {
     const blocksThatCanDrop = this.checkBoardForBlocksThatCanDrop()
     const thereAreBlocksToDrop = blocksThatCanDrop.length > 0
 
-    const blocksToBreak = thereAreBlocksToDrop ? [] : this.boardManager.getPossibleBreaks()
+    const blocksToBreak = thereAreBlocksToDrop
+      ? []
+      : this.boardManager.getPossibleBreaks()
     const thereAreBlocksToBreak = blocksToBreak.length > 0
 
     if (thereAreBlocksToDrop) {
@@ -411,7 +481,7 @@ class TetrisGame {
     @return an array of tuples. Each one describes a cell that can be dropped
       ex: [[rowIdx, colIdx], [rowIdx, colIdx], ...]
   */
-  checkBoardForBlocksThatCanDrop () {
+  checkBoardForBlocksThatCanDrop() {
     let thisCellIsEmpty = null
     let cellAboveThisCellIsNotEmpty = null
     const blocksThatCanDrop = []
@@ -419,14 +489,20 @@ class TetrisGame {
     for (let rowIdx = TetrisGame.NUMROWS - 1; rowIdx >= 2; rowIdx--) {
       for (let colIdx = 0; colIdx < TetrisGame.NUMCOLS; colIdx++) {
         thisCellIsEmpty = this.boardManager.isCellAvailable(rowIdx, colIdx)
-        cellAboveThisCellIsNotEmpty = !this.boardManager.isCellAvailable(rowIdx - 1, colIdx)
+        cellAboveThisCellIsNotEmpty = !this.boardManager.isCellAvailable(
+          rowIdx - 1,
+          colIdx
+        )
         if (thisCellIsEmpty && cellAboveThisCellIsNotEmpty) {
           // The above cell can be dropped
           blocksThatCanDrop.push([rowIdx - 1, colIdx])
           // If there are also cells above this that are occupied, then
           // those can drop too (even though the cell below isn't empty)
           let chainedRowIdx = rowIdx - 2 // Already checked rowIdx - 1
-          while (chainedRowIdx >= 2 && !this.boardManager.isCellAvailable(chainedRowIdx, colIdx)) {
+          while (
+            chainedRowIdx >= 2 &&
+            !this.boardManager.isCellAvailable(chainedRowIdx, colIdx)
+          ) {
             blocksThatCanDrop.push([chainedRowIdx, colIdx])
             chainedRowIdx--
           }
@@ -441,14 +517,14 @@ class TetrisGame {
     This will produce a block whose type has a small chance to
     be a "Breaker", but is otherwise just a "Normal" block
   */
-  makeRegularBlock () {
+  makeRegularBlock() {
     return new Block({ blockType: chanceToGetBreaker() })
   }
 
   // Once the cell borders have been drawn for a while, next it
   // will be time to start the cells' shattering animations
-  stopBorderingsStartShattering () {
-    this.progress.addBreak(this.cellsToBreakLater.map(cell => cell.cells))
+  stopBorderingsStartShattering() {
+    this.progress.addBreak(this.cellsToBreakLater.map((cell) => cell.cells))
     this.boardManager.breakBlocks(this.cellsToBreakLater)
     this.soundManager.play('success')
     this.borders.clearCellsToBeBordered()
@@ -459,7 +535,7 @@ class TetrisGame {
   // Once the cells' shattering animations have played through,
   // then it's time to actually remove the blocks from the board
   // and consider the game's next state
-  stopShattering () {
+  stopShattering() {
     this.cellsToBreakLater = null
     this.shatterAnimations = []
     this.state.setProcessingBoard()
@@ -467,35 +543,33 @@ class TetrisGame {
 
   // All keyboard input will be handled by the 'InputManager', and converted
   // into events ('up', 'down', etc)
-  onKeyPressed (keyCode) {
+  onKeyPressed(keyCode) {
     if (this.state.acceptsUserInput && this.boardManager.hasActivePiece()) {
       this.inputManager.handleKeyUp(keyCode)
     }
   }
 
   // All clicks on the canvas will be first routed here
-  onClick ({ x, y }) {
+  onClick({ x, y }) {
     if (this.checkIfPauseButtonClicked(x, y)) {
       this.handlePauseButtonClicked()
     }
   }
 
-  onTabFocused () {
-
-  }
+  onTabFocused() {}
 
   // When the user clicks away from this browser tab, the game will pause
-  onTabBlurred () {
+  onTabBlurred() {
     this.pauseTheGame()
   }
 
-  unpauseTheGame () {
+  unpauseTheGame() {
     console.log('Unpausing')
     this.state.restoreStashedState()
     this.pauseButton.doPlayingAnimation()
   }
 
-  pauseTheGame () {
+  pauseTheGame() {
     console.log('Pausing')
     if (!this.state.gameIsPaused) {
       this.state.stashCurrentState()
@@ -504,7 +578,7 @@ class TetrisGame {
     }
   }
 
-  handlePauseButtonClicked () {
+  handlePauseButtonClicked() {
     if (this.state.gameIsPaused) {
       this.unpauseTheGame()
     } else {
@@ -512,19 +586,51 @@ class TetrisGame {
     }
   }
 
-  checkIfPauseButtonClicked (clickX, clickY) {
+  checkIfPauseButtonClicked(clickX, clickY) {
     const [btnX, btnY, btnWidth, btnHeight] = this.dim.pauseButtonDims
     return (
-      clickX >= btnX && clickY >= btnY &&
-      clickX <= (btnX + btnWidth) && clickY <= (btnY + btnHeight)
+      clickX >= btnX &&
+      clickY >= btnY &&
+      clickX <= btnX + btnWidth &&
+      clickY <= btnY + btnHeight
     )
   }
 
-  setupCellsToShatter () {
+  setupCellsToShatter() {
     this.shatterAnimations = this.cellsToBreakLater
-      .map(({ color, cells }) => cells.map(([row, col]) => ({ row, col, color })))
+      .map(({ color, cells }) =>
+        cells.map(([row, col]) => ({ row, col, color }))
+      )
       .flat()
-      .map(shatterConfig => new ShatterAnimation(shatterConfig))
+      .map((shatterConfig) => new ShatterAnimation(shatterConfig))
+  }
+
+  //
+  socketEmitTrash = (payload) => {
+    if (this.socket) {
+      this.socket.emit('MATCH_SEND_BREAKS', {
+        matchID: this.matchID,
+        breaks: [],
+      })
+    }
+  }
+
+  //
+  socketEmitGameBoard = () => {
+    if (this.socket && !this.state.gameIsOver) {
+      const boardShadow = []
+      console.log('Emitting game board', boardShadow)
+
+      this.socket.emit('MATCH_SEND_BOARD', {
+        matchID: this.matchID,
+        board: boardShadow,
+      })
+    }
+  }
+
+  //
+  queueTrash = (payload) => {
+    console.log('Tetris queuing trash...', payload)
   }
 }
 

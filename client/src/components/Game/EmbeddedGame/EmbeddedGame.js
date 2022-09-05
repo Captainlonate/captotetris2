@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, memo, forwardRef } from 'react'
 
 import GameLoop from '../logic/classes/GameLoop'
-import TetrisGame from '../logic/classes/TetrisGame'
+// import TetrisGame from '../logic/classes/TetrisGame'
 import checkIsMobile from '../../../utils/isMobile'
 import Planks from '../Planks'
 import BackgroundVideo from '../BackgroundVideo'
@@ -15,10 +15,14 @@ import {
 } from './styled'
 import { MATCH_STATE, useAppContext } from '../../../context/AppContext'
 import GameConfirmationModal from './GameConfirmationModal'
+import { useSocketContext } from '../../../context/SocketContext'
 
 // ==============================================
 
-const EmbeddedGame = () => {
+const EmbeddedGame = ({ matchID }) => {
+  //
+  const socketConn = useSocketContext()
+
   // The game needs these to handle resizing
   const canvasRef = useRef(null)
   const gameAreaRef = useRef(null)
@@ -33,7 +37,9 @@ const EmbeddedGame = () => {
   useEffect(() => {
     console.log('Mounting', Date.now())
     const gameLoop = new GameLoop(canvasRef, gameAreaRef)
-    gameLoop.setGame(TetrisGame)
+
+    gameLoop.initializeTwoPlayer(socketConn, matchID)
+    // gameLoop.setGame(TetrisGame)
     // gameLoop.initialize()
     gameLoop.start()
 
@@ -73,8 +79,10 @@ const MemoizedGame = memo(EmbeddedGame)
 const EmbeddedGameContainer = ({ twoPlayer = false }) => {
   const [appState, setAppState] = useAppContext()
 
-  if (appState.match.status === MATCH_STATE.PLAYING) {
-    return <MemoizedGame />
+  const matchID = appState?.match?.matchID
+
+  if (matchID && appState.match.status === MATCH_STATE.PLAYING) {
+    return <MemoizedGame matchID={matchID} />
   } else {
     return (
       <GameContainer>
