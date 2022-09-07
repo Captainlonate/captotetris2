@@ -38,9 +38,12 @@ const EmbeddedGame = ({ matchID }) => {
     console.log('Mounting', Date.now())
     const gameLoop = new GameLoop(canvasRef, gameAreaRef)
 
-    gameLoop.initializeTwoPlayer(socketConn, matchID)
+    // console.log('Initializing with two-player mode for testing.')
+    // gameLoop.initializeTwoPlayer(socketConn, matchID)
     // gameLoop.setGame(TetrisGame)
-    // gameLoop.initialize()
+
+    console.log('Initializing one-player')
+    gameLoop.initializeOnePlayer()
     gameLoop.start()
 
     return () => {
@@ -68,20 +71,17 @@ const EmbeddedGame = ({ matchID }) => {
   )
 }
 
-// const MemoizedGame = memo(
-//   forwardRef(EmbeddedGame)
-// )
-
 const MemoizedGame = memo(EmbeddedGame)
 
-// const Confirmation
-
 const EmbeddedGameContainer = ({ twoPlayer = false }) => {
-  const [appState, setAppState] = useAppContext()
+  const [appState] = useAppContext()
 
   const matchID = appState?.match?.matchID
 
-  if (matchID && appState.match.status === MATCH_STATE.PLAYING) {
+  if (
+    !twoPlayer ||
+    (matchID && appState.match.status === MATCH_STATE.PLAYING)
+  ) {
     return <MemoizedGame matchID={matchID} />
   } else {
     return (

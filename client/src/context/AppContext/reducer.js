@@ -23,21 +23,25 @@ export const MATCH_STATE = {
 }
 
 const EMPTY_MATCH = () => ({
-  // status: MATCH_STATE.NONE,
-  // opponentID: null,
-  // opponentName: null,
-  // matchID: null,
-
+  status: MATCH_STATE.NONE,
+  opponentID: null,
+  opponentName: null,
+  matchID: null,
   // Fake Stuff
   // status: MATCH_STATE.LOADING,
-  status: MATCH_STATE.PLAYING,
-  matchID: '5773f037b7beab8da1ff',
+  // MACBOOK
+  // status: MATCH_STATE.PLAYING,
+  // matchID: '5773f037b7beab8da1ff',
+  // Signed in as mammaw, facing captain
+  // opponentID: '6313e7980d42a681b5cf3482', // captain
+  // opponentName: 'captain',
   //
-  opponentID: '6313e7980d42a681b5cf3482', // captain
-  opponentName: 'captain',
-  //
-  // opponentID: '6313e7940d42a681b5cf347f', // mammaw
-  // opponentName: 'mammaw',
+  // WINDOWS
+  // status: MATCH_STATE.PLAYING,
+  // matchID: 'ea8b784977097a8f0776',
+  // Signed in as mammaw, facing captain
+  // opponentID: '6316209594f48b754860e835', // captain
+  // opponentName: 'captain',
 })
 
 export const initialAppContextState = {

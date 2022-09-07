@@ -2,6 +2,7 @@ import { Socket } from 'socket.io-client'
 
 import ImageLoader from '../ImageLoader'
 import Block from '../Block'
+import { ShadowBlockColors } from '../Block/blockColors'
 import { ImageLabelsToPaths, BlockImageSize } from './images'
 import BoardManager from '../BoardManager'
 import { chanceToGetBreaker } from '../Block/blockTypes'
@@ -45,6 +46,10 @@ class TetrisGame {
     const isTwoPlayer = isValidSocket && isValidMatchID
     this.socket = isTwoPlayer ? socket : null
     this.matchID = isTwoPlayer ? twoPlayerMatchID : null
+    this.opponentBoard = {
+      str: null,
+      blocks: null,
+    }
 
     // Contains the board, allows access and mechanical functions
     this.boardManager = new BoardManager({
@@ -83,6 +88,7 @@ class TetrisGame {
       shatterAnim: new Timer({ duration: Math.floor((0.5 * SECONDS) / 30) }), // blocks shattering animation speed
       shattering: new Timer({ duration: 0.5 * SECONDS }), // total duration it takes to shatter a block
 
+      //
       sendBoard: new Timer({ duration: 20 * SECONDS }), // How often to socket emit the board
     }
   }
@@ -106,6 +112,10 @@ class TetrisGame {
       pauseButtonDims: [0, 0, 0, 0],
       shatterAnimationSize: 0,
       shatterAnimationOffset: 0,
+      //
+      sidebarPreviewBlock: 0,
+      sidebarPreviewDims: [0, 0, 0, 0],
+      opponentTextOffset: [0, 0],
     }
   }
 
@@ -158,6 +168,10 @@ class TetrisGame {
       console.log('The game begins paused, document does not have focus.')
       this.pauseTheGame()
     }
+    // TODO: Remove
+    const fakeOpponentBoardStr = this.boardManager.generateBoardShadow()
+    console.log('fakeOpponentBoardStr', fakeOpponentBoardStr)
+    this.setOpponentsBoard(fakeOpponentBoardStr)
   }
 
   // Called by requestAnimationFrame() to progress the game logic and animations
@@ -286,6 +300,8 @@ class TetrisGame {
       ...blockSrcDimensions,
       ...pauseButtonDims
     )
+    // Draw the Opponent's shadow board preview
+    this.drawOpponentBoard()
   }
 
   // Draws the blocks on the board (in their animated state, idle, rare, shattering)
@@ -375,6 +391,45 @@ class TetrisGame {
     )
   }
 
+  //
+  drawOpponentBoard() {
+    if (
+      Array.isArray(this.opponentBoard?.blocks) &&
+      Array.isArray(this.opponentBoard?.blocks[0])
+    ) {
+      const {
+        blockWidth,
+        sidebarPreviewDims: [offsetX, offsetY, fullWidth, fullHeight],
+        opponentTextOffset: [textX, textY],
+      } = this.dim
+      // let [offsetX, offsetY, fullWidth, fullHeight] = this.dim.sidebarPreviewDims
+      // Draw the preview board's background
+      this.ctx.globalAlpha = 0.5
+      this.ctx.fillStyle = '#000000'
+      this.ctx.fillRect(offsetX, offsetY, fullWidth, fullHeight)
+      // The "Opponent" text
+      this.ctx.font = `${blockWidth * 0.25}px TradeWinds`
+      this.ctx.fillStyle = 'white'
+      this.ctx.textAlign = 'left'
+      this.ctx.fillText('Opponent', textX, textY)
+      // Draw the cells
+      this.ctx.globalAlpha = 1
+      if (this.opponentBoard?.blocks) {
+        this.opponentBoard?.blocks?.forEach(([color, blockSDims]) => {
+          // Only set the color once, per color
+          this.ctx.fillStyle = color
+          // Batch fill all the rects of this color
+          this.ctx.beginPath()
+          // Then draw all of the blocks of that color
+          blockSDims.forEach((blockDim) => {
+            this.ctx.rect(...blockDim)
+          })
+          this.ctx.fill()
+        })
+      }
+    }
+  }
+
   // Called when the window resizes
   updateCanvasBounds(
     newCanvasWidth,
@@ -436,6 +491,21 @@ class TetrisGame {
       this.dim.blockWidth,
       this.dim.blockHeight,
     ]
+    // Where the board preview should be drawn
+    this.dim.sidebarPreviewBlock = Math.floor(
+      (this.dim.leftSidebarWidth * 0.8) / TetrisGame.NUMCOLS
+    )
+    this.dim.sidebarPreviewDims = [
+      Math.floor(this.dim.leftSidebarWidth * 0.15),
+      Math.floor(this.dim.canvasHeight * 0.38),
+      this.dim.sidebarPreviewBlock * TetrisGame.NUMCOLS,
+      this.dim.sidebarPreviewBlock * TetrisGame.NUMROWS,
+    ]
+    this.dim.opponentTextOffset = [
+      this.dim.sidebarPreviewDims[0] + this.dim.blockWidth * 0.15,
+      this.dim.sidebarPreviewDims[1] - this.dim.blockWidth * 0.15,
+    ]
+    this.preCalculateOpponentBoard()
   }
 
   handleGameIsOver(isWin) {
@@ -618,19 +688,87 @@ class TetrisGame {
   //
   socketEmitGameBoard = () => {
     if (this.socket && !this.state.gameIsOver) {
-      const boardShadow = []
-      console.log('Emitting game board', boardShadow)
+      const boardShadowStr = this.boardManager.generateBoardShadow()
+      console.log('Emitting game board', boardShadowStr)
 
-      this.socket.emit('MATCH_SEND_BOARD', {
-        matchID: this.matchID,
-        board: boardShadow,
-      })
+      // TODO: Fake take this out
+      this.setOpponentsBoard(boardShadowStr)
+
+      // this.socket.emit('MATCH_SEND_BOARD', {
+      //   matchID: this.matchID,
+      //   board: boardShadowStr,
+      // })
     }
   }
 
   //
   queueTrash = (payload) => {
     console.log('Tetris queuing trash...', payload)
+  }
+
+  //
+  setOpponentsBoard = (boardString) => {
+    // Number of cells in the board (not counting commas or separators)
+    const numberOfCells = TetrisGame.NUMCOLS * TetrisGame.NUMROWS
+    if (
+      typeof boardString === 'string' &&
+      boardString.trim().length >= numberOfCells
+    ) {
+      // this.opponentBoard.str = boardString
+      //   .split(',')
+      //   .map((row) => row.split(''))
+      this.preCalculateOpponentBoard(boardString)
+    }
+  }
+
+  preCalculateOpponentBoard = (boardStr) => {
+    const boardString = boardStr ?? this?.opponentBoard?.str
+    console.log('preCalculateOpponentBoard', {
+      boardStr,
+      'opponentBoard.str': this?.opponentBoard?.str,
+      'typeof boardStr': typeof boardStr,
+      'typeof boardString': typeof boardString,
+      'will return': typeof boardString !== 'string',
+    })
+    if (typeof boardString !== 'string') {
+      return
+    }
+
+    const boardArray = boardString.split(',').map((row) => row.split(''))
+
+    //
+    const groups = {}
+    const {
+      sidebarPreviewDims: [offsetX, offsetY],
+      sidebarPreviewBlock,
+    } = this.dim
+
+    for (let rowIdx = 0; rowIdx < boardArray.length; rowIdx++) {
+      let row = boardArray[rowIdx]
+      for (let colIdx = 0; colIdx < row.length; colIdx++) {
+        let cellCode = row[colIdx]
+        if (cellCode !== '0') {
+          let color = ShadowBlockColors.codeToColor[cellCode]
+          groups[color] = groups[color] ?? []
+          groups[color].push([
+            offsetX + sidebarPreviewBlock * colIdx, // x
+            offsetY + sidebarPreviewBlock * rowIdx, // y
+            sidebarPreviewBlock, // width
+            sidebarPreviewBlock, // height
+          ])
+        }
+      }
+    }
+
+    console.log('setting this.opponentBoard', {
+      str: boardStr,
+      blocks: Object.entries(groups),
+    })
+
+    this.opponentBoard = {
+      str: boardStr,
+      blocks: Object.entries(groups),
+    }
   }
 }
 

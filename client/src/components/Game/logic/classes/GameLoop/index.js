@@ -181,6 +181,14 @@ class GameLoop {
       this.game.queueTrash(payload)
     }
   }
+
+  //
+  onSocketReceiveOpponentBoard = (payload) => {
+    console.log('Socket::Tetris::Received Opponents board', payload)
+    if (this.game) {
+      this.game.setOpponentsBoard(payload)
+    }
+  }
 }
 
 export default GameLoop

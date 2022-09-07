@@ -1,5 +1,6 @@
 import { sortTuplesDesc } from '../../utils/tuples'
 import Block from '../Block'
+import { ShadowBlockColors } from '../Block/blockColors'
 import { twentyPercentChance } from '../../utils/random'
 import Break from '../GameProgress/Break'
 
@@ -583,6 +584,19 @@ class BoardManager {
         block.playRareAnimation()
       }
     }
+  }
+
+  generateBoardShadow() {
+    const codes = ShadowBlockColors.colorToCode
+    return this.board
+      .map((row) =>
+        row
+          .map((b) =>
+            !!b ? codes[b.isBreaker ? 'breaker' : 'block'][b.color] : '0'
+          )
+          .join('')
+      )
+      .join(',')
   }
 }
 
