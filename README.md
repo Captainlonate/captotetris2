@@ -99,51 +99,51 @@ It **will be** 2 players. I'm super close. You'll send unusuable "trash" to your
 <table>
   <tbody>
     <tr>
-      <td><img src="readme_images/progress_9_6_2022.png" width="600" height="666" /></td>
-      <td></td>
+      <td><img src="readme_images/progress_9_6_2022.png" width="300" height="333" /></td>
+      <td width="0"></td>
     </tr>
     <tr>
-      <td><img src="readme_images/progress_chat_9_6_2022.png" width="600" height="442" /></td>
-      <td></td>
+      <td><img src="readme_images/progress_chat_9_6_2022.png" width="300" height="222" /></td>
+      <td width="0"></td>
     </tr>
     <tr>
-      <td><img src="readme_images/progress_lobby_9_6_2022.png" width="600" height="515" /></td>
-      <td></td>
+      <td><img src="readme_images/progress_lobby_9_6_2022.png" width="300" height="258" /></td>
+      <td width="0"></td>
     </tr>
     <tr>
-      <td><img src="readme_images/progress_login_9_6_2022.png" width="600" height="444" /></td>
-      <td></td>
+      <td><img src="readme_images/progress_login_9_6_2022.png" width="300" height="222" /></td>
+      <td width="0"></td>
     </tr>
     <tr>
     <td>
-      <img src="readme_images/green_breaker.gif" width="600" height="600" />
+      <img src="readme_images/green_breaker.gif" width="300" height="300" />
     </td>
     <td>
-      <img src="readme_images/green_block.png" width="600" height="600" />
-    </td>
-    </tr>
-    <tr>
-    <td>
-      <img src="readme_images/blue_breaker.png" width="600" height="600" />
-    </td>
-    <td>
-      <img src="readme_images/blue_block.png" width="600" height="600" />
+      <img src="readme_images/green_block.png" width="300" height="300" />
     </td>
     </tr>
     <tr>
     <td>
-      <img src="readme_images/red_breaker_loses_eye_compressed.gif" width="600" height="600" />
+      <img src="readme_images/blue_breaker.png" width="300" height="300" />
     </td>
     <td>
-      <img src="readme_images/red_block.png" width="600" height="600" />
+      <img src="readme_images/blue_block.png" width="300" height="300" />
     </td>
     </tr>
     <tr>
     <td>
-      <img src="readme_images/yellow_breaker.png" width="600" height="600" />
+      <img src="readme_images/red_breaker_loses_eye_compressed.gif" width="300" height="300" />
     </td>
     <td>
-      <img src="readme_images/yellow_block.png" width="600" height="600" />
+      <img src="readme_images/red_block.png" width="300" height="300" />
+    </td>
+    </tr>
+    <tr>
+    <td>
+      <img src="readme_images/yellow_breaker.png" width="300" height="300" />
+    </td>
+    <td>
+      <img src="readme_images/yellow_block.png" width="300" height="300" />
     </td>
     </tr>
     <tr>
