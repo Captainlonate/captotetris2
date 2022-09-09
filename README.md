@@ -4,6 +4,8 @@
 Play it live here: [https://breaks.pirated.technology/](https://breaks.pirated.technology/)
 
 
+The multiplayer is almost finished and can be found on [this branch](https://github.com/Captainlonate/captotetris2/tree/feature/multiplayer).
+
 ## Summary
 
 This is a blocks-and-breakers style game, built with javascript. I wrote all the code and did all the art. I "found" the sound files online.
